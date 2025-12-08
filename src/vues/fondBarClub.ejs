@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+
+<%- include('head')%>
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="index.html">Home</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Add Staff
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+            <% if(msg) {%>
+              <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                <b><%= msg %></b> !
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% }%>
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Collecte de fond</h5>
+                  </div>
+                  <% if(type === 'bc') {%>
+                    <div class="card-body">
+                      <form method="post" name="forme" id="forme">
+                        <!-- Row starts -->
+                        <div class="row gx-3">
+                          <div class="col-sm-12">
+                            <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                              <h6 class="m-0">Details de la collecte du Bar/Club</h6>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Bar/Club <span class="text-danger">*</span></label>
+                              <select class="form-select" id="bc" name="barClub">
+                                <% barss.forEach(bars => { %>
+                                    <option value="<%= bars.id_barSimple %> bs" ><%= bars.nom %></option>
+                                <% }) %>
+                                <% barvs.forEach(barv => { %>
+                                  <option value="<%= barv.id_barVip %> bv" ><%= barv.nom %></option>
+                                <% }) %>
+                                <% crazys.forEach(crazy => { %>
+                                  <option value="<%= crazy.id_cclub %> cc" ><%= crazy.nom %></option>
+                                <% }) %>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a1">Montant recuperer<span class="text-danger">*</span></label>
+                              <input type="number" min="0" step="0.01" class="form-control" name="montant" required>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Date <span class="text-danger">*</span></label>
+                              <input type="date" class="form-control" id="a2" name="date" required>
+                            </div>
+                          </div>
+                          <!-- ---------------------------------------------------------------- -->
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Caisse<span class="text-danger">*</span></label>
+                              <select class="form-select" name="caisse">
+                                <option value="null" >Aucune caisse</option>
+                                <% caisses.forEach(caisse => { %>
+                                    <option value="<%= caisse.id_caisse %>" ><%= caisse.nom %></option>
+                                <% }) %>
+                              </select>
+                            </div>
+                          </div>
+                          <!-- ---------------------------------------------------------------- -->
+                          </div>
+                          <div class="col-sm-12">
+                            <div class="d-flex gap-2 justify-content-end">
+                              <button type="submit" id="btn" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </div>
+                        </div>
+                        <!-- Row ends -->
+                      </form>
+                    </div>
+                  <% } else if(type === 'appart') { %>
+                    <div class="card-body">
+                      <form method="post" action="/addJournal">
+                        <!-- Row starts -->
+                        <div class="row gx-3">
+                          <div class="col-sm-12">
+                            <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                              <h6 class="m-0">Details de la collecte des Appartement</h6>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Appartement <span class="text-danger">*</span></label>
+                              <select class="form-select"  name="appart" id="chambre1">
+                                <% apparts.forEach(chambre => { %>
+                                    <option value="<%= chambre.id_appart %>" ><%= chambre.nom_appart %></option>
+                                <% }) %>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a1">Montant recuperer<span class="text-danger">*</span></label>
+                              <input type="number" min="0" step="0.01" class="form-control" name="montant" required>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a1">Depenses<span class="text-danger">*</span></label>
+                              <input type="number" min="0" step="0.01" class="form-control" name="depense" required>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Date <span class="text-danger">*</span></label>
+                              <input type="date" class="form-control" id="a2" name="date" required>
+                            </div>
+                          </div>
+                          </div>
+                          <div class="col-sm-12">
+                            <div class="d-flex gap-2 justify-content-end">
+                              <button type="submit" id="btn" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </div>
+                        </div>
+                        <!-- Row ends -->
+                      </form>
+                    </div>
+                  <% } else if(type === 'cuisine') { %>
+                    <div class="card-body">
+                      <form method="post" action="/addCuJournal">
+                        <!-- Row starts -->
+                        <div class="row gx-3"> 
+                          <div class="col-sm-12">
+                            <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                              <h6 class="m-0">Details de la collecte des Cuisine</h6>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Cuisines <span class="text-danger">*</span></label>
+                              <select class="form-select"  name="cuisine">
+                                <% cuisines.forEach(cuisine => { %>
+                                    <option value="<%= cuisine.id_cuisine %>" ><%= cuisine.nom_cuisine %></option>
+                                <% }) %>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a1">Montant recuperer<span class="text-danger">*</span></label>
+                              <input type="number" min="0" step="0.01" class="form-control" name="montant" required>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Date <span class="text-danger">*</span></label>
+                              <input type="date" class="form-control" id="a2" name="date" required>
+                            </div>
+                          </div>
+                          </div>
+                          <div class="col-sm-12">
+                            <div class="d-flex gap-2 justify-content-end">
+                              <button type="submit" id="btn" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </div>
+                        </div>
+                        <!-- Row ends -->
+                      </form>
+                    </div>
+                  <% } else if(type === 'mclose') { %>
+                    <div class="card-body">
+                      <form method="post" action="/addChJournal">
+                        <!-- Row starts -->
+                        <div class="row gx-3"> 
+                          <div class="col-sm-12">
+                            <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                              <h6 class="m-0">Details de la collecte des Maison close</h6>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Maison Close <span class="text-danger">*</span></label>
+                              <select class="form-select"  name="mclose1" id="mclose1">
+                                <% mcloses.forEach(mclose => { %>
+                                    <option value="<%= mclose.id_mclose %>" ><%= mclose.nom %></option>
+                                <% }) %>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Chambre <span class="text-danger">*</span></label>
+                              <select class="form-select"  name="chambre1" id="chambre1">
+                                <!-- <% chambres.forEach(chambre => { %>
+                                    <option value="<%= chambre.id_chambre %>" ><%= chambre.nom %></option>
+                                <% }) %> -->
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a1">Montant recuperer<span class="text-danger">*</span></label>
+                              <input type="number" min="0" step="0.01" class="form-control" name="montant" required>
+                            </div>
+                          </div>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Date <span class="text-danger">*</span></label>
+                              <input type="date" class="form-control" id="a2" name="date" required>
+                            </div>
+                          </div>
+                          <div class="col-sm-12">
+                            <div class="mb-3">
+                              <label class="form-label" for="a8">commentaire <span class="text-danger">*</span></label>
+                              <textarea class="form-control"  placeholder="ajouter un commentaire" rows="2" name="commentaire"></textarea>
+                            </div>
+                          </div>
+                          </div>
+                          <div class="col-sm-12">
+                            <div class="d-flex gap-2 justify-content-end">
+                              <button type="submit" id="btn" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </div>
+                        </div>
+                        <!-- Row ends -->
+                      </form>
+                    </div>
+                  <% }%>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          
+          <!-- App footer ends -->
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      const btn = document.getElementById('btn');
+      const form = document.getElementById('forme');
+      const bc = document.getElementById('bc');
+
+      if(form){
+        form.addEventListener('submit', (e) => {
+          if(bc.value.split(' ')[1] === 'bs'){
+            form.action = "/addBSJournal"
+            form.submit()
+          }else if(bc.value.split(' ')[1] === 'bv'){
+            form.action = "/addBVJournal"
+            form.submit()
+          }else if(bc.value.split(' ')[1] === 'cc'){
+            form.action = "/addCCJournal"
+            form.submit()
+          }
+          
+        })
+      }
+
+      const avert = () => {
+        alert(``)
+      }
+      
+      // btn.addEventListener('click', (e) => {
+      //   e.preventDefault()
+      //   if(bc.value.split(' ')[1] === 'bs'){
+      //     form.action = "/addBSJournal"
+      //     form.submit()
+      //   }else if(bc.value.split(' ')[1] === 'bv'){
+      //     form.action = ""
+      //     form.submit()
+      //   }else if(bc.value.split(' ')[1] === 'cc'){
+      //     form.action = ""
+      //     form.submit()
+      //   }
+      // }) 
+      
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+      // console.log("<% chambres%>")
+      const mclose = document.getElementById('mclose1');
+      const chambre = document.getElementById('chambre1');
+      if(mclose && chambre){
+        "<% if(chambres){ %>"
+          "<% chambres.forEach(chambre => { %>"
+            if("<%= mcloses[0].id_mclose %>" === "<%=chambre.id_mclose%>"){
+              console.log("<%= mcloses %>")
+              chambre.insertAdjacentHTML('beforeend',`
+                <option value="${'<%=chambre.id_chambre%>'}"><%= chambre.nom %></option>
+              `)
+            }
+          "<% }) %>"
+
+          mclose.addEventListener('change', () => {
+            const valeur = mclose.value;
+            //console.log(JSON.stringify("<% chambres%>", null, 2))
+            //alert('change' + valeur + typeof valeur)
+            chambre.innerHTML = '';
+            "<% chambres.forEach((chambre,index) => { %>"
+              if(valeur === "<%=chambre.id_mclose%>"){
+                chambre.insertAdjacentHTML('beforeend',`
+                  <option value="${'<%=chambre.id_chambre%>'}"><%= chambre.nom %></option>
+                `)
+              }
+            "<% }) %>"
+          })
+        "<% } %>"
+
+        
+      }
+      
+    </script>
+  </body>
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+</html>

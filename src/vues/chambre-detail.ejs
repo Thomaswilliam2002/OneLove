@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Detail de la chambre <%= chambre.nom %> de la maison close "<%= maisonColse.nom %>"
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-xxl-6 col-sm-12">
+                <div class="card mb-3 bg-1">
+                  <div class="card-body">
+
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-9">
+                        <div class="text-white mt-3">
+                          <h5>Nom: <%= chambre.nom %></h5>
+                          <h5>Loyer: <%= chambre.loyer %></h5>
+                          <h5>Disponibiliter: <%= chambre.disponibiliter %></h5>
+                          <h5>Description: <%= chambre.description %></h5>
+
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </div>
+                </div>
+                <!-- Table starts -->
+                <div class="table-responsive">
+                    <table id="basicExample" class="table truncate m-0 align-middle">
+                      <thead class="text-center">
+                        <tr>
+                          <th>Nom et Prenom de la fille</th>
+                          <th>Telephone</th>
+                          <th>Commentaire</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody class="text-center">
+                        <% if(occupent.length > 0){ %>
+                          <% occupent.forEach(occup => { %>
+                            <tr>
+                              <td><%= occup.nom_prenom %></td>
+                              <td><%= occup.numero %></td>
+                              <td><%= occup.commentaire %></td>
+                              <td>
+                                <div class="d-inline-flex gap-1">
+                                  <!-- ----------------------------------------------------------------------------------- -->
+                                  <div class="col-sm-4">
+                                    <!-- Card starts -->
+                                        <!-- Button trigger modal -->
+                                    <button type="button" data-bs-toggle="modal"
+                                      data-bs-target="#<%= occup.id_occup %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                      <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="<%= occup.id_occup %>ModalCenter" tabindex="-1"
+                                      aria-labelledby="<%= occup.id_occup %>ModalCenterTitle" aria-hidden="true">
+                                      <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="<%= occup.id_occup %>ModalCenterTitle">
+                                              Confirmer
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body" style="white-space: normal; word-wrap: break-word; overflow: break-word;">
+                                            <p>Voulez-vous vraiment supprimer <%= occup.nom_prenom %> ?</p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              annuler
+                                            </button>
+                                            <form action="/deleteOccupent/<%= occup.id_occup %>/<%= maisonColse.id_mclose %>/<%= chambre.id_chambre %>?_method=DELETE" method="post">
+                                              <div class="col-sm-12">
+                                                <div class="d-flex gap-2 justify-content-end">
+                                                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                </div>
+                                              </div>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      <!-- </form> -->
+                                      </div>
+                                    </div>
+                                    <!-- Card ends -->
+                                    </div>
+                                </div>
+                              </td>
+                            </tr>
+                          <% }) %>
+                        <% } else { %>
+                          <tr><td colspan="4">Cette chambre n'est louer a aucune Fille</td></tr>
+                          <button type="button" class="btn btn-info">
+                            <a href="/Add#formoccupent" class="text-white"><i class="ri-sticky-note-add-line">louer cette chambre</i></a> 
+                          </button>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- Table ends -->
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+          <!-- ---------------------------------------------------------------- -->
+          <!-- Row starts -->
+          <div class="row gx-3">
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                  <h5 class="card-title">Historique de paie de la chambre</h5>
+                  <a href="/formFondBarClub?type=mclose" class="btn btn-primary ms-auto">Ajouter une journal</a>
+                </div> 
+                <div class="card-body">
+                  <!-- Table starts -->
+                  <div class="table-responsive">
+                    <table id="customButtons" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                      <thead class="text-center">
+                        <tr>
+                          <th>#</th>
+                          <th>Montant recuperer</th>
+                          <th>Description</th>
+                          <th>Date de la paie</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody class="text-center" id="tbody">
+                        <% i = 1; chambreJournals.forEach(journal => { %>
+                        <tr>
+                          <td><%= i %></td>
+                          <td class="calcule">
+                              <%= journal.loyer %>
+                          </td>
+                          <td><%= journal.description %></td>
+                          <td>
+                            <%= new Date(journal.date).getDate() < 10 ? `0${new Date(journal.date).getDate()}` : new Date(journal.date).getDate()  %>-<%= new Date(journal.date).getMonth() + 1 < 10 ? `0${new Date(journal.date).getMonth() + 1}` : new Date(journal.date).getMonth() + 1 %>-<%= new Date(journal.date).getFullYear()%>
+                          </td>
+                          <td>
+                            <div class="d-inline-flex gap-1">
+                              <!-- ----------------------------------------------------------------------------------- -->
+                              <!-- <div class="col-sm-4"> -->
+                                <!-- Card starts -->
+                                    <!-- Button trigger modal -->
+                                    <button type="button" data-bs-toggle="modal"
+                                      data-bs-target="#h<%= journal.id_journal %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                      <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="h<%= journal.id_journal %>ModalCenter" tabindex="-1"
+                                      aria-labelledby="h<%= journal.id_journal %>ModalCenterTitle" aria-hidden="true">
+                                      <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="h<%= journal.id_journal %>ModalCenterTitle">
+                                              Confirmer
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p>Voulez-vous vraiment supprimer cette ligne ?</p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              annuler
+                                            </button>
+                                            <form action="/deleteChJournal/<%= journal.id_journal %>/<%= journal.id_chambre %>/<%= journal.id_mclose %>?_method=DELETE&sender=profil" method="post">
+                                              <div class="col-sm-12">
+                                                <div class="d-flex gap-2 justify-content-end">
+                                                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                </div>
+                                              </div>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                <!-- Card ends -->
+                              <!-- </div> -->
+                              <!-- ----------------------------------------------------------------------------------------- -->
+                              <a href="formEditjournal/<%= journal.id_journal %>" class="btn btn-outline-success btn-sm"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
+                                <i class="ri-edit-box-line"></i>
+                              </a>
+                              <!-- <a href="onejournal/<%= journal.id_journal %>" class="btn btn-outline-info btn-sm"
+                                data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="voir les details">
+                                <i class="ri-eye-line"></i>
+                              </a> -->
+                            </div>
+                          </td>
+                        </tr>
+                        <% i++ }) %>
+                      </tbody>
+                    </table>
+                    <table id="" class="table truncate m-0 align-middle dataTable">
+                      <thead class="text-center">
+                        <tr>
+                          <th>Somme des loyer: </th>
+                          <th id="resulta"></th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+                  <!-- Table ends -->
+
+                  <!-- Modal Delete Row -->
+                  
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Row ends -->
+          <!-- ---------------------------------------------------------------- -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      const resulta = document.getElementById('resulta')
+      const observer= new MutationObserver((mutations, observer) => {
+        mutations.forEach((mutation) => {
+          let allCase = document.querySelectorAll('.calcule')
+          let sum = 0
+          console.log(allCase.length)
+          if(allCase.length > 0){
+            allCase.forEach((td, index) => {
+              //console.log(td)
+              sum += parseFloat(td.innerText)
+              resulta.innerText = sum
+            })
+          }else{
+            resulta.innerText = 0
+          }
+          console.log('change', mutation)
+        })
+      })
+
+      observer.observe(document.getElementById('tbody'), {
+        childList: true,
+        subtree: true,
+        characterData: true
+      })
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
+</html>

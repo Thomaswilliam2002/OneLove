@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+<%- include('head')%>
+
+  <body style="background-color: rgb(56, 100, 158);">
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+            <% if(msg) {%>
+              <% if(msg === 'ajout') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                  <b>Article </b> mis a jour !
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+              <% if(msg === 'modif') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                  <b>Appartement </b> modifier avec succes !
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+              <% if(msg === 'sup') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                  <b>Appartement </b> supprimer avec succes !
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+            <% }%>
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12" id="base">
+                <%if(data === 'null'){%>
+                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                    Aucune <b>Caisse </b> n'est associer a votre compte!
+                  </div>
+                <%}%>
+              </div>
+            </div>
+            <!-- Row ends -->
+          </div>
+          
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      const personne = "<%= user.Personnel.id_personnel%>"
+      let prodid = []
+      let prodnom = []
+      let recu = 0
+      let embid = []
+      let embanom = []
+      let r = 0
+      const base = document.getElementById("base");
+      const data = JSON.parse('<%- JSON.stringify(data) %>')
+      const histV = JSON.parse('<%- JSON.stringify(hists) %>')
+      console.log(data)
+      console.log(histV)
+      data[0].forEach((caisse, indexCaisse) => {
+        base.insertAdjacentHTML('beforeend',`
+          <div class="text-center" style="background: " id="${caisse.nom.replace(/\s+/g,"")}">
+              <p class="rounded-4" style="background:#79deec"><b style="font-size:25px">${caisse.nom}</b></p>
+          </div>
+        `)
+
+        
+        const box = document.getElementById(`${caisse.nom.replace(/\s+/g,"")}`);
+        data[1].forEach((bs, inbs)=> {
+          if(data[1].length > 0 && data[3].length > 0 && caisse.caisse_of.split('#')[1] === bs.nom){
+            if(!document.getElementById(`${bs.nom}`)){
+              box.insertAdjacentHTML('beforeend',`
+                <div class="rounded-4 py-2 my-4" style="font-size:18px; background:#5e969c; ">
+                  <p><b style="text-decoration: underline">${bs.nom}</b></p>
+                    <div class="d-flex mx-2 my-2 rounded-4 flex-row flex-wrap justify-content-around" style="background:" id="${bs.nom.replace(/\s+/g,"")}">
+                    </div>
+                </div>
+              `)
+            }
+            
+            if(caisse.caisse_of.split('#')[0] == bs.id_barSimple && caisse.caisse_of.split('#')[1] === bs.nom){
+              const boxc = document.getElementById(bs.nom.replace(/\s+/g,""));
+
+              data[3].forEach((cg, idcg) => {
+                if(cg.type === 'produit' && !prodid.includes(cg.id_probal) && cg.receveur === bs.nom){
+                  prodid.push(cg.id_probal)
+                }
+                if(cg.type === 'emballage' && !embid.includes(cg.id_probal) && cg.receveur === bs.nom){
+                  embid.push(cg.id_probal)
+                }
+              });
+
+              for(let i = 0; i < prodid.length; i++){
+                data[3].forEach((cg, idcg) => {
+                  if(prodid[i] === cg.id_probal && cg.receveur === bs.nom && cg.type === 'produit'){
+                    recu += cg.quantiter
+                  }
+                });
+                data[5].forEach((pd, idpd) => {
+                  if(prodid[i] === pd.id_produit && !prodnom.includes(pd.nom)){
+                    prodnom.push(pd.nom)
+                  }
+                });
+
+                histV.forEach((hist, inh) => {
+                  if(hist.type === 'produit' && hist.nomBarClub === bs.nom && hist.id_caisse === caisse.id_caisse && 
+                    hist.id_probal === prodid[i]
+                  ){
+                    r += hist.quantiter
+                  }
+                })
+                console.log(r)
+                boxc.insertAdjacentHTML('beforeend',`
+                    <div class="col-sm-6 col-lg-3" style="padding: 10px; background-color: rgb(166 214 241); 
+                      border-radius: 16px; border-style: solid; border-width: 1px; margin: 10px;" id="${bs.nom.replace(/\s+/g,"")}">
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 10px;">Produit:</b></p>
+                          <p>${prodnom[i]}</p>
+                      </div>
+
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 20px;">Quantiter Disponible: </b></p>
+                          <p>${recu - r}</p>
+                      </div>
+
+                      
+                      <div>
+                          <button type="button" data-bs-toggle="modal"
+                              data-bs-target="#${bs.nom.replace(/\s+/g,"")}${i}ModalCenter" class="btn btn-outline-info btn-sm w-50">
+                              <i class="">Mise a jour</i>
+                          </button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="${bs.nom.replace(/\s+/g,"")}${i}ModalCenter" tabindex="-1"
+                          aria-labelledby="${bs.nom.replace(/\s+/g,"")}${i}ModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="${bs.nom.replace(/\s+/g,"")}${i}ModalCenterTitle">
+                                      Mise a jour
+                                  </h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                                  <div class="modal-body">
+                                      <form action="/addHistCaisse" method="post">
+                                          <div class="row gx-3">
+                                            <div class="col-sm-12">
+                                              <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                <h6 class="m-0">Caisse: ${caisse.nom} produit: ${prodnom[i]}</h6>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Stock<span class="text-danger">*</span></label>
+                                                <input type="number" min="0"  max="" step="0.1" class="form-control" id="a1" value="${recu - r}" placeholder="Stock actuelle" name="stock" required disabled>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Quantiter vendu <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" max="${recu - r}" step="0.1" class="form-control" id="a2" placeholder="Quantiter vendu" name="qte" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-12 col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" step="0.1" class="form-control" id="a2" placeholder="Prix a l'unité" name="prix" required>
+                                              </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="a2" name="type" value="produit">
+                                            <input type="hidden" class="form-control" id="a2" name="idpro" value="${prodid[i]}">
+                                            <input type="hidden" class="form-control" id="a2" name="caisse" value="${caisse.id_caisse}">
+                                            <input type="hidden" class="form-control" id="a2" name="barclub" value="${bs.nom}">
+                                            <input type="hidden" class="form-control" id="a2" name="caissier" value="${personne}">
+                                            <input type="hidden" class="form-control" id="a2" name="nom" value="${prodnom[i]}">
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              Annuler
+                                            </button>
+                                            <button type="submit" class="btn btn-danger">Appliquer les modifications</button>
+                                          </div>
+                                        </form>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                    </div>
+                `)
+                recu = 0
+                r=0
+              }
+
+              // ---------------------Emballage-------------------------------------
+
+              for(let i = 0; i < embid.length; i++){
+                data[3].forEach((cg, idcg) => {
+                  if(embid[i] === cg.id_probal  && cg.receveur === bs.nom && cg.type === 'emballage'){
+                    recu += cg.quantiter
+                  }
+                });
+                data[6].forEach((em, idem) => {
+                  if(embid[i] === em.id_emballage && !embanom.includes(em.nom)){
+                    embanom.push(em.nom)
+                  }
+                });
+
+                histV.forEach((hist, inh) => {
+                  if(hist.type === 'emballage' && hist.nomBarClub === bs.nom && hist.id_caisse === caisse.id_caisse && 
+                    hist.id_probal === embid[i]
+                  ){
+                    r += hist.quantiter
+                  }
+                })
+
+                boxc.insertAdjacentHTML('beforeend',`
+                    <div class="col-sm-6 col-lg-3" style="padding: 10px; background-color: rgb(166 214 241); 
+                      border-radius: 16px; border-style: solid; border-width: 1px; margin: 10px;" id="${bs.nom.replace(/\s+/g,"")}">
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 10px;">Emballage:</b></p>
+                          <p>${embanom[i]}</p>
+                      </div>
+
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 20px;">Quantiter Disponible: </b></p>
+                          <p>${recu - r}</p>
+                      </div>
+
+                      
+                      <div>
+                          <button type="button" data-bs-toggle="modal"
+                              data-bs-target="#${bs.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenter" class="btn btn-outline-info btn-sm w-50">
+                              <i class="">Mise a jour</i>
+                          </button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="${bs.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenter" tabindex="-1"
+                          aria-labelledby="${bs.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="${bs.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenterTitle">
+                                      Mise a jour
+                                  </h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                                  <div class="modal-body">
+                                      <form action="/addHistCaisse" method="post">
+                                          <div class="row gx-3">
+                                            <div class="col-sm-12">
+                                              <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                <h6 class="m-0">Caisse: ${caisse.nom} produit: ${embanom[i]}</h6>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Stock<span class="text-danger">*</span></label>
+                                                <input type="number" min="1"  max="" step="0.1" class="form-control" id="a1" value="${recu - r}" placeholder="Stock actuelle" name="stock" required disabled>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Quantiter vendu <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" max="${recu - r}" step="0.1" class="form-control" id="a2" placeholder="Quantiter vendu" name="qte" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-12 col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" step="0.1" class="form-control" id="a2" placeholder="Prix a l'unité" name="prix" required>
+                                              </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="a2" name="type" value="emballage">
+                                            <input type="hidden" class="form-control" id="a2" name="idpro" value="${embid[i]}">
+                                            <input type="hidden" class="form-control" id="a2" name="caisse" value="${caisse.id_caisse}">
+                                            <input type="hidden" class="form-control" id="a2" name="barclub" value="${bs.nom}">
+                                            <input type="hidden" class="form-control" id="a2" name="caissier" value="${personne}">
+                                            <input type="hidden" class="form-control" id="a2" name="nom" value="${embanom[i]}">
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              Annuler
+                                            </button>
+                                            <button type="submit" class="btn btn-danger">Appliquer les modifications</button>
+                                          </div>
+                                        </form>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                    </div>
+                `)
+                recu = 0
+                r = 0
+              }
+              // data[3].forEach((cg, idcg) => {
+              //   if(cg.receveur === bs.nom){
+              //     boxc.insertAdjacentHTML('beforeend',`
+              //       <div class="text-center" id="${idcg}${bs.nom}">
+              //           <p style="padding-right: 20px;">okok</p>
+              //       </div>
+              //     `)
+              //   }
+              // });
+            }
+          }
+          prodid = []
+          prodnom = []
+          embid = []
+          embanom = []
+        })
+
+        // ----------------------------------------------------------------------------------------------------------------
+        // console.log(prodid)
+          // console.log(prodnom)
+          // console.log(embid)
+        
+        prodid = []
+        prodnom = []
+        embid = []
+        embanom = []
+          
+        data[2].forEach((bv, inbv)=> {
+          const box = document.getElementById(`${caisse.nom.replace(/\s+/g,"")}`);
+          if(data[2].length > 0 && data[4].length > 0 && caisse.caisse_of.split('#')[1] === bv.nom){
+            if(!document.getElementById(`${bv.nom.replace(/\s+/g,"")}`)){
+              box.insertAdjacentHTML('beforeend',`
+                <div class="rounded-4 py-2 my-4" style="font-size:18px; background:#5e969c; ">
+                  <p><b style="text-decoration: underline">${bv.nom}</b></p>
+                    <div class="d-flex mx-2 my-2 rounded-4 flex-row flex-wrap justify-content-around" style="background:" id="${bv.nom.replace(/\s+/g,"")}">
+                    </div>
+                </div>
+              `)
+            }
+            if(caisse.caisse_of.split('#')[0] == bv.id_barVip && caisse.caisse_of.split('#')[1] === bv.nom){
+              const boxc = document.getElementById(bv.nom.replace(/\s+/g,""));
+              data[4].forEach((cg, idcg) => {
+                if(cg.type === 'produit' && !prodid.includes(cg.id_probal) && cg.receveur === bv.nom){
+                  prodid.push(cg.id_probal)
+                }
+                if(cg.type === 'emballage' && !embid.includes(cg.id_probal) && cg.receveur === bv.nom){
+                  embid.push(cg.id_probal)
+                }
+              });
+
+              for(let i = 0; i < prodid.length; i++){
+                data[4].forEach((cg, idcg) => {
+                  if(prodid[i] === cg.id_probal){
+                    recu += cg.quantiter
+                  }
+                });
+                data[5].forEach((pd, idpd) => {
+                  if(prodid[i] === pd.id_produit && !prodnom.includes(pd.nom)){
+                    prodnom.push(pd.nom)
+                  }
+                });
+
+                histV.forEach((hist, inh) => {
+                  if(hist.type === 'produit' && hist.nomBarClub === bv.nom && hist.id_caisse === caisse.id_caisse && 
+                    hist.id_probal === prodid[i]
+                  ){
+                    r += hist.quantiter
+                  }
+                })
+
+                boxc.insertAdjacentHTML('beforeend',`
+                    <div style="display: inline-block;padding: 10px; background-color: rgb(166 214 241); 
+                      border-radius: 16px; border-style: solid; border-width: 1px; margin: 10px;" id="${bv.nom.replace(/\s+/g,"")}">
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 10px;">Produit:</b></p>
+                          <p>${prodnom[i]}</p>
+                      </div>
+
+                     <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 20px;">Quantiter Disponible: </b></p>
+                          <p>${recu - r}</p>
+                      </div>
+
+                      
+                      <div>
+                          <button type="button" data-bs-toggle="modal"
+                              data-bs-target="#${bv.nom.replace(/\s+/g,"")}${i}ModalCenter" class="btn btn-outline-info btn-sm w-50">
+                              <i class="">Mise a jour</i>
+                          </button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="${bv.nom.replace(/\s+/g,"")}${i}ModalCenter" tabindex="-1"
+                          aria-labelledby="${bv.nom.replace(/\s+/g,"")}${i}ModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="${bv.nom.replace(/\s+/g,"")}${i}ModalCenterTitle">
+                                      Mise a jour
+                                  </h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                                  <div class="modal-body">
+                                      <form action="/addHistCaisse" method="post">
+                                          <div class="row gx-3">
+                                            <div class="col-sm-12">
+                                              <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                <h6 class="m-0">Caisse: ${caisse.nom} produit: ${prodnom[i]}</h6>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Stock<span class="text-danger">*</span></label>
+                                                <input type="number" min="0"  max="" value="${recu - r}" step="0.1" class="form-control" id="a1" placeholder="Stock actuelle" name="stock" required disabled>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Quantiter vendu <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" max="${recu - r}" step="0.1" class="form-control" id="a2" placeholder="Quantiter vendu" name="qte" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-12 col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" step="0.1" class="form-control" id="a2" placeholder="Prix a l'unité" name="prix" required>
+                                              </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="a2" name="type" value="produit">
+                                            <input type="hidden" class="form-control" id="a2" name="idpro" value="${prodid[i]}">
+                                            <input type="hidden" class="form-control" id="a2" name="caisse" value="${caisse.id_caisse}">
+                                            <input type="hidden" class="form-control" id="a2" name="barclub" value="${bv.nom}">
+                                            <input type="hidden" class="form-control" id="a2" name="caissier" value="${personne}">
+                                            <input type="hidden" class="form-control" id="a2" name="nom" value="${prodnom[i]}">
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              Annuler
+                                            </button>
+                                            <button type="submit" class="btn btn-danger">Appliquer les modifications</button>
+                                          </div>
+                                        </form>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                    </div>
+                `)
+                recu = 0
+                r = 0
+              }
+
+              // ---------------------Emballage VIP-------------------------------------
+
+              for(let i = 0; i < embid.length; i++){
+                data[4].forEach((cg, idcg) => {
+                  if(embid[i] === cg.id_probal  && cg.receveur === bv.nom && cg.type === 'emballage'){
+                    recu += cg.quantiter
+                  }
+                });
+                data[6].forEach((em, idem) => {
+                  if(embid[i] === em.id_emballage && !embanom.includes(em.nom)){
+                    embanom.push(em.nom)
+                  }
+                });
+
+                histV.forEach((hist, inh) => {
+                  if(hist.type === 'emballage' && hist.nomBarClub === bv.nom && hist.id_caisse === caisse.id_caisse && 
+                    hist.id_probal === embid[i]
+                  ){
+                    r += hist.quantiter
+                  }
+                })
+
+                boxc.insertAdjacentHTML('beforeend',`
+                    <div class="col-sm-6 col-lg-3" style="padding: 10px; background-color: rgb(166 214 241); 
+                      border-radius: 16px; border-style: solid; border-width: 1px; margin: 10px;" id="${bv.nom.replace(/\s+/g,"")}">
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 10px;">Emballage:</b></p>
+                          <p>${embanom[i]}</p>
+                      </div>
+
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 20px;">Quantiter Disponible: </b></p>
+                          <p>${recu - r}</p>
+                      </div>
+
+                      
+                      <div>
+                          <button type="button" data-bs-toggle="modal"
+                              data-bs-target="#${bv.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenter" class="btn btn-outline-info btn-sm w-50">
+                              <i class="">Mise a jour</i>
+                          </button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="${bv.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenter" tabindex="-1"
+                          aria-labelledby="${bv.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="${bv.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenterTitle">
+                                      Mise a jour
+                                  </h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                                  <div class="modal-body">
+                                      <form action="/addHistCaisse" method="post">
+                                          <div class="row gx-3">
+                                            <div class="col-sm-12">
+                                              <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                <h6 class="m-0">Caisse: ${caisse.nom} produit: ${embanom[i]}</h6>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Stock<span class="text-danger">*</span></label>
+                                                <input type="number" min="0"  max="" step="0.1" class="form-control" id="a1" value="${recu - r}" placeholder="Stock actuelle" name="stock" required disabled>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Quantiter vendu <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" max="${recu - r}" step="0.1" class="form-control" id="a2" placeholder="Quantiter vendu" name="qte" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-12 col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" step="0.1" class="form-control" id="a2" placeholder="Prix a l'unité" name="prix" required>
+                                              </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="a2" name="type" value="emballage">
+                                            <input type="hidden" class="form-control" id="a2" name="idpro" value="${embid[i]}">
+                                            <input type="hidden" class="form-control" id="a2" name="caisse" value="${caisse.id_caisse}">
+                                            <input type="hidden" class="form-control" id="a2" name="barclub" value="${bv.nom}">
+                                            <input type="hidden" class="form-control" id="a2" name="caissier" value="${personne}">
+                                            <input type="hidden" class="form-control" id="a2" name="nom" value="${embanom[i]}">
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              Annuler
+                                            </button>
+                                            <button type="submit" class="btn btn-danger">Appliquer les modifications</button>
+                                          </div>
+                                        </form>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                    </div>
+                `)
+                recu = 0
+                r = 0
+              }
+            }
+          }
+          prodid = []
+          prodnom = []
+          embid = []
+          embanom = []
+        })
+
+        prodid = []
+        prodnom = []
+        embid = []
+        embanom = [] 
+
+        // --------------------------------------------------------------------------------------------------------
+        
+        data[7].forEach((bc, inbc)=> {
+          console.log(data[8])
+          const box = document.getElementById(`${caisse.nom.replace(/\s+/g,"")}`);
+          if(data[7].length > 0 && data[8].length > 0 && caisse.caisse_of.split('#')[1] === bc.nom){
+            if(!document.getElementById(`${bc.nom.replace(/\s+/g,"")}`)){
+              box.insertAdjacentHTML('beforeend',`
+                <div class="rounded-4 py-2 my-4" style="font-size:18px; background:#5e969c; ">
+                  <p><b style="text-decoration: underline">${bc.nom}</b></p>
+                    <div class="d-flex mx-2 my-2 rounded-4 flex-row flex-wrap justify-content-around" style="background:" id="${bc.nom.replace(/\s+/g,"")}">
+                    </div>
+                </div>
+              `)
+            }
+            if(caisse.caisse_of.split('#')[0] == bc.id_cclub && caisse.caisse_of.split('#')[1] === bc.nom){
+              const boxc = document.getElementById(bc.nom.replace(/\s+/g,""));
+              data[8].forEach((cg, idcg) => {
+                if(cg.type === 'produit' && !prodid.includes(cg.id_probal) && cg.receveur === bc.nom){
+                  prodid.push(cg.id_probal)
+                }
+                if(cg.type === 'emballage' && !embid.includes(cg.id_probal) && cg.receveur === bc.nom){
+                  embid.push(cg.id_probal)
+                }
+              });
+              
+
+              for(let i = 0; i < prodid.length; i++){
+                data[8].forEach((cg, idcg) => {
+                  if(prodid[i] === cg.id_probal){
+                    recu += cg.quantiter
+                  }
+                });
+                data[5].forEach((pd, idpd) => {
+                  if(prodid[i] === pd.id_produit && !prodnom.includes(pd.nom)){
+                    prodnom.push(pd.nom)
+                  }
+                });
+
+                histV.forEach((hist, inh) => {
+                  if(hist.type === 'produit' && hist.nomBarClub === bc.nom && hist.id_caisse === caisse.id_caisse && 
+                    hist.id_probal === prodid[i]
+                  ){
+                    r += hist.quantiter
+                  }
+                })
+
+                boxc.insertAdjacentHTML('beforeend',`
+                    <div style="display: inline-block;padding: 10px; background-color: rgb(166 214 241); 
+                      border-radius: 16px; border-style: solid; border-width: 1px; margin: 10px;" id="${bc.nom.replace(/\s+/g,"")}">
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 10px;">Produit:</b></p>
+                          <p>${prodnom[i]}</p>
+                      </div>
+
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 20px;">Quantiter Disponible: </b></p>
+                          <p>${recu - r}</p>
+                      </div>
+
+                      
+                      <div>
+                          <button type="button" data-bs-toggle="modal"
+                              data-bs-target="#${bc.nom.replace(/\s+/g,"")}${i}ModalCenter" class="btn btn-outline-info btn-sm w-50">
+                              <i class="">Mise a jour</i>
+                          </button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="${bc.nom.replace(/\s+/g,"")}${i}ModalCenter" tabindex="-1"
+                          aria-labelledby="${bc.nom.replace(/\s+/g,"")}${i}ModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="${bc.nom.replace(/\s+/g,"")}${i}ModalCenterTitle">
+                                      Mise a jour
+                                  </h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                                  <div class="modal-body">
+                                      <form action="/addHistCaisse" method="post">
+                                          <div class="row gx-3">
+                                            <div class="col-sm-12">
+                                              <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                <h6 class="m-0">Caisse: ${caisse.nom} produit: ${prodnom[i]}</h6>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Stock<span class="text-danger">*</span></label>
+                                                <input type="number" min="0"  max="" value="${recu - r}" step="0.1" class="form-control" id="a1" placeholder="Stock actuelle" name="stock" required disabled>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Quantiter vendu <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" max="${recu - r}" step="0.1" class="form-control" id="a2" placeholder="Quantiter vendu" name="qte" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-12 col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" step="0.1" class="form-control" id="a2" placeholder="Prix a l'unité" name="prix" required>
+                                              </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="a2" name="type" value="produit">
+                                            <input type="hidden" class="form-control" id="a2" name="idpro" value="${prodid[i]}">
+                                            <input type="hidden" class="form-control" id="a2" name="caisse" value="${caisse.id_caisse}">
+                                            <input type="hidden" class="form-control" id="a2" name="barclub" value="${bc.nom}">
+                                            <input type="hidden" class="form-control" id="a2" name="caissier" value="${personne}">
+                                            <input type="hidden" class="form-control" id="a2" name="nom" value="${prodnom[i]}">
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              Annuler
+                                            </button>
+                                            <button type="submit" class="btn btn-danger">Appliquer les modifications</button>
+                                          </div>
+                                        </form>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                    </div>
+                `)
+                recu = 0
+                r = 0
+              }
+
+              // ---------------------Emballage-------------------------------------
+
+              for(let i = 0; i < embid.length; i++){
+                data[8].forEach((cg, idcg) => {
+                  if(embid[i] === cg.id_probal  && cg.receveur === bc.nom && cg.type === 'emballage'){
+                    recu += cg.quantiter
+                  }
+                });
+                data[6].forEach((em, idem) => {
+                  if(embid[i] === em.id_emballage && !embanom.includes(em.nom)){
+                    embanom.push(em.nom)
+                  }
+                });
+
+                histV.forEach((hist, inh) => {
+                  if(hist.type === 'emballage' && hist.nomBarClub === bc.nom && hist.id_caisse === caisse.id_caisse && 
+                    hist.id_probal === embid[i]
+                  ){
+                    r += hist.quantiter
+                  }
+                })
+
+                boxc.insertAdjacentHTML('beforeend',`
+                    <div class="col-sm-6 col-lg-3" style="padding: 10px; background-color: rgb(166 214 241); 
+                      border-radius: 16px; border-style: solid; border-width: 1px; margin: 10px;" id="${bc.nom.replace(/\s+/g,"")}">
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 10px;">Emballage:</b></p>
+                          <p>${embanom[i]}</p>
+                      </div>
+
+                      <div style="display: flex; justify-content: space-between;">
+                          <p><b style="padding-right: 20px;">Quantiter Disponible: </b></p>
+                          <p>${recu - r}</p>
+                      </div>
+
+                      
+                      <div>
+                          <button type="button" data-bs-toggle="modal"
+                              data-bs-target="#${bc.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenter" class="btn btn-outline-info btn-sm w-50">
+                              <i class="">Mise a jour</i>
+                          </button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="${bc.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenter" tabindex="-1"
+                          aria-labelledby="${bc.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="${bc.nom.replace(/\s+/g,"")}${i}${'emballage'}ModalCenterTitle">
+                                      Mise a jour
+                                  </h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                                  <div class="modal-body">
+                                      <form action="/addHistCaisse" method="post">
+                                          <div class="row gx-3">
+                                            <div class="col-sm-12">
+                                              <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                <h6 class="m-0">Caisse: ${caisse.nom} produit: ${embanom[i]}</h6>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Stock<span class="text-danger">*</span></label>
+                                                <input type="number" min="0"  max="" step="0.1" class="form-control" id="a1" value="${recu - r}" placeholder="Stock actuelle" name="stock" required disabled>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Quantiter vendu <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" max="${recu - r}" step="0.1" class="form-control" id="a2" placeholder="Quantiter vendu" name="qte" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-12 col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                <input type="number" min="1" step="0.1" class="form-control" id="a2" placeholder="Prix a l'unité" name="prix" required>
+                                              </div>
+                                            </div>
+                                            <input type="hidden" class="form-control" id="a2" name="type" value="emballage">
+                                            <input type="hidden" class="form-control" id="a2" name="idpro" value="${embid[i]}">
+                                            <input type="hidden" class="form-control" id="a2" name="caisse" value="${caisse.id_caisse}">
+                                            <input type="hidden" class="form-control" id="a2" name="barclub" value="${bc.nom}">
+                                            <input type="hidden" class="form-control" id="a2" name="caissier" value="${personne}">
+                                            <input type="hidden" class="form-control" id="a2" name="nom" value="${embanom[i]}">
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              Annuler
+                                            </button>
+                                            <button type="submit" class="btn btn-danger">Appliquer les modifications</button>
+                                          </div>
+                                        </form>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+                      </div>
+                    </div>
+                `)
+                recu = 0
+                r = 0
+              }
+            }
+          }
+          prodid = []
+          prodnom = []
+          embid = []
+          embanom = []
+        })
+      });
+
+    </script>
+  </body>
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+</html>

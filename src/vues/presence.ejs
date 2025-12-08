@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Liste des Cuissine
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          
+          <div class="app-body">
+            <% if(type) {%>
+              <% if(type === 'presence') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                  <b><%= msg %></b>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+              <% if(type === 'absence') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                  <b><%= msg %></b>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+              <% if(type === 'existe') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                  Impossible de parquer une absence pour <b><%= msg %></b> parce qu'une presence lui a déjà été marquer 
+                  pour cet interval de temps!
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+            <% }%>
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title">Listes des personnels</h5>
+                  </div>
+                  <div class="card-body">
+
+                    <!-- Table starts -->
+                    <div class="table-responsive">
+                      <table id="customButtons" class="table truncate m-0 align-middle">
+                        <thead class="text-center">
+                          <tr>
+                            <th>Nom de Prenom </th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-center">
+                          <% personnels.forEach(personnel => { if(personnel.type_personnel === 'staff') {%>
+                            <tr>
+                                <td><%= personnel.nom %> <%= personnel.prenom %></td>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <!-- ----------------------------------------------------------------------------------- -->
+                                        <div class="col-sm-4">
+                                        <!-- Card starts -->
+                                            <!-- Button trigger modal -->
+                                            <button type="button" data-bs-toggle="modal"
+                                                data-bs-target="#<%= personnel.id_personnel %>ModalCenter" class="btn btn-outline-success btn-sm">
+                                                <i class=""></i>Present(e)
+                                            </button>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="<%= personnel.id_personnel %>ModalCenter" tabindex="-1"
+                                                aria-labelledby="<%= personnel.id_personnel %>ModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h5 class="modal-title" id="<%= personnel.id_personnel %>ModalCenterTitle" style="white-space: normal; word-wrap: break-word; overflow: break-word;">
+                                                          Marquer la presence de <%= personnel.nom %> <%= personnel.prenom %>
+                                                      </h5>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form action="/addPresence/<%= personnel.id_personnel %>/<%= user.Personnel.id_personnel %>" method="post">
+                                                      <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                                                        <div class="col-xxl-3 col-lg-8 col-sm-6 ">
+                                                          <div class="mb-3">
+                                                              <label class="form-label" for="a1">Date<span class="text-danger">*</span></label>
+                                                              <input type="date" class="form-control" value="" name="date" id="a1" required>
+                                                          </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-8 col-sm-6 ">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="a1">Heure de debut <span class="text-danger">*</span></label>
+                                                                <input type="time" class="form-control" value="" name="hd" id="a1" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-8 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="a1">Heure de fin <span class="text-danger">*</span></label>
+                                                                <input type="time" class="form-control" value="" name="hf" id="a1" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-8 col-sm-6">
+                                                            <div class="mb-3 form-check">
+                                                                <label class="form-label" for="a1">Départ anticipé <span class="text-danger">*</span></label>
+                                                                <input type="checkbox" class="form-check-input" value="1" name="da" id="a1">
+                                                            </div>
+                                                        </div>
+                                                      </div>
+                                                      <div class="col-sm-12">
+                                                        <div class="d-flex gap-2 justify-content-end">
+                                                          <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">annuler</button>
+                                                          <button type="submit" class="btn btn-danger me-3 mb-3">Marquer</button>
+                                                        </div>
+                                                      </div>
+                                                    </form>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        <!-- Card ends -->
+                                        </div>
+                                        <!-- ----------------------------------------------------------------------------------------- -->
+                                        <div class="col-sm-4">
+                                          <!-- Card starts -->
+                                              <!-- Button trigger modal -->
+                                              <button type="button" data-bs-toggle="modal"
+                                                  data-bs-target="#abs<%= personnel.id_personnel %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                                  Absent(e)
+                                              </button>
+                                              <!-- Modal -->
+                                              <div class="modal fade" id="abs<%= personnel.id_personnel %>ModalCenter" tabindex="-1"
+                                                  aria-labelledby="abs<%= personnel.id_personnel %>ModalCenterTitle" aria-hidden="true">
+                                                  <div class="modal-dialog modal-dialog-centered">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h5 class="modal-title" id="abs<%= personnel.id_personnel %>ModalCenterTitle" style="white-space: normal; word-wrap: break-word; overflow: break-word;">
+                                                        Marquer l'absence de <%= personnel.nom %> <%= personnel.prenom %>
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form action="/addAbsence/<%= personnel.id_personnel %>/<%= user.Personnel.id_personnel %>" method="post">
+                                                      <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                                                        <div class="col-xxl-3 col-lg-8 col-sm-6 ">
+                                                          <div class="mb-3">
+                                                              <label class="form-label" for="a1">Date<span class="text-danger">*</span></label>
+                                                              <input type="date" class="form-control" value="" name="date" id="a1" required>
+                                                          </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-8 col-sm-6">
+                                                          <div class="mb-3">
+                                                              <label class="form-label" for="a1">Heure de debut <span class="text-danger">*</span></label>
+                                                              <input type="time" class="form-control" value="" name="hd" id="a1" required>
+                                                          </div>
+                                                        </div>
+                                                        <div class="col-xxl-3 col-lg-8 col-sm-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="a1">Heure de fin <span class="text-danger">*</span></label>
+                                                                <input type="time" class="form-control" value="" name="hf" id="a1" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                          <div class="mb-3">
+                                                            <label class="form-label" for="a8">Justification de l'absence <span class="text-danger">*</span></label>
+                                                            <textarea class="form-control" id="a8" placeholder="Enter Address" rows="2" name="just" required></textarea>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                      <div class="col-sm-12">
+                                                        <div class="d-flex gap-2 justify-content-end">
+                                                          <button type="button" class="btn btn-secondary mb-3" data-bs-dismiss="modal">annuler</button>
+                                                          <button type="submit" class="btn btn-danger me-3 mb-3">Mentionner</button>
+                                                        </div>
+                                                      </div>
+                                                    </form>
+                                                  </div>
+                                                  </div>
+                                              </div>
+                                          <!-- Card ends -->
+                                          </div>
+                                    </div>
+                                </td>
+                            </tr>
+                          <% }}) %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Table ends -->
+
+                    <!-- Modal Delete Row -->
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+</html>

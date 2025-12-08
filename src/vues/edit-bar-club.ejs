@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class=" d-flex align-items-center">
+
+            
+          <!-- App body ends --> 
+
+          <!-- =---------------------------------------------------------------------- -->
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Modifier les information du <% if(type === 'bs'){%> <%='Bar Simple'%> <%}else if(type === 'bv'){%> <%='Bar Simple' %> <%} else{%> <%='Crazy Club' %> <%} %></h5>
+                  </div>
+                  <div class="card-body">
+                    <form method="post" id="form" name="form">
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-12">
+                        <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                          <h6 class="m-0">Details</h6>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a1" value="<%=bar.nom%>" name="nom" placeholder="Entrer le nom" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Adresse <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a2" name="adresse" value="<%=bar.adresse%>" placeholder="Entrer l'adresse" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Type <span class="text-danger">*</span></label>
+                          <select class="form-select" id="type">
+                            <% if (bar.id_barSimple){%>
+                              <option value="Bar Simple" selected>Bar Simple</option>
+                            <%} else if (bar.id_barVip){%>
+                              <option value="Bar VIP" selected>Bar VIP</option>
+                            <%} else{%>
+                              <option value="Crazy Club" selected>Crazy Club</option>
+                            <%}%>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <button id="btnbar" type="submit" class="btn btn-primary">Appliquer les modifications</button>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+            <!-- <button id="btnbar" type="submit" class="btn btn-primary">Appliquer les modifications</button> -->
+             <!-- =---------------------------------------------------------------------- -->
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      
+      
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      const s = "<%=bar.id_barSimple%>";
+      const v = "<%=bar.id_barVip%>";
+      const c = "<%=bar.id_cclub%>";
+      const type = document.getElementById("type");
+      const btn = document.getElementById("btnbar");
+      btn.addEventListener('click', function(){
+        if (type.value ==="Bar Simple"){
+          document.form.action = "/updateBarS/" + s + "?_method=PUT";
+        }else if (type.value ==="Bar VIP"){
+          document.form.action = "/updateBarV/" + v + "?_method=PUT";
+        }else if (type.value ==="Crazy Club"){
+          document.form.action = "/updateCClub/" + c + "?_method=PUT";
+        }
+      })
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+</html>

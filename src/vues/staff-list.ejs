@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Liste du Personnels
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+            <% if(msg) {%>
+              <% if(type === 'staff') {%>
+                <% if(msg === 'ajout') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                    <b>Personnel </b> ajouter avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'modif') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                    <b>Personnel </b> modifier avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'sup') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                    <b>Personnel </b> supprimer avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+              <% }%>
+              <% if(type === 'admin') {%>
+                <% if(msg === 'ajout') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                    <b>Administrateur </b> ajouter avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'modif') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                    <!-- <b>Administrateur </b> modifier avec succes ! --> modifier avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'sup') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                    supprimer avec succes !<!-- <b>Administrateur </b> supprimer avec succes ! -->
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+              <% }%>
+            <% }%>
+
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title">Liste des Employer</h5>
+                    <a href="<%= allType === 'admin' ? '/formAddAdmin' : '/formAddPersonnel?indice=admin' %>" class="btn btn-primary ms-auto"><% if(allType === 'admin'){%> <%='Ajouter un Administrateur'%> <%}else{%> <%='Ajouter un Personnel' %> <%} %></a>
+                  </div>
+                  <div class="card-body">
+                    
+                    <!-- Table starts -->
+                    <div class="table-responsive">
+                      <table id="basicExample" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                        <thead class="text-center">
+                          <tr>
+                            <th aria-controls="basicExample">ID</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-center">
+                          <% i = 1; personnels.forEach(personnel => { %>
+                          <tr>
+                            <td><%= i %></td>
+                            <td>
+                                <%= personnel.nom %>
+                            </td>
+                            <td>
+                              <%= personnel.prenom %>
+                            </td>
+                            <td><%= personnel.type_personnel %></td>
+                            <td>
+                              <div class="d-inline-flex gap-1">
+                                <!-- ----------------------------------------------------------------------------------- -->
+                                <% if(personnel.type_personnel !== 'admin'){%>
+                                  <!-- Card starts -->
+                                      <!-- Button trigger modal -->
+                                      <button type="button" data-bs-toggle="modal"
+                                        data-bs-target="#<%= personnel.id_personnel %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                        <i class="ri-delete-bin-line"></i>
+                                      </button>
+                                      <!-- Modal -->
+                                      <div class="modal fade" id="<%= personnel.id_personnel %>ModalCenter" tabindex="-1"
+                                        aria-labelledby="personnel.id_personnelModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                          <!-- <form action="/deletePersonnel/<%= personnel.id_personnel %>?_method=DELETE" method="post"> -->
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="<%= personnel.id_personnel %>ModalCenterTitle">
+                                                Confirmer
+                                              </h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body" style="white-space: normal; word-wrap: break-word; overflow: break-word;">
+                                              <p>Voulez-vous vraiment supprimer <%= personnel.nom %> <%= personnel.prenom %> ?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                annuler
+                                              </button>
+                                              <form action="/deletePersonnel/<%= personnel.id_personnel %>?_method=DELETE" method="post">
+                                                <div class="col-sm-12">
+                                                  <div class="d-flex gap-2 justify-content-end">
+                                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                  </div>
+                                                </div>
+                                              </form>
+                                            </div>
+                                          </div>
+                                        <!-- </form> -->
+                                        </div>
+                                      </div>
+                                  <!-- Card ends -->
+                                <% }%>
+                                <% if(user.Personnel.type_personnel === 'comptable'){if(personnel.type_personnel !== 'admin'){%>
+                                <!-- ----------------------------------------------------------------------------------------- -->
+                                  <a href="<%= allType === 'admin' ? '/formEditAdmin/' + personnel.id_personnel : 'formEditPersonnel/' + personnel.id_personnel %>" class="btn btn-outline-success btn-sm"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
+                                    <i class="ri-edit-box-line"></i>
+                                  </a>
+                                <% }} else if(user.Personnel.type_personnel === 'admin'){%>
+                                  <a href="<%= allType === 'admin' ? '/formEditAdmin/' + personnel.id_personnel : 'formEditPersonnel/' + personnel.id_personnel %>" class="btn btn-outline-success btn-sm"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
+                                    <i class="ri-edit-box-line"></i>
+                                  </a>
+                                <%} %>
+
+                                <% if(!['admin'].includes(personnel.type_personnel)) {%>
+                                  <a href="/onePersonnel/<%= personnel.id_personnel %>?indice=admin" class="btn btn-outline-info btn-sm"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="voir le Profile">
+                                    <i class="ri-eye-line"></i> 
+                                  </a>
+                                  <a href="/formAddSamction/<%= personnel.id_personnel %>" class="btn btn-outline-warning btn-sm"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Sanctionnée">
+                                    <i class="ri-speak-line"></i>
+                                  </a>
+                                <% }; if(user.Personnel.type_personnel === 'admin'){ if(['caissier central', 'caissier', 'comptable'].includes(personnel.type_personnel) || user.Personnel.id_personnel !== personnel.id_personnel){%>
+                                  <a href="/validation/<%= personnel.id_personnel%>/<%- personnel.validation === true ? false : true %>?" class="btn btn-outline-info btn-sm"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="<%- personnel.validation === true ? 'Suspendre le compte' : 'Valider le compte'%>">
+                                    <i class="<%- personnel.validation === true ? 'ri-close-line' : 'ri-check-fill'%>"></i>
+                                  </a>
+                                <%}} %>
+                                </div>
+                            </td>
+                          </tr>
+                          <% i++ }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Table ends -->
+
+                    <!-- Modal Delete Row -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+</html>

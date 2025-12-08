@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          
+          <!-- App body ends --> 
+
+          <!-- =---------------------------------------------------------------------- -->
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Ajouter un Client</h5>
+                  </div>
+                  <div class="card-body">
+                    <form action="/addClient" method="post" id="" name=""> 
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-12">
+                        <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                          <h6 class="m-0">Details du Client</h6>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a1" name="nom" placeholder="Entrer le Nom" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Prenom <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a1" name="prenom" placeholder="Entrer le Prenom" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Numero de Telephone<span class="text-danger">*</span></label>
+                          <input type="tel"  name="numero" class="form-control" id="a1" placeholder="Entrer un numero valide">
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Loyer <span class="text-danger">*</span></label>
+                          <input type="number" min="0" step="0.01" class="form-control" id="a1" name="loyer" placeholder="Entrer le montant" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nombre de nuitée <span class="text-danger">*</span></label>
+                          <input type="number" min="1" class="form-control" name="nuiter" placeholder="Entrer le nombre de nuitée" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nom d'Appartement attribuer <span class="text-danger">*</span></label>
+                          <!-- <input type="text" class="form-control" id="a1" name="nom_chambre" placeholder="Entrer le nom de la chambre" required> -->
+                          <select class="form-select" id="appart" name="id_appart">
+                            <% if(appartements){ appartements.forEach(appartement => {%>
+                                <option value="<%= appartement.id_appart %>"><%= appartement.nom_appart %></option>
+                            <% })}else{ %>
+                              <option value="null">Aucune categorie disponinble</option>
+                            <% } %>
+                          </select> 
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Commentaire <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a2" name="commentaire" placeholder="Entrer un commentaire" >
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Date <span class="text-danger">*</span></label>
+                          <input type="date" class="form-control" name="date" placeholder="Entrer la date" required>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <button id="btnbar" type="submit" class="btn btn-primary">Ajouter</button>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+            
+             <!-- =---------------------------------------------------------------------- -->
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      
+      
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      const f =document.querySelector('form')
+      const appart = document.getElementById('appart');
+      f.addEventListener('submit', (e) => {
+        if(!appart.value || appart.value === ''){
+          e.preventDefault();
+          alert("Impossible d'ajouter un client sans Appartement")
+        }
+      })
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+</html>

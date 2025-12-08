@@ -1,0 +1,330 @@
+<!-- Sidebar wrapper starts -->
+<nav id="sidebar" class="sidebar-wrapper">
+
+    <!-- Sidebar profile starts -->
+    <div class="sidebar-profile">
+      <div class="m-0">
+        <h5 class="mb-1 profile-name text-nowrap text-truncate"><%= user.Personnel.nom %></h5>
+        <p class="m-0 small profile-name text-nowrap text-truncate"><%= user.Personnel.prenom %></p>
+      </div>
+    </div>
+    <!-- Sidebar profile ends -->
+    <% const gerant = ['gerant', 'gérant'];
+      const caisse = ['caissier', 'comptable']
+    %>
+    <!-- Sidebar menu starts -->
+    <div class="sidebarMenuScroll">
+      <ul class="sidebar-menu">
+        <li class="items">
+          <a href="/onePersonnel/<%= user.Personnel.id_personnel %>">
+            <i class="ri-home-6-line"></i>
+            <span class="menu-text">Dashboard</span>
+          </a>
+        </li>
+        <%  if(user.Poste.nom_poste.toLowerCase() === 'caissier') { %>
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/presence">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Marquer la Presence(pointage)</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/allPresence">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Historique de presence</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/allAbsence">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Historique des Absence</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/formFondBarClub?type=mclose">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Collect de fond Maison close</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/allProduitCaisse/<%=user.Personnel.id_personnel%>">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">List des Produits/Emballage</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/allHistCaisse/<%=user.Personnel.id_personnel%>">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Historique des Produit/Emballage vendue</span>
+            </a>
+          </li>
+        <% }; if(user.Poste.nom_poste.toLowerCase() === 'caissier central' 
+        || user.Poste.nom_poste.toLowerCase() === 'comptable'){%>
+          <li class="treeview items">
+            <a href="#!">
+              <i class="ri-stethoscope-line"></i>
+              <span class="menu-text">Collecte des Fonds</span>
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="/formFondBarClub?type=bc">Bar/Club</a>
+              </li>
+              <li>
+                <a href="/formFondBarClub?type=cuisine">Cuisine</a>
+              </li>
+              <li>
+                <a href="/formFondBarClub?type=appart">Appartement</a>
+              </li>
+              <li>
+                <a href="/formFondBarClub?type=mclose">Maison close</a> 
+              </li>
+            </ul>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="treeview items">
+            <a href="#!">
+              <i class="ri-stethoscope-line"></i>
+              <span class="menu-text">Historique des Collecte</span>
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="/allBSJournal?indice=staff">Bar Simple</a>
+              </li>
+              <li>
+                <a href="/allBVJournal?indice=staff">Bar Vip</a>
+              </li>
+              <li>
+                <a href="/allCCJournal?indice=staff">Club</a>
+              </li>
+              <li>
+                <a href="/appartFondJournal?indice=staff">Appartement</a>
+              </li>
+              <li>
+                <a href="/allChJournal?indice=staff">Maison close</a>
+              </li>
+              <li>
+                <a href="/allCuJournal?indice=staff">Cuisine</a>
+              </li>
+            </ul>
+          </li>
+          <!--  -->
+        <% } if(user.Poste.nom_poste.toLowerCase() === 'comptable') {%>
+          <!---------------------------------------------------------------------->
+          <li class="treeview items">
+            <a href="#!">
+              <i class="ri-home-5-line"></i>
+              <span class="menu-text">Appartement</span>
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="/allAppart">Liste des Appartement</a>
+              </li>
+              <li>
+                <a href="/formAddAppart">Ajouter un Appartement</a>
+              </li>
+              <li>
+                <a href="/allClient">Liste des Client</a>
+              </li>
+              <li>
+                <a href="formAddClient">Ajouter un Client</a>
+              </li>
+            </ul>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/allBarClub">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Bars/Crazy Club</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/allMClose">
+              <i class="ri-home-smile-2-line"></i>
+              <span class="menu-text">Maison Close</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items"> 
+            <a href="/allPersonnel?allType=pas_admin">
+              <i class="ri-nurse-line"></i>
+              <span class="menu-text">Liste du personnels</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="treeview items">
+            <a href="#!">
+              <i class="ri-coins-line"></i>
+              <span class="menu-text">Caisse/Comptabilités</span>
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="/caisseOnelove">Caisse One Love</a>
+              </li>
+              <li>
+                <a href="/caisseBareSimple">Caisse Bar Simple</a>
+              </li>
+              <li>
+                <a href="/caisseBareVip">Caisse Bar Vip</a>
+              </li>
+              <li>
+                <a href="/caisseCClub">Caisse Crazy Club</a>
+              </li>
+              <li>
+                <a href="/caisseAppart">Caisse Appartement</a>
+              </li>
+              <li>
+                <a href="/caisseMClose">Caisse Maison close</a>
+              </li>
+              <li>
+                <a href="/allCaisse">Listes des Caisses</a>
+              </li>
+              <li>
+                <a href="/formAddCaisse">Ajouter une Caisse</a>
+              </li>
+            </ul>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/salarier">
+              <i class="ri-money-dollar-circle-line"></i>
+              <span class="menu-text">Liste des salarier</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="treeview items">
+            <a href="#!">
+              <i class="ri-stock-line"></i>
+              <span class="menu-text">Stock/Magasin</span>
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="/allProduit">List des Produits</a>
+              </li>
+              <li>
+                <a href="/allEmballage">List des Emballage</a>
+              </li>
+              <li>
+                <a href="/formAddProduit">Ajouter un Produit</a>
+              </li>
+              <li>
+                <a href="/formAddEmballage">Ajouter un Emballage</a>
+              </li>
+              <li>
+                <a href="/allCateg">Categorie d'article</a>
+              </li>
+            </ul>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="treeview">
+            <a href="#!">
+              <i class="ri-restaurant-line"></i>
+              <span class="menu-text">Cuisine</span>
+            </a>
+            <ul class="treeview-menu">
+              <li>
+                <a href="/allCuisine">List des Cuisine</a>
+              </li>
+              <li>
+                <a href="/formAddCuisine">Ajouter une Cuisine</a>
+              </li>
+            </ul>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items">
+            <a href="/allHistCaisse">
+              <i class="ri-file-list-3-line"></i>
+              <span class="menu-text">Historique des Produits/Emballages vendue</span>
+            </a>
+          </li>
+          <!---------------------------------------------------------------------->
+          <li class="items"> 
+            <a href="/allHistCaisse/<%= user.Personnel.id_personnel %>">
+              <i class="ri-file-list-3-line"></i>
+              <span class="menu-text">Historique des Rapport</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/allPoste">
+              <i class="ri-user-add-line"></i>
+              <span class="menu-text">Poste</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/proforma">
+              <i class="ri-draft-line"></i>
+              <span class="menu-text">Facture Proforma</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/fichePaie">
+              <i class="ri-draft-line"></i>
+              <span class="menu-text">Fiche de paie</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/Add">
+              <i class="ri-add-fill"></i>
+              <span class="menu-text">Autre Ajout</span>
+            </a>
+          </li>
+        <% }  if(user.Poste.nom_poste.toLowerCase() === 'gerant') {%>
+          <li class="items">
+            <a href="/allClient">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Liste des Clients</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/formAddClient">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Ajouter un Client</span>
+            </a>
+          </li>
+          <!-- ---------------------------------------------------------------- -->
+          <!-- <li class="items">
+            <a href="/allProduitCaisse/<%=user.Personnel.id_personnel%>">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">List des Produits/Emballage</span>
+            </a>
+          </li>
+          <li class="items">
+            <a href="/allHistCaisse/<%=user.Personnel.id_personnel%>">
+              <i class="ri-home-6-line"></i>
+              <span class="menu-text">Historique des Produit/Emballage vendue</span>
+            </a>
+          </li> -->
+        <% }%>
+        <li class="items"> 
+          <a href="/formEditPersonnel/<%= user.Personnel.id_personnel %>">
+            <i class="ri-home-6-line"></i>
+            <span class="menu-text">Mofifier le profil</span>
+          </a>
+        </li>
+        <li class="items"> 
+          <a href="/deconnexion">
+            <i class="ri-home-6-line"></i>
+            <span class="menu-text">Deconnexion</span>
+          </a>
+        </li>
+    </div>
+    <!-- Sidebar menu ends -->
+  
+    <!-- Sidebar contact starts -->
+    <!-- <div class="sidebar-contact">
+      <p class="fw-light mb-1 text-nowrap text-truncate">Emergency Contact</p>
+      <h5 class="m-0 lh-1 text-nowrap text-truncate">0987654321</h5>
+      <i class="ri-phone-line"></i>
+    </div> -->
+    <!-- Sidebar contact ends -->
+  
+  </nav>
+  <!-- Sidebar wrapper ends -->
+  
+  

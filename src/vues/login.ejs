@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:15:52 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Connexion</title>
+
+    <!-- Meta -->
+    <meta name="description" content="Marketplace for Bootstrap Admin Dashboards">
+    <meta property="og:title" content="Admin Templates - Dashboard Templates">
+    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+    <meta property="og:type" content="Website">
+    <link rel="shortcut icon" href="assets/images/favicon.svg">
+
+    <!-- *************
+			************ CSS Files *************
+		************* -->
+    <link rel="stylesheet" href="assets/fonts/remix/remixicon.css">
+    <link rel="stylesheet" href="assets/css/main.min.css">
+
+  </head>
+
+  <body class="login-bg">
+
+    <!-- Container starts -->
+    <div class="container">
+
+      <!-- Auth wrapper starts -->
+      <div class="auth-wrapper">
+        
+        <!-- Form starts -->
+        <form action="/connexion" method="post">
+          
+          <div class="auth-box">
+            <a href="index.html" class="auth-logo mb-4">
+              <img src="assets/images/logo-dark.svg" alt="Bootstrap Gallery">
+            </a>
+
+            <h4 class="mb-4">Connexion</h4>
+
+            <% if(msg) {%>
+              <% if(msg === 'mdp') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                  <b>Email </b> ou <b>Mot de Pass </b>incorrecte
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+              <% if(msg === 'user') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                  <b>Email </b> ou <b>Mot de Pass </b>incorrecte
+                </div>
+              <% }%>
+              <% if(msg === 'validation') {%>
+                <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                  Votre<b> compte  </b> n'a pas encore ete activer !
+                  veillez patienter ou contacter l'administrateur.
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              <% }%>
+            <% }%>
+            
+            <div class="mb-3">
+              <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="Entrer votre email" required>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label" for="pwd">Mot de pass<span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="password" id="pwd" name="pwd" class="form-control" placeholder="Entrer votre mot de pass" required>
+                <button class="btn btn-outline-secondary" type="button">
+                  <i class="ri-eye-line text-primary"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end mb-3">
+              <a href="/forgot" class="text-decoration-underline">Mot de pass oublier?</a>
+            </div>
+
+            <div class="mb-3 d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Connexion</button>
+              <a href="/inscription" class="btn btn-secondary">Pas encore inscrit? inscription</a>
+            </div>
+
+          </div>
+
+        </form>
+        <!-- Form ends -->
+
+      </div>
+      <!-- Auth wrapper ends -->
+      <!-- App footer starts -->
+      <div class="app-footer bg-white">
+        <span>© OneLove admin 2024</span>
+      </div>
+      <!-- App footer ends -->
+    </div>
+    <!-- Container ends -->
+
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:15:52 GMT -->
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="index.html">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Liste des Emballage
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title">Liste des Emballage</h5>
+                    <a href="/formAddEmballage" class="btn btn-primary ms-auto">Ajouter un nouvel emballage</a>
+                  </div>
+                  <div class="card-body">
+                      <% if(msg) {%>
+                        <% if(type === 'achat') {%>
+                          <% if(msg === 'ajout') {%>
+                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                              <b>Transaction </b> ajouter avec succes !
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                          <% }%>
+                        <% }%>
+                        <% if(type === 'vente') {%>
+                          <% if(msg === 'ajout') {%>
+                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                              <b>Transaction </b> ajouter avec succes !
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                          <% }%>
+                        <% }%>
+                        <% if(type === 'article') {%>
+                          <% if(msg === 'ajout') {%>
+                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                              <b>Emballage </b> ajouter avec succes !
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                          <% }%>
+                          <% if(msg === 'modif') {%>
+                            <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                              <b>Emballage </b> modifier avec succes !
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                          <% }%>
+                          <% if(msg === 'sup') {%>
+                            <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                              <b>Emballage </b> supprimer avec succes !
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                          <% }%>
+                        <% }%>
+                      <% }%>
+                    <!-- Table starts -->
+                    <div class="table-responsive">
+                      <table id="customButtons" class="table truncate m-0 align-middle">
+                        <thead>
+                          <tr class="text-center">
+                            <th>ID</th>
+                            <th>Nom de l'emballage</th>
+                            <th>Quantiter</th>
+                            <th>seuil de rappel</th>
+                            <th>Categorie</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% i = 1; emballages.forEach(emballage => { %> 
+                          <tr class="text-center">
+                            <td><%= i %></td>
+                            <td>
+                              <%= emballage.nom %>
+                            </td>
+                            <td><%= emballage.quantiter %></td>
+                            <td><%= emballage.seuil %></td>
+                            <% categories.forEach(categorie => { if(emballage.id_categ === categorie.id_categ){ %>
+                              <td><%= categorie.nom %></td>
+                            <% }}) %>
+                            <td><%= emballage.description %></td>
+                            <td>
+                              <div class="d-inline-flex gap-1">
+                                
+                                  <!-- Card starts -->
+                                      <!-- Button trigger modal -->
+                                      <button type="button" data-bs-toggle="modal"
+                                        data-bs-target="#delete<%= emballage.id_emballage %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                        <i class="ri-delete-bin-line"></i>
+                                      </button>
+                                      <!-- Modal -->
+                                      <div class="modal fade" id="delete<%= emballage.id_emballage %>ModalCenter" tabindex="-1"
+                                        aria-labelledby="personnel.id_personnelModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="delete<%= emballage.id_emballage %>ModalCenterTitle">
+                                                Confirmer
+                                              </h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                              <p>Voulez-vous vraiment supprimer l'article: <%= emballage.nom %> ?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                annuler
+                                              </button>
+                                              <form action="/deleteEmballage/<%= emballage.id_emballage %>?_method=DELETE&art=emballage" method="post">
+                                                <div class="col-sm-12">
+                                                  <div class="d-flex gap-2 justify-content-end">
+                                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                  </div>
+                                                </div>
+                                              </form>
+                                            </div>
+                                          </div>
+                                        <!-- </form> -->
+                                        </div>
+                                      </div>
+                                  <!-- Card ends -->
+                                
+                                <!-- <a href="edit-doctors.html" class="btn btn-outline-success btn-sm"
+                                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit Doctor Details">
+                                  <i class="ri-edit-box-line"></i>
+                                </a> -->
+                                <!-- ----------------------------------------------------------------------------------- -->
+                                <!-- Card starts -->
+                                <!-- Button trigger modal -->
+                                <button type="button" data-bs-toggle="modal"
+                                  data-bs-target="#update<%= emballage.id_emballage %>ModalCenter" class="btn btn-outline-success btn-sm">
+                                  <i class="ri-edit-box-line"></i>
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="update<%= emballage.id_emballage %>ModalCenter" tabindex="-1"
+                                  aria-labelledby="personnel.id_personnelModalCenterTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                    <form action="/updateEmballage/<%= emballage.id_emballage %>?_method=PUT" method="post">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="update<%= emballage.id_emballage %>ModalCenterTitle">
+                                          Modification
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <div class="row gx-3">
+                                          <div class="col-sm-12">
+                                            <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                              <h6 class="m-0">Details d'emballage</h6>
+                                            </div>
+                                          </div>
+                                          <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a1">Nom de l'emballage<span class="text-danger">*</span></label>
+                                              <input type="text" class="form-control" id="a1" value="<%= emballage.nom %>" placeholder="Entrer le nouveau nom" name="nom" required>
+                                            </div>
+                                          </div>
+                                          <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a2">Categorie<span class="text-danger">*</span></label>
+                                              <select class="form-select" id="dep" name="categ">
+                                                <% if(categories){ categories.forEach(categorie => {%>
+                                                    <option value="<%= categorie.id_categ %>"><%= categorie.nom %></option>
+                                                <% })}else{ %>
+                                                  <option value="null">Aucune categorie disponinble</option>
+                                                <% } %>
+                                              </select>
+                                            </div>
+                                          </div>
+                                          <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a1">Seuil de rappel<span class="text-danger">*</span></label>
+                                              <input type="text" class="form-control" id="a1" value="<%= emballage.seuil %>" placeholder="Entrer le nouveau nom" name="seuil" required>
+                                            </div>
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a8">Description <span class="text-danger">*</span></label>
+                                              <textarea class="form-control" id="a8" rows="2" name="desc"><%= emballage.description %></textarea>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                          annuler
+                                        </button>
+                                        <button type="submit" class="btn btn-danger">Appliquer les modification</button>
+                                      </form>
+                                      </div>
+                                    </div>
+                                  <!-- </form> -->
+                                  </div>
+                                </div>
+                                  <!-- Card ends -->
+                                <!-- ----------------------------------------------------------------------------------- -->
+                                <a href="/oneEmballage/<%= emballage.id_emballage %>" class="btn btn-outline-info btn-sm"
+                                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Historique de l'article">
+                                  <i class="ri-eye-line"></i>
+                                </a>
+                                <!-- -------------------------------------------------------------------------------------------------- -->
+                                <!-- <a href="doctors-profile.html" class="btn btn-outline-info btn-sm"
+                                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Augmenter le nombre en stock">
+                                  <i class="ri-file-reduce-line"></i>
+                                </a> -->
+                                <!-- Card starts -->
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                                  data-bs-target="#<%= emballage.id_emballage %>exampleModalCenter" data-bs-title="Augmenter le nombre en stock">
+                                  <i class="ri-file-reduce-line"></i>
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="<%= emballage.id_emballage %>exampleModalCenter" tabindex="-1"
+                                  aria-labelledby="<%= emballage.id_emballage %>exampleModalCenterTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="<%= emballage.id_emballage %>exampleModalCenterTitle">
+                                          Modiffication apres Sortie d'un Emballage
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <!-- Row starts -->
+                                        <% if (emballage.quantiter >= 1){ %>
+                                        <form action="/addHSortie/<%= emballage.id_emballage %>?art=emballage" method="post">
+                                        <div class="row gx-3">
+                                          <div class="col-sm-12">
+                                            <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                              <h6 class="m-0">Details de la Vente</h6>
+                                            </div>
+                                          </div>
+                                          
+                                          <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a1">Quantiter/Nombre a retirer<span class="text-danger">*</span></label>
+                                              <input type="number" min="1"  max="<%= emballage.quantiter %>" step="0.01" class="form-control" id="a1" placeholder="Entrer le nombre ou la quqntiter" name="nbr" required>
+                                            </div>
+                                          </div>
+                                          <div class="col-xxl-3 col-lg-6 col-sm-6"> 
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                              <input type="number" min="0" step="0.01" class="form-control" id="a2" placeholder="Entrer le prix unitaire" name="prix" required>
+                                            </div>
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a8">Nom du destinataire<span class="text-danger">*</span></label>
+                                              <input list="dest" class="form-control"  placeholder=" Ajouter le nom l'entité ou de la personne qui est destinataire" name="dest" required>
+                                              <!-- <input type="hidden" class="form-control" id="dest_id" placeholder=" Ajouter le nom l'entité ou de la personne qui est destinataire" name="dest" required> -->
+                                              <datalist id="dest">
+                                                <% if(barSimples){ barSimples.forEach(barSimple => {%>
+                                                  <option value="<%= barSimple.nom %>" data-id="<%= barSimple.id_barSimple %>" ></option>
+                                                <% }) }%>
+                                                <% if(barVips){ barVips.forEach(barVip => {%>
+                                                  <option value="<%= barVip.nom %>" data-id="<%= barVip.id_barVip %>"></option>
+                                                <% }) } %>
+                                                <% if(crazycs){ crazycs.forEach(crazyc => {%>
+                                                  <option value="<%= crazyc.nom %>" data-id="<%= crazyc.id_cclub %>"></option>
+                                                <% }) } %>
+                                              </datalist>
+                                            </div>
+                                          </div>
+                                          <input type="hidden" class="form-control" id="a2" name="type" value="emballage">
+                                          <input type="hidden" class="form-control" id="a2" name="idpro" value="<%= emballage.id_emballage %>">
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Annuler
+                                          </button>
+                                          <button type="submit" class="btn btn-danger">Confirmer le retrait</button>
+                                          </form>
+                                          <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                            Confirmer le retrait
+                                          </button> -->
+                                        </div>
+                                        <% } else { %>
+                                          <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                                            <b>Imposssible </b> de diminuer le stock ! <br>
+                                            Actuellement le stock est a <b>0</b> .
+                                          </div>
+                                        <% } %>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Card ends -->
+                              </div>
+                                <!-- -------------------------------------------------------------------------------------------------- -->
+                                <!-- <a href="doctors-profile.html" class="btn btn-outline-info btn-sm"
+                                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Reduire le nombre en stock">
+                                  <i class="ri-file-add-line"></i>
+                                </a> -->
+
+                                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                                  data-bs-target="#<%= emballage.id_emballage %>exampleModalCenter<%= emballage.id_emballage %>" data-bs-title="Di minuer le nombre en stock">
+                                  <i class="ri-file-add-line"></i>
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="<%= emballage.id_emballage %>exampleModalCenter<%= emballage.id_emballage %>" tabindex="-1"
+                                  aria-labelledby="<%= emballage.id_emballage %>exampleModalCenterTitle<%=emballage.id_emballage %>" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="<%= emballage.id_emballage %>exampleModalCenterTitle<%= emballage.id_emballage %>">
+                                          Modiffication apres Entrer d'un Emballage
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <!-- Row starts -->
+                                        <form action="/addHEntrer/<%= emballage.id_emballage %>?art=emballage" method="post">
+                                        <div class="row gx-3">
+                                          <div class="col-sm-12">
+                                            <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                              <h6 class="m-0">Details de l'ajout</h6>
+                                            </div>
+                                          </div>
+                                          <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a1">Quantiter/Nombre a ajouter<span class="text-danger">*</span></label>
+                                              <input type="number" min="1" step="0.01" class="form-control" id="a1" placeholder="Entrer le nombre ou la quantiter" name="nb" required>
+                                            </div>
+                                          </div>
+                                          <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                              <input type="number" min="0" step="0.01" class="form-control" id="a2" placeholder="Entrer le prix unitaire" name="prix" required>
+                                            </div>
+                                          </div>
+                                          <div class="col-sm-12">
+                                            <div class="mb-3">
+                                              <label class="form-label" for="a8">Nom de l'émetteur<span class="text-danger">*</span></label>
+                                              <textarea class="form-control" id="a8" placeholder="Ajouter le nom l'entité ou de la personne et qui ou d'où vien l'emballage " rows="2" name="dest" required></textarea>
+                                            </div>
+                                          </div>
+                                          <input type="hidden" class="form-control" id="a2" name="type" value="emballage">
+                                          <input type="hidden" class="form-control" id="a2" name="idpro" value="<%= emballage.id_emballage %>">
+                                      </div>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                          Annuler
+                                        </button>
+                                        <button type="submit" class="btn btn-success">Confirmer l'ajout</button>
+                                      </form>
+                                        <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                          Confirmer l'ajout
+                                        </button> -->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- ----------------------------------------------------------------------------------- -->
+                                <!-- <div class="icons">
+                                  <i class="ri-file-reduce-line"></i>
+                                </div>
+                                <div class="icons">
+                                  <i class="ri-file-add-line"></i>
+                                </div> -->
+                              </div>
+                            </td>
+                          </tr>
+                          <% i++ }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Table ends -->
+
+                    <!-- Modal Delete Row -->
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+</html>

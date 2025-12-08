@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/create-invoice.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:22 GMT -->
+<%- include('head')%>
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Home</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Cree une fiche de paie
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row start -->
+            <div class="row">
+              <div class="col-xl-12">
+                <div class="card">
+                  <div class="card-body create-invoice-wrapper">
+                    <div class="">
+                      <div class="w-100 text-center"><h2><u>Fiche de Paie Residence Onelove</u></h2></div>
+                      <hr>
+                      <!-- Row start -->
+                      <div class="row">
+                        <div class="col-sm-6 col-12 d-flex flex-row justify-content-between w-100">
+                          <!-- Row start -->
+                          <div class="col d-flex flex-column justify-content-end align-items-center">
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-4">
+                                <label for="customerName" class="form-label"><strong>NOM :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-4">
+                                <label for="invNumber" class="form-label"><strong>PRENOM :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <label for="" class="form-label"><strong>TEL :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12 w-100">
+                              <!-- Form group start -->
+                              <div class="mb-4 w-100 text-center">
+                                <label for="customerName" class="form-label"><strong>SITUATION MATRIMONIALE :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-4">
+                                <label for="invNumber" class="form-label"><strong>POSTE :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <label for="" class="form-label"><strong>DEPARTEMENT :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                          </div>
+                          <!-- Row end -->
+                          <!-- ---------------------------------------------------------------- -->
+                          <!-- Row start -->
+                          <div class="col d-flex flex-column justify-content-center align-items-center">
+                            <!-- ---------------------------------------------------------------- -->
+                            <div class="col-sm-6 col-12 d-flex flex-column justify-content-center">
+                              <!-- Form group start -->
+                              <div class="mt-1">
+                                <label for="customerName" class="form-label"><strong>FICHE DE PAIE N°</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mt-4">
+                                <label for="invNumber" class="form-label"><strong>MOIS DE :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mt-3">
+                                <h2 style="display: none;" id="h2"></h2>
+                                <input type="text" id="lieu" class="form-control nomove"
+                                  placeholder="Lieu de l'édition de la fiche" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mt-4">
+                                <label for="invNumber" class="form-label"><strong>EMPLOYEUR :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <br>
+                            <!-- ---------------------------------------------------------------- -->
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <input type="text" id="customerName" class="form-control nomove"
+                                  placeholder="Entrer le nom" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <input type="text" id="invNumber" class="form-control nomove"
+                                  placeholder="Entrer le prenom" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <input type="text" id="invNumber" class="form-control nomove"
+                                  placeholder="Entrer le numero" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <input type="text" id="customerName" class="form-control nomove"
+                                  placeholder="Situation matrimoniale" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <input type="text" id="invNumber" class="form-control nomove"
+                                  placeholder="Entrer le poste" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <input type="text" id="invNumber" class="form-control nomove"
+                                  placeholder="Entrer le departement" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                          </div>
+                          <!-- Row end -->
+                          <!-- ---------------------------------------------------------------- -->
+                           <!-- Row start -->
+                          <div class="col d-flex flex-column justify-content-start align-items-center">
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <input type="text" id="customerName" class="form-control"
+                                  placeholder="Enter Customer Name" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <div class="mb-3">
+                                  <div class="input-group">
+                                    <input type="text" class="form-control datepicker-opens-left  nomove" id=""
+                                      placeholder="DD/MM/YYYY" style="margin-left: -10px;">
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <div class="input-group">
+                                  <input type="text" class="form-control datepicker-opens-left  nomove" id="dueDate"
+                                    placeholder="DD/MM/YYYY" style="margin-left: -10px;">
+                                </div>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mt-2">
+                                <label for="invNumber" class="form-label"><strong>RESIDENCE ONELOVE</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                          </div>
+                          <!-- Row end -->
+                        </div>
+                      </div>
+                      <!-- Row end -->
+                    </div>
+
+                    <!-- Row start -->
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="table-outer">
+                          <table class="table m-0 align-middle">
+                            <thead class="text-center">
+                              <tr>
+                                <th>Libellé</th>
+                                <th>Bae</th>
+                                <th>Montant</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Salaire de Base</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Primes</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Commission</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Heures supplémentaires</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Total Brut</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Retenues Obligatoires</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Cotisation Sociale (CNSS)</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Salaire Net</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0"  class="form-control center" id="price" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="d-flex justify-content-end gap-2 mt-2">
+                          <button id="btnExportPDF" class="btn btn-primary hide-in-pdf">Exporter PDF</button>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Row end -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row end -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <%- include('script')%>
+    <!-- Date Range JS -->
+    <script src="assets/vendor/daterange/daterange.js"></script>
+    <script src="assets/vendor/daterange/custom-daterange.js"></script>
+    <script src="assets/fact/jspdf.umd.min.js"></script>
+    <script src="assets/fact/html2canvas.min.js"></script>
+
+    <script>
+    document.getElementById('btnExportPDF').addEventListener('click', () => {
+      const h2 = document.getElementById("h2")
+      const lieu = document.getElementById("lieu")
+
+      const style = document.createElement("style");
+      style.innerHTML = `
+        input, .aussi {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+        }
+
+        input::placeholder {
+          color: transparent; /* masque tous les placeholders */
+        }
+      `;
+
+      document.head.appendChild(style);
+
+      document.querySelectorAll("input").forEach(input => {
+        input.placeholder = "";
+      });
+
+      document.querySelectorAll('.hide-in-pdf').forEach(el => {
+        el.style.display = 'none';
+      });
+
+      // document.querySelectorAll('.center').forEach(el => {
+      //   el.style.textAlign = 'center';
+      // });
+
+      const invoice = document.querySelector('.create-invoice-wrapper'); // zone facture
+      html2canvas(invoice).then(canvas => {
+        // h2.style.display = 'block'
+        // h2.innerText = lieu.value
+        // lieu.style.display = 'none'
+
+      h2.innerText = lieu.value;
+      h2.style.display = "block";
+      lieu.style.display = "none";
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF('p', 'mm', 'a4'); // portrait A4
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('facture.pdf');
+        // 🔥 On restaure l'affichage APRÈS le PDF
+        document.querySelectorAll('.hide-in-pdf').forEach(el => {
+          el.style.display = 'block';
+        });
+
+        // 🔥 Rechargement APRÈS que tout soit fini
+        setTimeout(() => {
+          location.reload();
+        }, 300); // petite pause pour être 100% sûr
+      });
+      // document.querySelectorAll('.hide-in-pdf').forEach(el => {
+      //    el.style.display = 'block';
+      // });
+      // location.reload();
+    });
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/create-invoice.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:24 GMT -->
+</html>

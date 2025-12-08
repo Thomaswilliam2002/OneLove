@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="index.html">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Detail de l'appartement
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-xxl-6 col-sm-12">
+                <div class="card mb-3 bg-1">
+                  <div class="card-body mh-230">
+
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <!-- <div class="col-sm-3">
+                        <img src="/assets/images/user2.png" class="img-fluid rounded-3" alt="Medical Dashboard">
+                      </div> -->
+                      <div class="col-sm-9">
+                        <div class="text-white mt-3">
+                          <h3><%= appartement.nom_appart %></h3>
+                          <h5><%= appartement.prix_appart %> FCFA</h5>
+                          <h5><%= appartement.type_appart %></h5>
+                          <h5><%= appartement.dispo_appart %></h5>
+                          <h5><%= appartement.adresse_appart %></h5>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </div>
+                </div>
+                <!-- ---------------------------------------------------------------------------------------- -->
+                <div class="row gx-3">
+                  <div class="col-sm-12">
+                    <div class="accordion mb-3" id="accordionSpecialTitle">
+                      <!-- <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSpecialTitleOne">
+                          <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSpecialTitleOne" aria-expanded="true"
+                            aria-controls="collapseSpecialTitleOne">
+                            <div class="d-flex flex-column">
+                              <h5 class="m-0">Comparatif</h5>
+                            </div>
+                          </button>
+                        </h2>
+                        <div id="collapseSpecialTitleOne" class="accordion-collapse collapse show"
+                          aria-labelledby="headingSpecialTitleOne">
+                          <div class="accordion-body">
+                            
+                              
+                             
+                          </div>
+                        </div>
+                      </div> -->
+                      <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSpecialTitleTwo">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSpecialTitleTwo" aria-expanded="false"
+                            aria-controls="collapseSpecialTitleTwo">
+                            <div class="d-flex flex-column">
+                              <h5 class="m-0">Visualisation de l'evolution</h5>
+                            </div>
+                          </button>
+                        </h2>
+                        <div id="collapseSpecialTitleTwo" class="accordion-collapse collapse"
+                          aria-labelledby="headingSpecialTitleTwo">
+                          <div class="accordion-body">
+                          <!-- ---------------------------b start------------------------------------- -->
+                              <!-- Table start -->
+                              <div class="table-responsive">
+                                <table id="customButtons" class="table m-0 randomTableColors">
+                                  <thead>
+                                    <tr>
+                                      <th>Apartement</th>
+                                      <th class="mois">Jan</th>
+                                      <th class="mois">Feb</th>
+                                      <th class="mois">Mar</th>
+                                      <th class="mois">Apr</th>
+                                      <th class="mois">May</th>
+                                      <th class="mois">Jun</th>
+                                      <th class="mois">Jul</th>
+                                      <th class="mois">Aug</th>
+                                      <th class="mois">Sep</th>
+                                      <th class="mois">Oct</th>
+                                      <th class="mois">Nov</th>
+                                      <th class="mois">Dec</th>
+                                      <th>Total</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody id="tbody">
+                                    
+                                  </tbody>
+                                </table>
+                              </div>
+                            <!-- Table end -->
+                            <div class="row gx-3">
+                              <div class="col-sm-12">
+                                <div class="card mb-3">
+                                  <div class="card-header">
+                                    <h5 class="card-title">Courbre de variation des recette des Bar simple par année</h5>
+                                  </div>
+                                  <!-- ---------------------------------------------------------------- -->
+                                  <div class="">
+                                    <div class="">
+                                      <div class="card-body">
+                                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="false">
+                                          <div class="carousel-indicators">
+                                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                                              class="active" aria-current="true" aria-label="Slide 1"></button>
+                                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                                              aria-label="Slide 2"></button>
+                                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                                              aria-label="Slide 3"></button>
+                                          </div>
+                                          <div class="carousel-inner pb-3" id="pp">
+                
+                                          </div>
+                
+                                          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                                            data-bs-slide="prev" >
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                          </button>
+                                          <button class="carousel-control-next " type="button" data-bs-target="#carouselExampleIndicators"
+                                            data-bs-slide="next" >
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                          </button>
+                
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                   <!-- ---------------------------------------------------------------- -->
+                                  
+                                </div>
+                              </div>
+                            </div>
+                          <!-- --------------------------------b end-------------------------------- -->
+                          </div>
+                        </div>
+                      </div>
+                      <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingSpecialTitleThree">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSpecialTitleThree" aria-expanded="false"
+                            aria-controls="collapseSpecialTitleThree">
+                            <div class="d-flex flex-column">
+                              <h5 class="m-0">Historique des collecte de l'appartement</h5>
+                            </div>
+                          </button>
+                        </h2>
+                        <div id="collapseSpecialTitleThree" class="accordion-collapse collapse"
+                          aria-labelledby="headingSpecialTitleThree">
+                          <div class="accordion-body">
+                            <!-- Table starts -->
+                            <div class="table-responsive">
+                              <table id="basicExample" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                                <thead class="text-center">
+                                  <tr>
+                                    <th>#</th>
+                                    <th>Recette</th>
+                                    <th>Depense</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <% i = 1;historys.forEach(Journal => { %>
+                                        <tr>
+                                            <td><%= i %></td>
+                                            <td><%= Journal.recette %></td>
+                                            <td><%= Journal.depense %></td>
+                                            <td><%= new Date(Journal.date).getDate() < 10 ? `0${new Date(Journal.date).getDate()}` : new Date(Journal.date).getDate()  %>-<%= new Date(Journal.date).getMonth() + 1 < 10 ? `0${new Date(Journal.date).getMonth() + 1}` : new Date(Journal.date).getMonth() + 1 %>-<%= new Date(Journal.date).getFullYear()%></td>
+                                            <td>
+                                              <div class="d-inline-flex gap-1">
+                                                <!-- ----------------------------------------------------------------------------------- -->
+                                                <div class="col-sm-4">
+                                                <!-- Card starts -->
+                                                    <!-- Button trigger modal -->
+                                                    <button type="button" data-bs-toggle="modal"
+                                                        data-bs-target="#<%= Journal.id_journal %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                                        <i class="ri-delete-bin-line"></i> 
+                                                    </button>
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="<%= Journal.id_journal %>ModalCenter" tabindex="-1"
+                                                        aria-labelledby="<%= Journal.id_journal %>ModalCenterTitle" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                            <h5 class="modal-title" id="<%= Journal.id_journal %>ModalCenterTitle">
+                                                                Confirmer
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                            <p>Voulez-vous vraiment supprimer cet Historique ?</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                annuler
+                                                            </button>
+                                                            <form action="/deleteFondJournal/<%= Journal.id_journal %>?_method=DELETE" method="post">
+                                                                <div class="col-sm-12">
+                                                                <div class="d-flex gap-2 justify-content-end">
+                                                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                                </div>
+                                                                </div>
+                                                            </form>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  <!-- Card ends -->
+                                                </div>
+                                              </div>
+                                          </td>
+                                        </tr>
+                                    <% i++ }) %>  
+                                </tbody>
+                              </table>
+                            </div>
+                            <!-- Table ends -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- ------------------------------------------------------------------------------------------ -->
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <script src="assets/vendor/apex/apexcharts.min.js"></script>
+    <%- include('script')%>
+  </body>
+
+  <script>
+    // -----------------------------------------------------------------------------------------------------
+    const text_colore = ['text-primary', 'text-info', 'text-danger', 'text-warning', 'text-success']
+    const class_colore = ['badge bg-primary', 'badge bg-info', 'badge bg-danger', 'badge bg-warning', 'badge bg-success']
+    traduct = (date) => {
+        const dates = new Date(`${date.split('-')[0]}-${date.split('-')[1]}-01`);
+        const shortMonth = dates.toLocaleString('en-US', {month: 'short'});
+        return shortMonth;
+    }
+    
+    const pp = document.getElementById('pp');
+    const tbody = document.getElementById('tbody');
+    const anner = []
+    
+
+    let recette = JSON.parse('<%- JSON.stringify(courbe_info) %>')
+    console.log(recette)
+    if(recette.length === 0){
+      let d = new Date().toISOString().slice(0,7);
+      recette.push(JSON.parse(JSON.stringify({
+          "mois": d,
+          "id_journal": 1,
+          "total_recette": 0,
+          "NomAppart": "..."
+      })))
+    }
+    console.log(recette)
+
+    recette.forEach(element => {
+      if(!anner.includes(element.mois.split('-')[0])){
+        anner.push(element.mois.split('-')[0])
+      }
+    });
+
+    const nom = recette[0]['NomAppart']
+    
+
+    console.log(anner)
+    boole = 0
+    // ----------------------------------------------------------------------
+    anner.forEach((anner, ia) => {
+      const all_total = []
+
+      let total = 0
+      recette.forEach((element, index) => {
+          if(anner === element.mois.split('-')[0]){
+            total = total + element.total_recette
+          }
+        });
+        all_total.push(total);
+
+      console.log('=>',nom, all_total)
+
+      pp.insertAdjacentHTML('beforeend',`
+        <div class="card-body carousel-item ${ia === 0? 'active' : ''}" id="p${ia}">
+        </div>
+      `)
+
+      const p = document.getElementById(`p${ia}`);
+
+      const all_month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
+      const recettes = Array(12).fill(0);
+      recette.forEach(element => {
+        if(anner === element.mois.split('-')[0]){
+          for(let j = 0; j < all_month.length; j++){
+            if(all_month[j] === traduct(element.mois)){
+              recettes[j] = element.total_recette
+            }
+          }
+        }
+      })
+      var options = {
+        chart: {
+          height: 300,
+          type: "line",
+          toolbar: {
+            show: true,
+          },
+        },
+        title:{
+          text: `${nom} ${anner}`,
+          aligne: 'left',
+          style:{
+            color: `red`,
+          }
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "smooth",
+          width: 3,
+        },
+        series: [
+          {
+            name: "Recette",
+            data: recettes,
+          },
+        ],
+        grid: {
+          borderColor: "#d8dee6",
+          strokeDashArray: 5,
+          xaxis: {
+            lines: {
+              show: true,
+            },
+          },
+          yaxis: {
+            lines: {
+              show: true,
+            },
+          },
+          padding: {
+            top: 0,
+            right: 0,
+            bottom: 10,
+            left: 0,
+          },
+        },
+        xaxis: {
+          categories: all_month,
+        },
+        yaxis: {
+          labels: {
+            show: true,
+          },
+        },
+        colors: ["#116aef", "#ce313e", "#436ccf", "#dcad10", "#828382"],
+        markers: {
+          size: 0,
+          opacity: 0.3,
+          colors: ["#116aef", "#ce313e", "#436ccf", "#dcad10", "#828382"],
+          strokeColor: "#ffffff",
+          strokeWidth: 1,
+          hover: {
+            size: 7,
+          },
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val + "FCFA";
+            },
+          },
+        },
+      };
+
+      exi = document.getElementById(`#income${ia}`);
+      console.log(exi)
+      if(!exi){
+        p.insertAdjacentHTML('beforeend',`
+          <div class="chart-height-lg">
+              <div id="income${ia}" ></div>
+          </div>
+        `)
+      }
+      console.log(nom, anner)
+
+      tbody.insertAdjacentHTML('beforeend',`
+        <tr>
+          <td><span class="${class_colore[boole]}"> ${nom} ${anner}</span></td>
+          <td>${recettes[0]}</td>
+          <td>${recettes[1]}</td>
+          <td>${recettes[2]}</td>
+          <td>${recettes[3]}</td>
+          <td>${recettes[4]}</td>
+          <td>${recettes[5]}</td>
+          <td>${recettes[6]}</td>
+          <td>${recettes[7]}</td>
+          <td>${recettes[8]}</td>
+          <td>${recettes[9]}</td>
+          <td>${recettes[10]}</td>
+          <td>${recettes[11]}</td>
+          <td>${all_total} FCFA</td>
+        </tr>
+      `)
+
+      const hot = document.getElementById(`income${ia}`);
+      hot.insertAdjacentHTML('beforeend',`
+        <div class="" id="d${boole}-${anner}">
+        </div>
+      `)
+      var chart = new ApexCharts(document.querySelector(`#d${boole}-${anner}`), options);
+
+      chart.render();
+      boole++
+    })
+  </script>
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
+</html>

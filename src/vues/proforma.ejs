@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/create-invoice.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:22 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="index.html">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Cree une facture proforma
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row start -->
+            <div class="row">
+              <div class="col-xl-12">
+                <div class="card">
+                  <div class="card-body create-invoice-wrapper">
+                    <div class="">
+                      <div class="text-center">
+                          <h2><u>FACTURE PROFORMA</u></h2>
+                          <br>
+                      </div>
+                      <div class="d-flex align-items-center justify-content-around">
+                        <div class="">
+                          <div class="col-sm-6 col-12  w-100">
+                            <div class="mb-3 d-flex align-items-center">
+                              
+                              <label for="dueDate" 
+                                     class="form-label mb-1" 
+                                     style="white-space: nowrap;">
+                                Date de facture :
+                              </label>
+                          
+                              <div class="input-group flex-grow-1">
+                                <input type="date" class="form-control" id="dueDate">
+                              </div>
+                          
+                            </div>
+                          </div>
+                          
+                          <div class="col-sm-6 col-12 w-100">
+                            <!-- Form group start -->
+                            <div class="mb-3 d-flex align-items-center">
+                              <label for="Date" class="form-label" style="white-space: nowrap;">Échéance: </label>
+                              <div class="input-group mb-2">
+                                <input type="date" class="form-control datepicker-opens-left" id="Date"
+                                  placeholder="DD/MM/YYYY">
+                                
+                              </div>
+                            </div>
+                            <!-- Form group end -->
+                          </div>
+                          <div class="col-sm-6 col-12 w-100">
+                            <!-- Form group start -->
+                            <div class="mb-2 d-flex align-items-center">
+                              <label for="invNumber" class="form-label" style="white-space: nowrap;">Facture N° </label>
+                              <div class="mb-2">
+                                <input type="text" id="invNumber" class="form-control"
+                                placeholder="Enter Invoice Number">
+                              </div>
+                            </div>
+                            <!-- Form group end -->
+                          </div>
+                        </div>
+                        <div class="">
+                          
+                            <!-- Row start -->
+                            
+                              
+                              <div class="col-sm-6 col-12 w-100">
+                                <!-- Form group start -->
+                                <div class="mb-2 d-flex align-items-center">
+                                  <label for="customerName" class="form-label" style="white-space: nowrap; margin-right: 5px;">Nom du client:</label>
+                                  <div class="mb-2">
+                                    <input type="text" id="customerName" class="form-control"
+                                    placeholder="Enter Customer Name">
+                                  </div>
+                                </div>
+                                <!-- Form group end -->
+                              </div>
+                              <div class="col-sm-6 col-12 w-100">
+                                <!-- Form group start -->
+                                <div class="mb-3 d-flex align-items-center">
+                                  <label for="customerName" class="form-label" style="white-space: nowrap; margin-right: 5px;">Adresse:</label>
+                                  <div class="mb-2">
+                                    <input type="text" id="customerName" class="form-control"
+                                    placeholder="Enter Customer Name">
+                                  </div>
+                                </div>
+                                <!-- Form group end -->
+                              </div>
+                              <div class="col-sm-6 col-12 w-100">
+                                <!-- Form group start -->
+                                <div class="mb-3 d-flex align-items-center">
+                                  <label for="customerName" class="form-label" style="white-space: nowrap; margin-right: 5px;">Téléphone:</label>
+                                  <div class="mb-2">
+                                    <input type="text" id="customerName" class="form-control"
+                                    placeholder="Enter Customer Name">
+                                  </div>
+                                </div>
+                                <!-- Form group end -->
+                              </div>
+                              
+                            </div>
+                            <!-- Row end -->
+                          </div>
+                          <!-- <div>
+                            <h2>FACTURE PROFORMA </h2>
+                          </div> -->
+                        
+                      
+                    </div>
+                    <br>
+                    <!-- Row start -->
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="table-outer">
+                          <table class="table m-0 align-middle">
+                            <thead class="text-center">
+                              <tr>
+                                <th>Produit</th>
+                                <th>Quantiter</th>
+                                <th>prix Unitaire</th>
+                                <th>Prix hors taxe</th>
+                                <th>TVA</th>
+                                <th>Montant (Net)</th>
+                                <th class="hide-in-pdf">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody class="text-center" id="tbody">
+                              <tr id="cible">
+                                <td>
+                                  <button class="btn btn-outline-primary text-nowrap hide-in-pdf" id="btnadd">
+                                    Nouvelle ligne
+                                  </button>
+                                </td>
+                                <td colspan="6">
+                                  <div class="row justify-content-end">
+                                    <div class="col-auto">
+                                      <label class="col-form-label" for="disc">Pourcentage de remise sur le montant total</label>
+                                    </div>
+                                    <div class="col-auto">
+                                      <input type="number" min="0" value="0" id="prms" step="0.01" class="form-control"  placeholder="0%" style="text-align: center;">
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="4">&nbsp;</td>
+                                <td>
+                                  <p>Montant Partielle</p>
+                                  <p>Remise</p>
+                                  <p>TVA</p>
+                                  <h5 class="mt-2 text-primary">Total TTC</h5>
+                                </td>
+                                <td>
+                                  <p id="mtnp">0.00 FCFA</p>
+                                  <p data-value="0" id="rms">0.00 FCFA</p>
+                                  <p id="tva">0.00 FCFA</p>
+                                  <h5 data-value="0" class="mt-2 text-primary" id="ttc">0.00 FCFA</h5>
+                                </td>
+                              </tr>
+                              
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="d-flex justify-content-end gap-2 mt-2">
+                          <button id="btnExportPDF" class="btn btn-primary hide-in-pdf">Exporter PDF</button>
+                          <!-- <button class="btn btn-outline-secondary">
+                            Save as Draft
+                          </button>
+                          <a href="invoice-list.html" class="btn btn-success">Create Invoice</a> -->
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Row end -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row end -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script src="assets/fact/jspdf.umd.min.js"></script>
+    <script src="assets/fact/html2canvas.min.js"></script>
+
+    <script>
+    document.getElementById('btnExportPDF').addEventListener('click', () => {
+
+      const style = document.createElement("style");
+      style.innerHTML = `
+        input, .aussi {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+        }
+
+        input::placeholder {
+          color: transparent; /* masque tous les placeholders */
+        }
+      `;
+
+      document.head.appendChild(style);
+
+      document.querySelectorAll("input").forEach(input => {
+        input.placeholder = "";
+      });
+
+      document.querySelectorAll('.hide-in-pdf').forEach(el => {
+        el.style.display = 'none';
+      });
+
+      const invoice = document.querySelector('.create-invoice-wrapper'); // zone facture
+      html2canvas(invoice).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF('p', 'mm', 'a4'); // portrait A4
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('facture.pdf');
+        // 🔥 On restaure l'affichage APRÈS le PDF
+        document.querySelectorAll('.hide-in-pdf').forEach(el => {
+          el.style.display = 'block';
+        });
+
+        // 🔥 Rechargement APRÈS que tout soit fini
+        setTimeout(() => {
+          location.reload();
+        }, 300); // petite pause pour être 100% sûr
+      });
+      // document.querySelectorAll('.hide-in-pdf').forEach(el => {
+      //   el.style.display = 'block';
+      // });
+      // location.reload();
+    });
+    </script>
+
+    <script>
+      const tbody = document.getElementById('tbody');
+      const add = document.getElementById('btnadd');
+      const mtnp = document.getElementById('mtnp'); // Montant Partielle (HT)
+      const rms = document.getElementById('rms');   // Remise (valeur)
+      const prms = document.getElementById('prms'); // Pourcentage remise
+      const ttc = document.getElementById('ttc');   // Total TTC (après remise)
+      const tvap = document.getElementById('tva');  // TVA totale affichée
+      const cible = document.getElementById('cible');
+    
+      let i = 0;
+    
+      // Ajout d'une ligne
+      add.addEventListener('click', () => {
+        cible.insertAdjacentHTML('beforebegin',
+          `
+          <tr class="trow" id="row${i}">
+            <td class="ttrow">
+              <input type="text" class="form-control" id="pd${i}">
+            </td>
+            <td>
+              <div class="m-0">
+                <input type="number" value="0" class="form-control qty" min="0" step="0.01" id="qt${i}" style="text-align: center;">
+              </div>
+            </td>
+            <td>
+              <div class="m-0">
+                <input type="number" min="0" value="0" step="0.01" class="form-control unit" id="unit${i}" style="text-align: center;">
+              </div>
+            </td>
+            <td>
+              <div class="input-group m-0">
+                <input type="number" min="0" value="0" step="0.01" class="form-control price" id="price${i}" style="text-align: center;">
+              </div>
+            </td>
+            <td>
+              <div class="input-group m-0">
+                <input type="number" min="0" value="0" step="0.01" class="form-control tva" id="tva${i}" style="text-align: center;">
+              </div>
+            </td>
+            <td>
+              <div class="input-group m-0">
+                <input type="number" min="0" value="0" step="0.01" class="form-control mtn" id="mtn${i}" style="text-align: center;">
+              </div>
+            </td>
+            <td>
+              <div class="d-inline-flex gap-1">
+                <button class="btn btn-outline-danger delrow hide-in-pdf" type="button" data-row="${i}" style="text-align: center;">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          `
+        );
+    
+        // attacher listeners à la nouvelle ligne
+        attachRowListeners(i);
+        i++;
+        recalcAll();
+      });
+    
+      // Attache les écouteurs pour une ligne donnée (id numérique)
+      function attachRowListeners(rowId) {
+        const row = document.getElementById(`row${rowId}`);
+        if(!row) return;
+        const qt = row.querySelector(`#qt${rowId}`);
+        const unit = row.querySelector(`#unit${rowId}`);
+        const price = row.querySelector(`#price${rowId}`);
+        const tvaInput = row.querySelector(`#tva${rowId}`);
+        const delBtn = row.querySelector('.delrow');
+    
+        [qt, unit, price, tvaInput].forEach(el => {
+          if(el) el.addEventListener('input', recalcAll);
+        });
+    
+        if(delBtn) {
+          delBtn.addEventListener('click', () => {
+            row.remove();
+            recalcAll();
+          });
+        }
+      }
+    
+      // Récupère la valeur numérique d'un input (protège contre undefined)
+      function getNum(el) {
+        return el && el.value ? el.valueAsNumber : 0;
+      }
+    
+      // Fonction principale : recalcule tout
+      function recalcAll() {
+        const rows = tbody.querySelectorAll('.trow');
+        let sumHT = 0;    // Montant partielle (HT)
+        let sumTVA = 0;   // TVA totale
+        let sumTTC = 0;   // Total avant remise
+    
+        rows.forEach(row => {
+          // on récupère les inputs de la ligne
+          const qt = row.querySelector('[id^="qt"]');
+          const unit = row.querySelector('[id^="unit"]');
+          const price = row.querySelector('[id^="price"]'); // price hors taxe (HT)
+          const tvaInput = row.querySelector('[id^="tva"]'); // pourcentage
+          const mtn = row.querySelector('[id^="mtn"]'); // montant net (HT + TVA)
+          // calculer priceHT : si user modifie unit & qt -> on met à jour priceHT automatiquement
+          const qty = getNum(qt);
+          const unitVal = getNum(unit);
+          // console.log(qty, unitVal)
+          const priceHT = (price && price.value && price.valueAsNumber > 0) ? +(qty * unitVal).toFixed(2) : +(qty * unitVal).toFixed(2);
+    
+          // calc TVA ligne
+          const tvaPct = getNum(tvaInput);
+          const tvaAmount = +( (tvaPct / 100) * priceHT ).toFixed(2);
+          const lineTTC = +(priceHT + tvaAmount).toFixed(2);
+    
+          // écrire résultats sur la ligne (si inputs existent)
+          if(price) price.value = priceHT;
+          if(mtn) mtn.value = lineTTC;
+    
+          // accumuler
+          sumHT += priceHT;
+          sumTVA += tvaAmount;
+          sumTTC += lineTTC;
+        });
+    
+        // remise en valeur (pourcentage sur le total TTC)
+        const discountPct = prms && prms.value ? prms.valueAsNumber : 0;
+        const discountAmount = +( (discountPct / 100) * sumTTC ).toFixed(2);
+        const totalAfterDiscount = +(sumTTC - discountAmount).toFixed(2);
+    
+        // afficher totaux
+        mtnp.innerText = sumHT.toFixed(2) + ' FCFA';
+        rms.dataset.value = discountAmount;
+        rms.innerText = discountAmount.toFixed(2) + ' FCFA';
+        tvap.innerText = sumTVA.toFixed(2) + ' FCFA';
+        ttc.dataset.value = totalAfterDiscount;
+        ttc.innerText = totalAfterDiscount.toFixed(2) + ' FCFA';
+      }
+    
+      // Quand l'utilisateur change le % de remise
+      prms.addEventListener('input', recalcAll);
+    
+      // attacher listeners aux lignes existantes si il y en a (au chargement)
+      document.querySelectorAll('.trow').forEach(r => {
+        const idAttr = r.id;
+        if(!idAttr) return;
+        const numeric = idAttr.replace('row','');
+        if(!isNaN(numeric)) attachRowListeners(numeric);
+      });
+    
+      // recalcul initial
+      recalcAll();
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/create-invoice.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:24 GMT -->
+</html>
+
+
+
+
+<!-- <script>
+  const tbody = document.getElementById('tbody');
+  const add = document.getElementById('btnadd');
+  const mtnp = document.getElementById('mtnp'); // Montant Partielle (HT)
+  const rms = document.getElementById('rms');   // Remise (valeur)
+  const prms = document.getElementById('prms'); // Pourcentage remise
+  const ttc = document.getElementById('ttc');   // Total TTC (après remise)
+  const tvap = document.getElementById('tva');  // TVA totale affichée
+  const cible = document.getElementById('cible');
+
+  let i = 0;
+
+  // Ajout d'une ligne
+  add.addEventListener('click', () => {
+    cible.insertAdjacentHTML('beforebegin',
+      `
+      <tr class="trow" id="row${i}">
+        <td class="ttrow">
+          <input type="text" class="form-control" id="pd${i}">
+        </td>
+        <td>
+          <div class="m-0">
+            <input type="number" value="0" class="form-control qty" min="0" step="0.01" id="qt${i}">
+          </div>
+        </td>
+        <td>
+          <div class="m-0">
+            <input type="number" min="0" value="0" step="0.01" class="form-control unit" id="unit${i}">
+          </div>
+        </td>
+        <td>
+          <div class="input-group m-0">
+            <input type="number" min="0" value="0" step="0.01" class="form-control price" id="price${i}">
+            <span class="input-group-text">
+              <i class="ri-money-dollar-circle-line"></i>
+            </span>
+          </div>
+        </td>
+        <td>
+          <div class="input-group m-0">
+            <input type="number" min="0" value="0" step="0.01" class="form-control tva" id="tva${i}">
+            <span class="input-group-text">%</span>
+          </div>
+        </td>
+        <td>
+          <div class="input-group m-0">
+            <input type="number" min="0" value="0" step="0.01" class="form-control mtn" id="mtn${i}">
+            <span class="input-group-text">
+              <i class="ri-money-dollar-circle-line"></i>
+            </span>
+          </div>
+        </td>
+        <td>
+          <div class="d-inline-flex gap-1">
+            <button class="btn btn-outline-danger delrow" type="button" data-row="${i}">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+      `
+    );
+
+    // attacher listeners à la nouvelle ligne
+    attachRowListeners(i);
+    i++;
+    recalcAll();
+  });
+
+  // Attache les écouteurs pour une ligne donnée (id numérique)
+  function attachRowListeners(rowId) {
+    const row = document.getElementById(`row${rowId}`);
+    if(!row) return;
+    const qt = row.querySelector(`#qt${rowId}`);
+    const unit = row.querySelector(`#unit${rowId}`);
+    const price = row.querySelector(`#price${rowId}`);
+    const tvaInput = row.querySelector(`#tva${rowId}`);
+    const delBtn = row.querySelector('.delrow');
+
+    [qt, unit, price, tvaInput].forEach(el => {
+      if(el) el.addEventListener('input', recalcAll);
+    });
+
+    if(delBtn) {
+      delBtn.addEventListener('click', () => {
+        row.remove();
+        recalcAll();
+      });
+    }
+  }
+
+  // Récupère la valeur numérique d'un input (protège contre undefined)
+  function getNum(el) {
+    return el && el.value ? el.valueAsNumber : 0;
+  }
+
+  // Fonction principale : recalcule tout
+  function recalcAll() {
+    const rows = tbody.querySelectorAll('.trow');
+    let sumHT = 0;    // Montant partielle (HT)
+    let sumTVA = 0;   // TVA totale
+    let sumTTC = 0;   // Total avant remise
+
+    rows.forEach(row => {
+      // on récupère les inputs de la ligne
+      const qt = row.querySelector('[id^="qt"]');
+      const unit = row.querySelector('[id^="unit"]');
+      const price = row.querySelector('[id^="price"]'); // price hors taxe (HT)
+      const tvaInput = row.querySelector('[id^="tva"]'); // pourcentage
+      const mtn = row.querySelector('[id^="mtn"]'); // montant net (HT + TVA)
+
+      // calculer priceHT : si user modifie unit & qt -> on met à jour priceHT automatiquement
+      const qty = getNum(qt);
+      const unitVal = getNum(unit);
+      const priceHT = (price && price.value && price.valueAsNumber > 0) ? price.valueAsNumber : +(qty * unitVal).toFixed(2);
+
+      // calc TVA ligne
+      const tvaPct = getNum(tvaInput);
+      const tvaAmount = +( (tvaPct / 100) * priceHT ).toFixed(2);
+      const lineTTC = +(priceHT + tvaAmount).toFixed(2);
+
+      // écrire résultats sur la ligne (si inputs existent)
+      if(price) price.value = priceHT;
+      if(mtn) mtn.value = lineTTC;
+
+      // accumuler
+      sumHT += priceHT;
+      sumTVA += tvaAmount;
+      sumTTC += lineTTC;
+    });
+
+    // remise en valeur (pourcentage sur le total TTC)
+    const discountPct = prms && prms.value ? prms.valueAsNumber : 0;
+    const discountAmount = +( (discountPct / 100) * sumTTC ).toFixed(2);
+    const totalAfterDiscount = +(sumTTC - discountAmount).toFixed(2);
+
+    // afficher totaux
+    mtnp.innerText = sumHT.toFixed(2) + ' FCFA';
+    rms.dataset.value = discountAmount;
+    rms.innerText = discountAmount.toFixed(2) + ' FCFA';
+    tvap.innerText = sumTVA.toFixed(2) + ' FCFA';
+    ttc.dataset.value = totalAfterDiscount;
+    ttc.innerText = totalAfterDiscount.toFixed(2) + ' FCFA';
+  }
+
+  // Quand l'utilisateur change le % de remise
+  prms.addEventListener('input', recalcAll);
+
+  // attacher listeners aux lignes existantes si il y en a (au chargement)
+  document.querySelectorAll('.trow').forEach(r => {
+    const idAttr = r.id;
+    if(!idAttr) return;
+    const numeric = idAttr.replace('row','');
+    if(!isNaN(numeric)) attachRowListeners(numeric);
+  });
+
+  // recalcul initial
+  recalcAll();
+</script> -->

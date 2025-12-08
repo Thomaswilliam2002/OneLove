@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-doctors.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Modifier les informations de la cuisine
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-xl-12">
+                <div class="card">
+                  <div class="card-body">
+
+                    <!-- Custom tabs starts -->
+                    <div class="custom-tabs-container">
+
+                      <!-- Nav tabs starts -->
+                      
+                      <!-- Nav tabs ends -->
+
+                      <!-- Tab content starts -->
+                      <div class="tab-content h-350">
+                        <div class="tab-pane fade show active" id="oneA" role="tabpanel">
+                          <form action="/updateCuisine/<%= cuisine.id_cuisine %>?_method=PUT" method="post">
+                          <!-- Row starts -->
+                          <div class="row gx-3">
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="a1">Nom de la Cuisine <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                  <span class="input-group-text">
+                                    
+                                  </span>
+                                  <input type="text" class="form-control" id="a1" name="nom" value="<%= cuisine.nom_cuisine %>" placeholder="Entrer le nom de la cuisine" required>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                <div class="mb-3">
+                                  <label class="form-label" for="a1">Nom du locataire <span class="text-danger">*</span></label>
+                                  <div class="input-group">
+                                    <span class="input-group-text">
+                                      <i class="ri-account-circle-line"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="a1" name="nom_lo" value="<%= cuisine.nom_locataire %>" placeholder="Entrer le nom du locataire" required>
+                                  </div>
+                                </div>
+                              </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="a2">Prenom <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                  <span class="input-group-text">
+                                    <i class="ri-account-circle-line"></i>
+                                  </span>
+                                  <input type="text" class="form-control" id="a2" name="prenom" value="<%= cuisine.prenom_locataire %>" placeholder="Entrer le prenom du locataire" required>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="a3">Age <span class="text-danger">*</span></label>
+                                <input type="number" min="18" class="form-control" name="age" value="<%= cuisine.age_locataire %>" id="a2" placeholder="Entrer l'age">
+                              </div>
+                            </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="selectGender1">Gender<span
+                                    class="text-danger">*</span></label>
+                                <div class="m-0">
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="selectGenderOptions"
+                                      id="selectGender1" checked value="homme" required>
+                                    <label class="form-check-label" for="selectGender1">Homme</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="selectGenderOptions"
+                                      id="selectGender2" value="femme">
+                                    <label class="form-check-label" for="selectGender2">Femme</label>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="a6">Numero mobile <span
+                                    class="text-danger">*</span></label>
+                                <div class="input-group">
+                                  <span class="input-group-text">
+                                    <i class="ri-phone-line"></i>
+                                  </span>
+                                  <input type="text" class="form-control" id="a6" name="numero" value="<%= cuisine.numero_locataire %>" placeholder="Entrer un numero de Telephone">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="a6">Email <span
+                                    class="text-danger">*</span></label>
+                                <div class="input-group">
+                                  <span class="input-group-text">
+                                    <i class="ri-mail-open-line"></i>
+                                  </span>
+                                  <input type="email" class="form-control" id="a6" name="email" value="<%= cuisine.email_locataire %>" placeholder="Entrer un email valide">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                                <div class="mb-3">
+                                  <label class="form-label" for="a9">Adresse</label>
+                                  <textarea class="form-control" id="a8" placeholder=" Entrer une Adresse" rows="2" name="adresse" required><%= cuisine.adresse_locataire %></textarea>
+                                </div>
+                              </div>
+                            <div class="col-xxl-3 col-lg-4 col-sm-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="a9">Description</label>
+                                <textarea class="form-control" id="a8" placeholder=" Entrer une Description" rows="2" name="desc"><%= cuisine.description %></textarea>
+                              </div>
+                            </div>
+                            
+                          <!-- Row ends -->
+
+                        </div>
+                        
+                      <!-- Tab content ends -->
+
+                    </div>
+                    <!-- Custom tabs ends -->
+
+                    <!-- Card acrions starts -->
+                    <div class="col-sm-12">
+                      <div class="d-flex gap-2 justify-content-end">
+                        <button type="submit" class="btn btn-primary">Appliquer les modification</button>
+                      </div>
+                    </div>
+                    <!-- Card acrions ends -->
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+        <%- include('script')%>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-doctors.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:11 GMT -->
+</html>

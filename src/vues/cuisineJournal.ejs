@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Liste des Journaux
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title">Historique</h5>
+                    <!-- <a href="/formAddJournal" class="btn btn-primary ms-auto">Ajouter une jcuisine</a> -->
+                  </div>
+                  <div class="card-body">
+                    <% if(msg) {%>
+                      <% if(msg === 'ajout') {%>
+                        <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                          <b>Elément </b> supprimer avec succes !
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      <% }%>
+                      <% if(msg === 'modif') {%>
+                        <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                          <b>Elément </b> modifier avec succes !
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      <% }%>
+                      <% if(msg === 'sup') {%>
+                        <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                          <b>Elément </b> supprimer avec succes !
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      <% }%>
+                    <% }%>
+                    <!-- Table starts -->
+                    <div class="table-responsive">
+                      <table id="basicExample" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                        <thead class="text-center">
+                          <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Montant</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-center" id="tbody">
+                            <% i = 1;jcuisines.forEach(jcuisine => { %>
+                              <%jcuisine.CuisineJournals.forEach(Journaux => { %>
+                                <tr>
+                                    <td><%= i %></td>
+                                    <td><%= jcuisine.nom_cuisine %></td>
+                                    <td class="calcule"><%= Journaux.montant_verser %></td>
+                                    <td><%= new Date(Journaux.date).getDate() < 10 ? `0${new Date(Journaux.date).getDate()}` : new Date(Journaux.date).getDate()  %>-<%= new Date(Journaux.date).getMonth() + 1 < 10 ? `0${new Date(Journaux.date).getMonth() + 1}` : new Date(Journaux.date).getMonth() + 1 %>-<%= new Date(Journaux.date).getFullYear()%></td>
+                                    <td>
+                                        <div class="d-inline-flex gap-1">
+                                            <!-- ----------------------------------------------------------------------------------- -->
+                                            <div class="col-sm-4">
+                                            <!-- Card starts -->
+                                                <!-- Button trigger modal -->
+                                                <button type="button" data-bs-toggle="modal"
+                                                    data-bs-target="#<%= Journaux.id_journal %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                                    <i class="ri-delete-bin-line"></i> 
+                                                </button>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="<%= Journaux.id_journal %>ModalCenter" tabindex="-1"
+                                                    aria-labelledby="<%= Journaux.id_journal %>ModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h5 class="modal-title" id="<%= Journaux.id_journal %>ModalCenterTitle">
+                                                            Confirmer
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <form action="/deleteCuJournal/<%= Journaux.id_journal %>?_method=DELETE&indice=staff" method="post">
+                                                          <div class="modal-body">
+                                                            <p>Voulez-vous vraiment supprimer cet Historique ?</p>
+                                                            <div class="d-flex justify-content-end">
+                                                              <div class="gap-2">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                  annuler
+                                                                </button>
+                                                              </div>
+                                                              <div class="gap-2">
+                                                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                              </div>
+                                                            </div>
+                                                            
+                                                          </div>
+                                                        </form>
+                                                        <div class="modal-footer">
+                                                          
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            <!-- Card ends -->
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                              <% i++ }) %>  
+                            <%}) %>  
+                        </tbody>
+                      </table>
+                      <table id="" class="table truncate m-0 align-middle dataTable">
+                        <thead class="text-center">
+                          <tr>
+                            <th>Somme des montant versé: </th>
+                            <th id="resulta"></th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+                    <!-- Table ends -->
+
+                    <!-- Modal Delete Row -->
+                    
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      const resulta = document.getElementById('resulta')
+      const observer= new MutationObserver((mutations, observer) => {
+        mutations.forEach((mutation) => {
+          let allCase = document.querySelectorAll('.calcule')
+          let sum = 0
+          console.log(allCase.length)
+          if(allCase.length > 0){
+            allCase.forEach((td, index) => {
+              //console.log(td)
+              sum += parseFloat(td.innerText)
+              resulta.innerText = sum
+            })
+          }else{
+            resulta.innerText = 0
+          }
+          console.log('change', mutation)
+        })
+      })
+
+      observer.observe(document.getElementById('tbody'), {
+        childList: true,
+        subtree: true,
+        characterData: true
+      })
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
+</html>

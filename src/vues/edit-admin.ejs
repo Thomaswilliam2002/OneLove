@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <%- include('header')%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <%- include('menu')%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="index.html">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Modifier un Admin
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Modifier les information de l'Admin</h5>
+                  </div>
+                  <div class="card-body">
+                    <form action="/updatePersonnel/<%= personnel.id_personnel %>?_method=PUT&type=admin" method="post">
+                      <!-- Row starts -->
+                      <div class="row gx-3">
+                        <div class="col-sm-12">
+                          <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                            <h6 class="m-0">Details de l'Admin</h6>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="<%= personnel.nom%>" id="a1" placeholder="Entrer le nom" name="nom" required>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a2">Prenom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="<%= personnel.prenom%>" id="a2" placeholder="Entrer le prenom" name="prenom" required>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a2">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" value="<%= personnel.email%>" id="a2" placeholder="Enter un email valide" name="email">
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a3">Numero de Telephone<span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" value="<%= personnel.numero%>" id="a3" placeholder="Enter un numero Mobile" name="numero" required>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="selectGender1">Genre <span
+                                class="text-danger">*</span></label>
+                            <div class="m-0">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="selectGenderOptions" id="selectGender1"
+                                  value="homme" <%= personnel.genre === 'homme' ? 'checked' : '' %> required>
+                                <label class="form-check-label" for="selectGender1">Homme</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="selectGenderOptions" id="selectGender2"
+                                  value="femme" <%= personnel.genre === 'femme' ? 'checked' : '' %> required>
+                                <label class="form-check-label" for="selectGender2">Femme</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a4">age<span class="text-danger">*</span></label>
+                            <input type="number" min="18" value="<%= personnel.age%>" class="form-control" id="a4" placeholder="Entrer l'age" name="age">
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a5">Qualification <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="a5" placeholder="Enter la Qualification" name="qualification">
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a7">Salaire <span class="text-danger">*</span></label>
+                            <input type="number" min="0" step="0.01" value="<%= occupe.salaire%>" class="form-control" id="a7" placeholder="Ajouter le salaire" name="salaire" required>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a7">Description <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" value="<%= personnel.description%>" id="a7" placeholder="Ajouter une Description" name="desc">
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="mb-3">
+                            <label class="form-label" for="a8">Adresse <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="a8" placeholder="Enter Address" rows="2" name="adresse" required><%= personnel.adresse%></textarea>
+                          </div>
+                        </div>
+                        
+                        <div class="col-sm-12">
+                          <div class="d-flex gap-2 justify-content-end">
+                            <button type="submit" class="btn btn-primary">Applique les Modification</button>
+                        </div>
+                      </div>
+                      <!-- Row ends -->
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+</body>
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+            
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Modifier les informations
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Modifier les informations</h5>
+                  </div>
+                  <div class="card-body">
+                    <form action="/updatePersonnel/<%= personnel.id_personnel%>?_method=PUT&type=staff" method="post">
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-12">
+                        <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                          <h6 class="m-0">Details du Personnel</h6>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nom</label>
+                          <input type="text" class="form-control" id="a1" name="nom" value="<%= personnel.nom%>">
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Prenom</label>
+                          <input type="text" class="form-control" name="prenom" id="a2" value="<%= personnel.prenom%>">
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a3">Numero de Telephone</label>
+                          <input type="text" class="form-control" name="numero" id="a3" value="<%= personnel.numero%>">
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="selectGender1">Gender</label>
+                          <div class="m-0">
+                            
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="selectGenderOptions" id="selectGender1"
+                                value="homme" <%= personnel.genre === 'homme' ? 'checked' : '' %> required>
+                              <label class="form-check-label" for="selectGender1">Homme</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                              <input class="form-check-input" type="radio" name="selectGenderOptions" id="selectGender2"
+                                value="femme" <%= personnel.genre === 'femme' ? 'checked' : '' %>>
+                              <label class="form-check-label" for="selectGender2">Femme</label>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a4">Age</label>
+                          <input type="number" min="18" class="form-control" id="a4" name="age" value="<%= personnel.age%>">
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a5">Poste occuper <span class="text-danger">*</span></label>
+                          
+                          <select class="form-select" id="dep" name="poste">
+                            <% postes.forEach(poste => { if(poste.nom_poste === user.Poste.nom_poste){%>
+                              <option value="<%= poste.id_poste %>"><%= poste.nom_poste %></option>
+                            <% }}) %>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a7">Description</label>
+                          <input type="text" class="form-control" id="a7" value="<%= personnel.description%>" name="desc">
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a5">Periode <span class="text-danger">*</span></label>
+                          <select class="form-select" id="poste" name="periode">
+                            <%if(personnel.periode === user.Personnel.periode){%>
+                              <option value="<%= personnel.periode %>"><%= personnel.periode %></option>
+                            <% } %>
+                            <!-- <option value="Journalier">Journalier</option>
+                            <option value="Hebdomadere">Hebdomadere</option>
+                            <option value="Quinzene">Quinzene</option>
+                            <option value="Mensuel">Mensuel</option> -->
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="mb-3">
+                          <label class="form-label" for="a8">Address</label>
+                          <textarea class="form-control" id="a8" value=""
+                            rows="2" name="adresse"><%= personnel.adresse%></textarea>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <button type="submit" class="btn btn-primary">Appliquer les Modiffication</button>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+ 
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+</html>

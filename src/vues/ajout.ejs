@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class=" d-flex align-items-center">
+
+            <div class="col-sm-12">
+                <!-- Card starts -->
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                      
+                      <button type="button" class="btn btn-info">
+                        <a href="#formBar" class="text-white"><i class="ri-sticky-note-add-line">Ajouter un nouveau Bar</i></a> 
+                      </button>
+                      <!-- <button type="button" class="btn btn-info">
+                        <a href="formAddCuisine" class="text-white"><i class="ri-sticky-note-add-line">Ajouter une cuisine</i></a> 
+                      </button> -->
+                      <button type="button" class="btn btn-info">
+                        <a href="#formmclose" class="text-white"><i class="ri-sticky-note-add-line">Ajouter une maison close</i></a> 
+                      </button>
+                      <button type="button" class="btn btn-info">
+                        <a href="#formchambrer" class="text-white"><i class="ri-sticky-note-add-line">Ajouter une chambre a une maison close</i></a> 
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card ends -->
+              </div>
+
+          </div>
+          <!-- App body ends --> 
+
+          <!-- =---------------------------------------------------------------------- -->
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Ajouter un Bar</h5>
+                  </div>
+                  <div class="card-body">
+                    <form action="/addBarS" method="post" id="formBar" name="formbar">
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-12">
+                        <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                          <h6 class="m-0">Details du Bar</h6>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a1" name="nom" placeholder="Entrer le nom" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Adresse <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a2" name="adresse" placeholder="Entrer l'adresse" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Type <span class="text-danger">*</span></label>
+                          <select class="form-select" id="type">
+                            <option value="Bar Simple">Bar Simple</option>
+                            <option value="Bar VIP">Bar VIP</option>
+                            <option value="Crazy Club">Crazy Club</option>
+                          </select>
+                        </div>
+                      </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <button id="btnbar" type="submit" class="btn btn-primary">Ajouter</button>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+            <br>
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Ajouter une Chambre a une maison close</h5>
+                  </div>
+                  <div class="card-body">
+                    <form action="/addChambre" method="post" id="formchambrer" name="formchambre">
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-12">
+                        <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                          <h6 class="m-0">Details de la chambre</h6>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a1" name="nom" placeholder="Entrer le nom" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Montant a payer <span class="text-danger">*</span></label>
+                          <input type="number" min="0" step="0.01" name="montant" class="form-control" id="a1" placeholder="Entrer un montant">
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Disponibiliter <span class="text-danger">*</span></label>
+                          <select class="form-select" id="type" name="dispo">
+                            <option value="Disponible">Disponible</option>
+                            <option value="Indisponible">Indisponible</option>
+                            <option value="Occuper">Occuper</option>
+                          </select>
+                        </div>
+                      </div>  
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Maison Close <span class="text-danger">*</span></label>
+                          <select class="form-select" name="mclose">
+                            <% maisonColses.forEach(maisonColse => { %>
+                              <option value="<%= maisonColse.id_mclose %>"><%= maisonColse.nom %></option>
+                            <% }) %>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Description<span class="text-danger">*</span></label>
+                          <textarea name="desc" id="" class="form-control" rows="2" cols="12" placeholder="Entrer une description"></textarea>
+                        </div>
+                      </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <button  type="submit" class="btn btn-primary">Ajouter</button>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+            <br>
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Ajouter une Maison Close</h5>
+                  </div>
+                  <div class="card-body">
+                    <form action="/addMClose" method="post" id="formmclose" name="formmclose">
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-12">
+                        <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                          <h6 class="m-0">Details de la maison close</h6>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a1" name="nom" placeholder="Entrer le nom" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Adresse <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="a2" name="adresse" placeholder="Entrer l'adresse" required>
+                        </div>
+                      </div>
+                      <div class="col-xxl-3 col-lg-4 col-sm-6">
+                        <div class="mb-3">
+                          <label class="form-label" for="a2">Nombre de chambre <span class="text-danger">*</span></label>
+                          <input type="number" min="0" class="form-control" id="a2" name="nbr" value="0">
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="d-flex gap-2 justify-content-end">
+                          <button id="" type="submit" class="btn btn-primary">Ajouter</button>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+             <!-- =---------------------------------------------------------------------- -->
+          </div>
+          <br>
+          <!-- Row starts -->
+          <div class="row gx-3">
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title">Assigner une chambre a une fille</h5>
+                </div>
+                <div class="card-body">
+                  <form action="/AddOccupent" method="post" id="formmclose" name="formoccupent">
+                  <!-- Row starts -->
+                  <div class="row gx-3">
+                    <div class="col-sm-12">
+                      <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                        <h6 class="m-0">Formulaire d'information pour louer</h6>
+                      </div>
+                    </div>
+                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                      <div class="mb-3">
+                        <label class="form-label" for="a1">Nom et Prenom<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="a1" name="nom" placeholder="Entrer le nom" required>
+                      </div>
+                    </div>
+                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                      <div class="mb-3">
+                        <label class="form-label" for="a2">Numero de Téléphone<span class="text-danger">*</span></label>
+                        <input type="tel" pattern="^\+229\s\d{10}$" class="form-control" id="a2" name="tel" placeholder="+229 01XXXXXXXX" required>
+                      </div>
+                    </div>
+                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                      <div class="mb-3">
+                        <label class="form-label" for="a2">Maison Close <span class="text-danger">*</span></label>
+                        <select class="form-select" id="mclose" name="mclose">
+                          <% maisonColses.forEach(maisonColse => { %>
+                            <option value="<%= maisonColse.id_mclose %>"><%= maisonColse.nom %></option>
+                          <% }) %>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                      <div class="mb-3">
+                        <label class="form-label" for="a2">Chambre <span class="text-danger">*</span></label>
+                        <select class="form-select" id="chambre" name="chambre">
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                      <div class="mb-3">
+                        <label class="form-label" for="a1">Date de Debut<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="a1" name="date" placeholder="Entrer la date du Debut" required>
+                      </div>
+                    </div>
+                    <div class="col-xxl-3 col-lg-4 col-sm-6">
+                      <div class="mb-3">
+                        <label class="form-label" for="a1">Commentaire<span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="a8" placeholder="Laisser un commentaire" rows="2" name="com"></textarea>
+                      </div>
+                    </div>
+                    <div class="col-sm-12">
+                      <div class="d-flex gap-2 justify-content-end">
+                        <button id="" type="submit" class="btn btn-primary">Ajouter</button>
+                    </div>
+                  </div>
+                  <!-- Row ends -->
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Row ends -->
+           <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+          <!-- App container ends -->
+        </div>
+      </div>
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      const type = document.getElementById("type");
+      const btn = document.getElementById("btnbar");
+      btn.addEventListener('click', function(){
+        if (type.value ==="Bar Simple"){
+          document.formbar.action = "/addBarS";
+        }else if (type.value ==="Bar VIP"){
+          document.formbar.action = "/addBarV";
+        }else{
+          document.formbar.action = "/addCClub";
+        }
+      })
+
+      // ----------------------------------------------------------------
+      const mclose = document.getElementById('mclose');
+      const chambre = document.getElementById('chambre');
+      "<% if(maisonColses[0]){ chambres.forEach(chambre_ => { %>"
+        if("<%= maisonColses[0].id_mclose %>" === "<%=chambre_.id_mclose%>"){
+          chambre.insertAdjacentHTML('beforeend',`
+            <option value="${'<%=chambre_.id_chambre%>'}"><%= chambre_.nom %></option>
+          `)
+        }
+      "<% }) }%>"
+
+      mclose.addEventListener('change', () => {
+        const valeur = mclose.value;
+        //console.log(JSON.stringify("<% chambres%>", null, 2))
+        //alert('change' + valeur + typeof valeur)
+        chambre.innerHTML = '';
+        "<% chambres.forEach((chambre_,index) => { %>"
+          if(valeur === "<%=chambre_.id_mclose%>"){
+            chambre.insertAdjacentHTML('beforeend',`
+              <option value="${'<%=chambre_.id_chambre%>'}"><%= chambre_.nom %></option>
+            `)
+          }
+        "<% }) %>"
+      })
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/edit-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:14 GMT -->
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Ajouter un Appartement
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Ajouter un Appartement</h5>
+                  </div>
+                  <div class="card-body">
+
+                    <form action="/addAppart" method="post">
+                      <!-- Row starts -->
+                      <div class="row gx-3">
+                        <div class="col-sm-12">
+                          <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                            <h6 class="m-0">Details de l'appartement</h6>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="a1" placeholder="Entrer un nom" name="nom" required> 
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a1">Prix <span class="text-danger">*</span></label>
+                            <input type="number" min="0" step="0.01" class="form-control" id="a1" placeholder="Entrer un prix" name="prix" required>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a2">Adresse <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="a2" placeholder="Entrer une adresse" name="adresse">
+                          </div>
+                        </div>
+                        <!-- <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a2">Type <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="a2" placeholder="Type d'appartement" name="type">
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a3">Photo<span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="a3" placeholder="Choisir une photo" name="image">
+                          </div>
+                        </div> -->
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a6">Disponibilité<span class="text-danger">*</span></label>
+                            <select class="form-select" id="sdep" name="dispo">
+                              <option value="Disponible">Disponible</option>
+                              <option value="Indisponible">Indisponible</option>
+                              <option value="Occuper">Occuper</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a7">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="a9" placeholder="Ajouter une description" rows="3" name="description"></textarea>
+                          </div>
+                        </div>
+                        </div>
+                        <!-- <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a9">City <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="a9" placeholder="Enter City">
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a10">Country <span class="text-danger">*</span></label>
+                            <select class="form-select" id="a10">
+                              <option value="0">Select</option>
+                              <option value="1">USA</option>
+                              <option value="2">Switzerland</option>
+                              <option value="3">Australia</option>
+                              <option value="4">Japan</option>
+                              <option value="5">New Zealand</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a11">State <span class="text-danger">*</span></label>
+                            <select class="form-select" id="a11">
+                              <option value="0">Select</option>
+                              <option value="1">Alabama</option>
+                              <option value="2">Alaska</option>
+                              <option value="3">Arizona</option>
+                              <option value="4">California</option>
+                              <option value="5">Florida</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-xxl-3 col-lg-4 col-sm-6">
+                          <div class="mb-3">
+                            <label class="form-label" for="a12">Postal Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="a12" placeholder="Enter Postal Code">
+                          </div>
+                        </div> -->
+                        <div class="col-sm-12">
+                          <div class="d-flex gap-2 justify-content-end">
+                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- <button type="submit" class="btn btn-primary">Ajouter</button> -->
+                      <!-- Row ends -->
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+  </body>
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+</html>

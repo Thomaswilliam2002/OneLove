@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/accordions.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:35 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          <div class="app-hero-header d-flex align-items-center">
+
+            <!-- Breadcrumb starts -->
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <i class="ri-home-8-line lh-1 pe-3 me-3 border-end"></i>
+                <a href="/index">Accueil</a>
+              </li>
+              <li class="breadcrumb-item text-primary" aria-current="page">
+                Liste des Historiques du Produit <%= produit.nom %>
+              </li>
+            </ol>
+            <!-- Breadcrumb ends -->
+
+            <!-- Sales stats starts -->
+            
+            <!-- Sales stats ends -->
+
+          </div>
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+
+            <% if(msg) {%>
+              <% if(type === 'achat') {%>
+                <% if(msg === 'ajout') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                    <b>Achat </b> ajouter avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'modif') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                    <b>Achat </b> modifier avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'sup') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                    <b>Achat </b> supprimer avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+              <% }%>
+              <% if(type === 'vente') {%>
+                <% if(msg === 'ajout') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
+                    <b>Vente </b> ajouter avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'modif') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
+                    <b>Vente </b> modifier avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+                <% if(msg === 'sup') {%>
+                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
+                    <b>Vente </b> supprimer avec succes !
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                <% }%>
+              <% }%>
+            <% }%>
+
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="accordion mb-3" id="accordionSpecialTitle<%= produit.id_produit %>">
+                  <div class="accordion-item ">
+                    <div >
+                        <h2 class="accordion-header" id="headingSpecialTitle<%= produit.id_produit %>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSpecialTitle<%= produit.id_produit %>" aria-expanded="true"
+                            aria-controls="collapseSpecialTitle<%= produit.id_produit %>">
+                            <div class="d-flex flex-column">
+                              <h5>Historique des achat/Entrer de produit</h5>
+                            </div>
+                          </button>
+                        </h2>
+                    </div>
+                    
+                    <div id="collapseSpecialTitle<%= produit.id_produit %>" class="accordion-collapse collapse"
+                      aria-labelledby="headingSpecialTitle<%= produit.id_produit %>" data-bs-parent="#accordionSpecialTitle<%= produit.id_produit %>">
+                      <div class="accordion-body">
+                        <div class="table-responsive">
+                          <table id="customButtons"  class="table truncate m-0 align-middle " >
+                            <thead class="text-center">
+                              <tr>
+                                <th>ID</th>
+                                <th>Quantiter AJouter</th>
+                                <th>Prix a l'uniter</th>
+                                <th>Montant</th>
+                                <th>Emmeteur</th>
+                                <th>Date de l'operation</th>
+                                <th>Heure de l'operation</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody class="text-center" id="tbody1">
+                              <% i = 1; total_q = 0; total_p = 0; montant = 0; hachats.forEach(hachat => {%>
+                              <tr>
+                                <td><%= i %></td>
+                                <td><%= hachat.quantiter %></td>
+                                <td><%= hachat.prix_unit %></td>
+                                <td class="calcule1"><%= hachat.prix_unit * hachat.quantiter %></td>
+                                <td><%= hachat.donneur %></td>
+                                <td><%= new Date(hachat.created).getDate() %>-<%= new Date(hachat.created).getMonth() + 1 %>-<%= new Date(hachat.created).getFullYear()%></td>
+                                <td><%= new Date(hachat.created).getHours() %>-<%= new Date(hachat.created).getMinutes() %>-<%= new Date(hachat.created).getSeconds()%></td>
+                                <td>
+                                  <div class="d-inline-flex gap-1">
+                                    <!-- ----------------------------------------------------------------------------------- -->
+                                   
+                                      <!-- Card starts -->
+                                          <!-- Button trigger modal -->
+                                          <button type="button" data-bs-toggle="modal"
+                                            data-bs-target="#<%= hachat.id_hist %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                            <i class="ri-delete-bin-line"></i>
+                                          </button>
+                                          <!-- Modal -->
+                                          <div class="modal fade" id="<%= hachat.id_hist %>ModalCenter" tabindex="-1"
+                                            aria-labelledby="personnel.id_personnelModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <h5 class="modal-title" id="<%= hachat.id_hist %>ModalCenterTitle">
+                                                    Confirmer
+                                                  </h5>
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p>Voulez-vous vraiment supprimer cet Historique ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    annuler
+                                                  </button>
+                                                  <form action="/deleteHEntrer/<%= hachat.id_hist %>?_method=DELETE&id=<%= produit.id_produit %>" method="post">
+                                                    <div class="col-sm-12">
+                                                      <div class="d-flex gap-2 justify-content-end">
+                                                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                      </div>
+                                                    </div>
+                                                  </form>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                      <!-- Card ends -->
+                                    
+                                    <!-- ----------------------------------------------------------------------------------------- -->
+                                    
+                                  </div>
+                                </td>
+                              </tr>
+                              <% i++; total_p += hachat.prix_unit; total_q += hachat.quantiter; montant += hachat.prix_unit * hachat.quantiter}) %>
+                              <!-- <th >Total</th>
+                              <th ><%= total_q %></th>
+                              <th ><%= total_p %></th>
+                              <th ><%= montant %></th> -->
+                            </tbody>
+                          </table>
+                          <table id="" class="table truncate m-0 align-middle dataTable">
+                            <thead class="text-center">
+                              <tr>
+                                <th>Somme des montant : </th>
+                                <th id="resulta1"></th>
+                              </tr>
+                            </thead>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+            <!-- Row starts -->
+            
+            <!-- Row ends -->
+
+          
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-sm-12">
+                <div class="accordion mb-3" id="<%= produit.id_produit %>accordionSpecialTitle<%= produit.id_produit %>">
+                  <div class="accordion-item ">
+                    <div >
+                        <h2 class="accordion-header" id="<%= produit.id_produit %>headingSpecialTitle<%= produit.id_produit %>">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#<%= produit.id_produit %>collapseSpecialTitle<%= produit.id_produit %>" aria-expanded="true"
+                            aria-controls="<%= produit.id_produit %>collapseSpecialTitle<%= produit.id_produit %>">
+                            <div class="d-flex flex-column">
+                              <h5>Historique des Ventes/Sortie de produit</h5>
+                            </div>
+                          </button>
+                        </h2>
+                    </div>
+                    
+                    <div id="<%= produit.id_produit %>collapseSpecialTitle<%= produit.id_produit %>" class="accordion-collapse collapse"
+                      aria-labelledby="<%= produit.id_produit %>headingSpecialTitle<%= produit.id_produit %>" data-bs-parent="#<%= produit.id_produit %>accordionSpecialTitle<%= produit.id_produit %>">
+                      <div class="accordion-body">
+                        <div class="table-responsive">
+                          <table id="customButtonss" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                            <thead class="text-center">
+                              <tr>
+                                <th>ID</th>
+                                <th>Quantiter Retirer</th>
+                                <th>Prix a l'uniter</th>
+                                <th>Montant</th>
+                                <th>Destinataire</th>
+                                <th>Date de l'operation</th>
+                                <th>Heure de l'operation</th>
+                                <th>Action</th> 
+                              </tr>
+                            </thead>
+                            <tbody class="text-center" id="tbody2">
+                              <% i = 1; total_q = 0; total_p = 0; montant = 0; hventes.forEach(hvente => {%>
+                              <tr>
+                                <td><%= i %></td>
+                                <td><%= hvente.quantiter %></td>
+                                <td><%= hvente.prix_unit %></td>
+                                <td class="calcule2"><%= hvente.prix_unit * hvente.quantiter %></td>
+                                <td><%= hvente.receveur %></td>
+                                <td><%= new Date(hvente.created).getDate() %>-<%= new Date(hvente.created).getMonth() + 1 %>-<%= new Date(hvente.created).getFullYear()%></td>
+                                <td><%= new Date(hvente.created).getHours() %>-<%= new Date(hvente.created).getMinutes() %>-<%= new Date(hvente.created).getSeconds()%></td>
+                                <td>
+                                  <div class="d-inline-flex gap-1">
+                                    <!-- ----------------------------------------------------------------------------------- -->
+                                   
+                                      <!-- Card starts -->
+                                          <!-- Button trigger modal -->
+                                          <button type="button" data-bs-toggle="modal"
+                                            data-bs-target="#<%= hvente.id_hist %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                            <i class="ri-delete-bin-line"></i>
+                                          </button>
+                                          <!-- Modal -->
+                                          <div class="modal fade" id="<%= hvente.id_hist %>ModalCenter" tabindex="-1"
+                                            aria-labelledby="personnel.id_personnelModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <h5 class="modal-title" id="<%= hvente.id_hist %>ModalCenterTitle">
+                                                    Confirmer
+                                                  </h5>
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p>Voulez-vous vraiment supprimer la chambre ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    annuler
+                                                  </button>
+                                                  <form action="/deleteHSortie/<%= hvente.id_hist %>?_method=DELETE&id=<%= produit.id_produit %>" method="post">
+                                                    <div class="col-sm-12">
+                                                      <div class="d-flex gap-2 justify-content-end">
+                                                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                      </div>
+                                                    </div>
+                                                  </form>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                      <!-- Card ends -->
+                                    
+                                    <!-- ----------------------------------------------------------------------------------------- -->
+                                    
+                                  </div>
+                                </td>
+                              </tr>
+                              <% i++; total_p += hvente.prix_unit; total_q += hvente.quantiter; montant += hvente.prix_unit * hvente.quantiter}) %>
+                              <!-- <th >Total</th>
+                              <th ><%= total_q %></th>
+                              <th ><%= total_p %></th>
+                              <th ><%= montant %></th> -->
+                            </tbody>
+                          </table>
+                          <table id="" class="table truncate m-0 align-middle dataTable">
+                            <thead class="text-center">
+                              <tr>
+                                <th>Somme des montant : </th>
+                                <th id="resulta2"></th>
+                              </tr>
+                            </thead>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Row ends -->
+
+            <!-- Row starts -->
+            
+            <!-- Row ends -->
+            <div class="col-xxl-6 col-xl-12" style="display: none;" id="graph">
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h5 class="card-title">Courbre de variation des montant des Achat/Entrer et Sortie/Vente du produit <span class="text-info"><%= produit.nom %></span> par année</h5>
+                </div>
+                <div class="card-body">
+                  <div class="chart-height-xl">
+                    <div id="areaGraph">
+                      <!-- ---------------------------------------------------------------- -->
+                      <div class="">
+                        <div class="">
+                          <div class="card-body">
+                            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="false">
+                              <div class="carousel-indicators">
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                                  class="active" aria-current="true" aria-label="Slide 1"></button>
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                                  aria-label="Slide 2"></button>
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                                  aria-label="Slide 3"></button>
+                              </div>
+                              <div class="carousel-inner pb-3" id="pp">
+
+                              </div>
+
+                              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                                data-bs-slide="prev" >
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                              </button>
+                              <button class="carousel-control-next " type="button" data-bs-target="#carouselExampleIndicators"
+                                data-bs-slide="next" >
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                              </button>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- ---------------------------------------------------------------- -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2024</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/js/moment.min.js"></script>
+    <!-- Overlay Scroll JS -->
+    <!-- Apex Charts -->
+    <script src="/assets/vendor/apex/apexcharts.min.js"></script>
+    
+    <!-- Data Tables -->
+    <!-- Custom JS files -->
+
+    <script>
+      const text_colore = ['text-primary', 'text-info', 'text-danger', 'text-warning', 'text-success']
+      const class_colore = ['badge bg-primary', 'badge bg-info', 'badge bg-danger', 'badge bg-warning', 'badge bg-success']
+      traduct = (date) => {
+          const dates = new Date(`${date.split('-')[0]}-${date.split('-')[1]}-01`);
+          const shortMonth = dates.toLocaleString('en-US', {month: 'short'});
+          return shortMonth;
+      }
+      
+      const pp = document.getElementById('pp');
+      const tbody = document.getElementById('tbody');
+      const anner = []
+
+      const recettee = JSON.parse('<%- JSON.stringify(histe) %>')
+      console.log(recettee)
+
+      const recettes = JSON.parse('<%- JSON.stringify(hists) %>')
+      console.log(recettes)
+
+      recettee.forEach(element => {
+        if(!anner.includes(element.mois.split('-')[0])){
+          anner.push(element.mois.split('-')[0])
+        }
+      });
+
+      recettes.forEach(element => {
+        if(!anner.includes(element.mois.split('-')[0])){
+          anner.push(element.mois.split('-')[0])
+        }
+      });
+
+      const graph = document.getElementById("graph");
+
+      // ----------------------------------------------------------------------
+      anner.forEach((anner, ia) => {
+        let nb_he = 0
+        let nb_hs = 0
+          
+        recettee.forEach(element => {
+          nb_he++
+        });
+
+        let h = 1
+        recettes.forEach(element => {
+          nb_hs++
+        });
+
+        console.log(nb_he, nb_hs)
+        pp.insertAdjacentHTML('beforeend',`
+          <div class="card-body carousel-item ${ia === 0? 'active' : ''}" id="p${ia}">
+          </div>
+        `)
+
+        const p = document.getElementById(`p${ia}`);
+
+        for(let j = 0; j < nb_he; j++){
+          console.log("ok")
+          const all_month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
+          const recette_e = Array(12).fill(0);
+          const recette_s = Array(12).fill(0);
+          for(let i = 0; i < all_month.length; i++){
+            //console.log(traduct(recettee[j].mois), recettee[j].mois, all_month[i])
+            if(recettee[j]){
+              if(all_month[i] === traduct(recettee[j].mois) && anner === recettee[j].mois.split('-')[0]){
+                recette_e[i] = recettee[j].recette
+              }
+            }
+            if(recettes[j]){
+              if(all_month[i] === traduct(recettes[j].mois) && anner === recettes[j].mois.split('-')[0]){
+                recette_s[i] = recettes[j].recette
+              }
+            }
+          }
+          //console.log(JSON.stringify(recette_e) !== JSON.stringify(Array(12).fill(0)) || JSON.stringify(recette_s) !== JSON.stringify(Array(12).fill(0)))
+          if(JSON.stringify(recette_e) !== JSON.stringify(Array(12).fill(0)) || JSON.stringify(recette_s) !== JSON.stringify(Array(12).fill(0))){
+            if(graph.style.display === 'none'){
+              graph.style.display = 'block'
+            }
+            exi = document.getElementById(`#income${ia}`);
+            if(!exi){
+              p.insertAdjacentHTML('beforeend',`
+                <div class="chart-height-lg">
+                    <div id="income${ia}" ></div>
+                </div>
+              `)
+            }
+
+            const hot = document.getElementById(`income${ia}`);
+            hot.insertAdjacentHTML('beforeend',`
+              <div class="" id="d${ia}-${anner}">
+              </div>
+            `)
+
+            // ============================================================
+            var options = {
+              chart: {
+                height: 300,
+                type: "area",
+                toolbar: {
+                  show: true,
+                },
+              },
+              title:{
+                text: `${anner}`,
+                aligne: 'left',
+                style:{
+                  color: `black`,
+                }
+              },
+              dataLabels: {
+                enabled: false,
+              },
+              stroke: {
+                curve: "smooth",
+                width: 3,
+              },
+              series: [
+                {
+                  name: "Achat/Entrer",
+                  data: recette_e,
+                },
+                {
+                  name: "Sortie/Vente",
+                  data: recette_s,
+                },
+              ],
+              grid: {
+                borderColor: "#dfd6ff",
+                strokeDashArray: 5,
+                xaxis: {
+                  lines: {
+                    show: true,
+                  },
+                },
+                yaxis: {
+                  lines: {
+                    show: true,
+                  },
+                },
+                padding: {
+                  top: 0,
+                  right: 0,
+                  bottom: 10,
+                  left: 0,
+                },
+              },
+              xaxis: {
+                categories: [
+                  "Jan",
+                  "Feb",
+                  "Mar",
+                  "Apr",
+                  "May",
+                  "Jun",
+                  "Jul",
+                  "Aug",
+                  "Sep",
+                  "Oct",
+                  "Nov",
+                  "Dec",
+                ],
+              },
+              yaxis: {
+                labels: {
+                  show: true,
+                },
+              },
+              colors: [
+                "#207a5a",
+                "#248a65",
+                "#116aef",
+                "#3ea37e",
+                "#53ad8d",
+                "#69b89b",
+                "#7ec2a9",
+                "#94ccb8",
+                "#a9d6c6",
+              ],
+              markers: {
+                size: 0,
+                opacity: 0.3,
+                colors: [
+                  "#2f477a",
+                  "#35508a",
+                  "#3b5999",
+                  "#4f6aa3",
+                  "#627aad",
+                  "#768bb8",
+                  "#899bc2",
+                  "#9daccc",
+                ],
+                strokeColor: "#ffffff",
+                strokeWidth: 2,
+                hover: {
+                  size: 7,
+                },
+              },
+            };
+
+            var chart = new ApexCharts(document.querySelector(`#d${ia}-${anner}`), options);
+
+            chart.render();
+
+          // ============================================================
+          }
+          console.log('=>',recette_e)
+          console.log('=>',recette_s)
+        }
+      })
+
+      const resulta = document.getElementById('resulta1')
+      const observer= new MutationObserver((mutations, observer) => {
+        mutations.forEach((mutation) => {
+          let allCase = document.querySelectorAll('.calcule1')
+          let sum = 0
+          console.log(allCase.length)
+          if(allCase.length > 0){
+            allCase.forEach((td, index) => {
+              //console.log(td)
+              sum += parseFloat(td.innerText)
+              resulta.innerText = sum
+            })
+          }else{
+            resulta.innerText = 0
+          }
+        })
+      })
+
+      observer.observe(document.getElementById('tbody1'), {
+        childList: true,
+        subtree: true,
+        characterData: true
+      })
+      // ------------------------------------------------------------------
+      const resulta2 = document.getElementById('resulta2')
+      const observer2= new MutationObserver((mutations, observer) => {
+        mutations.forEach((mutation) => {
+          let allCase = document.querySelectorAll('.calcule2')
+          let sum = 0
+          console.log(allCase.length)
+          if(allCase.length > 0){
+            allCase.forEach((td, index) => {
+              //console.log(td)
+              sum += parseFloat(td.innerText)
+              resulta2.innerText = sum
+            })
+          }else{
+            resulta2.innerText = 0
+          }
+        })
+      })
+
+      observer2.observe(document.getElementById('tbody2'), {
+        childList: true,
+        subtree: true,
+        characterData: true
+      })
+    </script>
+    <%- include('script')%>
+  </body>
+  
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/accordions.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:35 GMT -->
+</html>
