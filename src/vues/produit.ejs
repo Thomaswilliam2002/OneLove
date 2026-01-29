@@ -119,9 +119,10 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <% i = 1; produits.forEach(produit => { %> 
+                          <%produits.forEach((produit, index) => {const matricule = String(index + 1).padStart(4, "0");%> 
+                            
                           <tr class="text-center">
-                            <td><%= i %></td>
+                            <td><%= matricule %></td>
                             <td>
                               <%= produit.nom %>
                             </td>
@@ -318,6 +319,12 @@
                                                 </datalist>
                                               </div>
                                             </div>
+                                            <div class="col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a8">Commantaire<span class="text-danger">*</span></label>
+                                                <textarea class="form-control" id="a8" placeholder="un commantaire ?" rows="2" name="cmm"></textarea>
+                                              </div>
+                                            </div>
                                             <input type="hidden" class="form-control" id="a2" name="type" value="produit">
                                             <input type="hidden" class="form-control" id="a2" name="idpro" value="<%= produit.id_produit %>">
                                           </div>
@@ -412,7 +419,7 @@
                               </div>
                             </td>
                           </tr>
-                          <% i++ }) %>
+                          <% }) %>
                         </tbody>
                       </table>
                     </div>
@@ -461,7 +468,7 @@
           
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2024</span>
+            <span>© OneLove admin 2026</span>
           </div>
           <!-- App footer ends -->
 

@@ -72,7 +72,7 @@
                   </div>
                   <% if(type === 'bc') {%>
                     <div class="card-body">
-                      <form method="post" name="forme" id="forme">
+                      <form method="post" name="forme" id="formebc">
                         <!-- Row starts -->
                         <div class="row gx-3">
                           <div class="col-sm-12">
@@ -84,6 +84,7 @@
                             <div class="mb-3">
                               <label class="form-label" for="a2">Bar/Club <span class="text-danger">*</span></label>
                               <select class="form-select" id="bc" name="barClub">
+                                <option value="null" >Aucun bar/club</option>
                                 <% barss.forEach(bars => { %>
                                     <option value="<%= bars.id_barSimple %> bs" ><%= bars.nom %></option>
                                 <% }) %>
@@ -133,7 +134,7 @@
                     </div>
                   <% } else if(type === 'appart') { %>
                     <div class="card-body">
-                      <form method="post" action="/addJournal">
+                      <form method="post" action="/addJournal" id="formeap">
                         <!-- Row starts -->
                         <div class="row gx-3">
                           <div class="col-sm-12">
@@ -145,6 +146,7 @@
                             <div class="mb-3">
                               <label class="form-label" for="a2">Appartement <span class="text-danger">*</span></label>
                               <select class="form-select"  name="appart" id="chambre1">
+                                <option value="null" >Aucun appartement</option>
                                 <% apparts.forEach(chambre => { %>
                                     <option value="<%= chambre.id_appart %>" ><%= chambre.nom_appart %></option>
                                 <% }) %>
@@ -181,7 +183,7 @@
                     </div>
                   <% } else if(type === 'cuisine') { %>
                     <div class="card-body">
-                      <form method="post" action="/addCuJournal">
+                      <form method="post" action="/addCuJournal" id="formecui">
                         <!-- Row starts -->
                         <div class="row gx-3"> 
                           <div class="col-sm-12">
@@ -193,6 +195,7 @@
                             <div class="mb-3">
                               <label class="form-label" for="a2">Cuisines <span class="text-danger">*</span></label>
                               <select class="form-select"  name="cuisine">
+                                <option value="null" >Aucune cuisine</option>
                                 <% cuisines.forEach(cuisine => { %>
                                     <option value="<%= cuisine.id_cuisine %>" ><%= cuisine.nom_cuisine %></option>
                                 <% }) %>
@@ -223,7 +226,7 @@
                     </div>
                   <% } else if(type === 'mclose') { %>
                     <div class="card-body">
-                      <form method="post" action="/addChJournal">
+                      <form method="post" action="/addChJournal" id="formemc">
                         <!-- Row starts -->
                         <div class="row gx-3"> 
                           <div class="col-sm-12">
@@ -235,6 +238,7 @@
                             <div class="mb-3">
                               <label class="form-label" for="a2">Maison Close <span class="text-danger">*</span></label>
                               <select class="form-select"  name="mclose1" id="mclose1">
+                                <option value="null" >Aucune maison close</option>
                                 <% mcloses.forEach(mclose => { %>
                                     <option value="<%= mclose.id_mclose %>" ><%= mclose.nom %></option>
                                 <% }) %>
@@ -244,7 +248,8 @@
                           <div class="col-xxl-3 col-lg-4 col-sm-6">
                             <div class="mb-3">
                               <label class="form-label" for="a2">Chambre <span class="text-danger">*</span></label>
-                              <select class="form-select"  name="chambre1" id="chambre1">
+                              <select class="form-select"  name="chambre2" id="chambre2">
+                              <option value="null" >Aucune chambre</option>
                                 <!-- <% chambres.forEach(chambre => { %>
                                     <option value="<%= chambre.id_chambre %>" ><%= chambre.nom %></option>
                                 <% }) %> -->
@@ -312,77 +317,94 @@
     <%- include('script')%>
     <script>
       const btn = document.getElementById('btn');
-      const form = document.getElementById('forme');
+      const formbc = document.getElementById('formebc');
+      const formap = document.getElementById('formeap');
+      const formcui = document.getElementById('formecui');
+      const formmc = document.getElementById('formemc');
       const bc = document.getElementById('bc');
+      const mclose = document.getElementById('mclose1');
+      const chambre = document.getElementById('chambre2');
+      const chambres = JSON.parse('<%- JSON.stringify(chambres || []) %>');
+      const appart = document.getElementById('chambre1');
 
-      if(form){
-        form.addEventListener('submit', (e) => {
-          if(bc.value.split(' ')[1] === 'bs'){
-            form.action = "/addBSJournal"
-            form.submit()
-          }else if(bc.value.split(' ')[1] === 'bv'){
-            form.action = "/addBVJournal"
-            form.submit()
-          }else if(bc.value.split(' ')[1] === 'cc'){
-            form.action = "/addCCJournal"
-            form.submit()
+      if(formbc){
+        formbc.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+          if (!bc.value || !bc.value.includes(' ')) return alert('Choisissez un bar/club');
+
+          const type = bc.value.split(' ')[1];
+          if (type === 'bs') formbc.action = "/addBSJournal";
+          if (type === 'bv') formbc.action = "/addBVJournal";
+          if (type === 'cc') formbc.action = "/addCCJournal";
+
+          formbc.submit();
+          return;
+        });
+      }
+
+      if(formap){
+        formap.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (appart) {
+            if (!appart.value || appart.value === "null") {
+              return alert('Choisissez un appartement');
+            }
+            formap.submit();
+            return;
           }
-          
+          return alert('Choisissez un appartement');
         })
       }
 
-      const avert = () => {
-        alert(``)
-      }
-      
-      // btn.addEventListener('click', (e) => {
-      //   e.preventDefault()
-      //   if(bc.value.split(' ')[1] === 'bs'){
-      //     form.action = "/addBSJournal"
-      //     form.submit()
-      //   }else if(bc.value.split(' ')[1] === 'bv'){
-      //     form.action = ""
-      //     form.submit()
-      //   }else if(bc.value.split(' ')[1] === 'cc'){
-      //     form.action = ""
-      //     form.submit()
-      //   }
-      // }) 
-      
-      // ----------------------------------------------------------------
-      // ----------------------------------------------------------------
-      // console.log("<% chambres%>")
-      const mclose = document.getElementById('mclose1');
-      const chambre = document.getElementById('chambre1');
-      if(mclose && chambre){
-        "<% if(chambres){ %>"
-          "<% chambres.forEach(chambre => { %>"
-            if("<%= mcloses[0].id_mclose %>" === "<%=chambre.id_mclose%>"){
-              console.log("<%= mcloses %>")
-              chambre.insertAdjacentHTML('beforeend',`
-                <option value="${'<%=chambre.id_chambre%>'}"><%= chambre.nom %></option>
-              `)
+      if(formcui){
+        formcui.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const cuisine = document.querySelector('select[name="cuisine"]');
+          if (cuisine) {
+            if (!cuisine.value || cuisine.value === "null") {
+              return alert('Choisissez une cuisine');
             }
-          "<% }) %>"
-
-          mclose.addEventListener('change', () => {
-            const valeur = mclose.value;
-            //console.log(JSON.stringify("<% chambres%>", null, 2))
-            //alert('change' + valeur + typeof valeur)
-            chambre.innerHTML = '';
-            "<% chambres.forEach((chambre,index) => { %>"
-              if(valeur === "<%=chambre.id_mclose%>"){
-                chambre.insertAdjacentHTML('beforeend',`
-                  <option value="${'<%=chambre.id_chambre%>'}"><%= chambre.nom %></option>
-                `)
-              }
-            "<% }) %>"
-          })
-        "<% } %>"
-
-        
+            formcui.submit();
+            return;
+          }
+          return alert('Choisissez une cuisine');
+        })
       }
-      
+
+      if(formmc){
+        formmc.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (mclose) {
+            if (!mclose.value || mclose.value === "null") {
+              return alert('Choisissez une maison close');
+            }
+
+            // Vérifie si chambre est sélectionnée
+            if (!chambre.value || chambre.value === "null") {
+              return alert('Choisissez une chambre');
+            }
+
+            formmc.submit();
+            return;
+          }
+          return alert('Choisissez une maison close');
+        })
+      }
+
+      mclose.addEventListener('change', () => {
+        chambre.innerHTML = '<option value="null">Aucune chambre</option>';
+
+        chambres.forEach(ch => {
+          if (mclose.value == ch.id_mclose) {
+            chambre.insertAdjacentHTML(
+              'beforeend',
+              `<option value="${ch.id_chambre}">${ch.nom}</option>`
+            );
+          }
+        });
+      });
+
     </script>
   </body>
 

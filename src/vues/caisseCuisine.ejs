@@ -42,7 +42,7 @@
                 <a href="/index">Accueil</a>
               </li>
               <li class="breadcrumb-item text-primary" aria-current="page">
-                Caisse général des Appartements de One Love
+                Caisse général des Cuisines de One Love
               </li>
             </ol>
             <!-- Breadcrumb ends --> 
@@ -116,7 +116,7 @@
               <div class="col-sm-12">
                 <div class="card mb-3">
                   <div class="card-header">
-                    <h5 class="card-title">Courbre de variation des recette des Appartement par année</h5>
+                    <h5 class="card-title">Courbre de variation des recette des Cuisine par année</h5>
                   </div>
                   <!-- ---------------------------------------------------------------- -->
                   <div class="">
@@ -198,7 +198,7 @@
         let d = new Date().toISOString().slice(0,7);
         recette.push(JSON.parse(JSON.stringify({
             "mois": d,
-            "id_barSimple": 1,
+            "id_cuisine": 1,
             "total_recette": 0,
             // "NomBar": "..."
         })))
@@ -335,7 +335,7 @@
 
         tbody.insertAdjacentHTML('beforeend',`
         <tr>
-            <td><span class="${class_colore[ia]}">Apparts ${anner}</span></td>
+            <td><span class="${class_colore[ia]}">Cuisine ${anner}</span></td>
             <td>${recettes[0]}</td>
             <td>${recettes[1]}</td>
             <td>${recettes[2]}</td>

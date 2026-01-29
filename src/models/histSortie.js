@@ -24,7 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         receveur: { // celui qui recois 
             type: DataTypes.TEXT,
             allowNull: false
-        }
+        },
+        commantaire: { // celui qui recois 
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
     },
     {
         timestamps: true,

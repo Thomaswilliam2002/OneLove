@@ -127,61 +127,102 @@ $(function () {
 });
 
 // Print Export Copy PDF Buttons
+// $(function () {
+//   $(".customButtone").DataTable({
+//     lengthMenu: [
+//       [10, 25, 50],
+//       [10, 25, 50, "All"],
+//     ],
+//     dom: "Bfrtip",
+//     // buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
+//     buttons: [
+//       {
+//         extend: 'excel',
+//         title: exportTitle,
+//         exportOptions: {
+//           columns: ':visible' // n'exporte que les colonnes visibles
+//         }
+//       },
+//       {
+//         extend: 'pdf',
+//         title: exportTitle,
+//         exportOptions: {
+//           columns: ':visible'
+//         }
+//       },
+//       {
+//         extend: 'csv',
+//         title: exportTitle,
+//         exportOptions: {
+//           columns: ':visible'
+//         }
+//       },
+//       {
+//         extend: 'copy',
+//         title: exportTitle,
+//         exportOptions: {
+//           columns: ':visible'
+//         }
+//       },
+//       {
+//         extend: 'print',
+//         title: exportTitle,
+//         exportOptions: {
+//           columns: ':visible'
+//         }
+//       }, 'colvis'
+//     ]
+//   });
+//   // $(".customButtone").DataTable({
+//   //   lengthMenu: [
+//   //     [10, 25, 50],
+//   //     [10, 25, 50, "All"],
+//   //   ],
+//   //   dom: "Bfrtip",
+//   //   buttons: ["copy", "csv", "excel", "pdf", "print"],
+//   // });
+// });
+
 $(function () {
-  $(".customButtone").DataTable({
-    lengthMenu: [
-      [10, 25, 50],
-      [10, 25, 50, "All"],
-    ],
-    dom: "Bfrtip",
-    // buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
-    buttons: [
-      {
-        extend: 'excel',
-        title: exportTitle,
-        exportOptions: {
-          columns: ':visible' // n'exporte que les colonnes visibles
-        }
-      },
-      {
-        extend: 'pdf',
-        title: exportTitle,
-        exportOptions: {
-          columns: ':visible'
-        }
-      },
-      {
-        extend: 'csv',
-        title: exportTitle,
-        exportOptions: {
-          columns: ':visible'
-        }
-      },
-      {
-        extend: 'copy',
-        title: exportTitle,
-        exportOptions: {
-          columns: ':visible'
-        }
-      },
-      {
-        extend: 'print',
-        title: exportTitle,
-        exportOptions: {
-          columns: ':visible'
-        }
-      }, 'colvis'
-    ]
+  $(".customButtone").each(function () {
+    $(this).DataTable({
+      lengthMenu: [
+        [10, 25, 50],
+        [10, 25, 50, "All"],
+      ],
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: 'excel',
+          title: exportTitle,
+          exportOptions: { columns: ':visible' }
+        },
+        {
+          extend: 'pdf',
+          title: exportTitle,
+          exportOptions: { columns: ':visible' }
+        },
+        {
+          extend: 'csv',
+          title: exportTitle,
+          exportOptions: { columns: ':visible' }
+        },
+        {
+          extend: 'copy',
+          title: exportTitle,
+          exportOptions: { columns: ':visible' }
+        },
+        {
+          extend: 'print',
+          title: exportTitle,
+          exportOptions: { columns: ':visible' }
+        },
+        'colvis'
+      ]
+    });
   });
-  // $(".customButtone").DataTable({
-  //   lengthMenu: [
-  //     [10, 25, 50],
-  //     [10, 25, 50, "All"],
-  //   ],
-  //   dom: "Bfrtip",
-  //   buttons: ["copy", "csv", "excel", "pdf", "print"],
-  // });
 });
+
 
 // Print Export Copy PDF Buttons
 $(function () {

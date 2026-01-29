@@ -3,134 +3,238 @@ const {Produit,Caisse, Personnel, BarSimple, BarVip, HistSortie, Emballage, Craz
 const caisse = require('../../models/caisse');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
+// allProduitCaisse = (app) => {
+//     app.get('/allProduitCaisse/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant'), async (req, res) => {
+//         // res.status(200).render('produitCaisse');
+//         const caisseAssocier = await Caisse.findAll({
+//             where: {id_employer: req.params.id}
+//         })
+//         // res.json(caisseAssocier);
+//         const tabbs = []
+//         const tabbv = []
+//         const tabcc = []
+//         const cargcc = []
+//         const cargbs = []
+//         const cargbv = []
+//         const prod = []
+//         const emba = []
+//         const hc = []
+//         if(caisseAssocier && caisseAssocier.length > 0){
+//             for (const caisse of caisseAssocier){
+//                 if(caisse.caisse_of.split('#')[2] === 'bs'){
+//                     const bars = await BarSimple.findByPk(caisse.caisse_of.split('#')[0])
+//                     if(bars){
+//                         // console.log('ok')
+//                         tabbs.push(bars);
+//                     }
+//                 }
+//                 if(caisse.caisse_of.split('#')[2] === 'bv'){
+//                     const barv = await BarVip.findByPk(caisse.caisse_of.split('#')[0])
+//                     if(barv){
+//                         tabbv.push(barv);
+//                     }
+//                 }
+//                 if(caisse.caisse_of.split('#')[2] === 'cc'){
+//                     const barc = await CrazyClub.findByPk(caisse.caisse_of.split('#')[0])
+//                     // console.log(barc)
+//                     if(barc){
+//                         tabcc.push(barc);
+//                     }
+//                 }
+//             };
+//             if(tabbs.length > 0){
+//                 for(const bs of tabbs){
+//                     const hbs = await HistSortie.findAll({
+//                         where:{receveur: bs.nom}
+//                     })
+//                     if(hbs && hbs.length > 0){
+//                         cargbs.push(...hbs)
+//                     }
+                    
+//                     for(const hb of hbs){
+//                         console.log(hb.type)
+//                         if(hb.type === 'produit'){
+//                             const pro = await Produit.findByPk(hb.id_probal)
+//                             if(pro){
+//                                 prod.push(pro)
+//                             }
+//                         }else if(hb.type === 'emballage'){
+//                             const emb = await Emballage.findByPk(hb.id_probal)
+//                             if(emb){
+//                                 emba.push(emb)
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//             if(tabbv.length > 0){
+//                 for(const bv of tabbv){
+//                     const hbv = await HistSortie.findAll({
+//                         where:{receveur: bv.nom}
+//                     })
+//                     if(hbv && hbv.length > 0){
+//                         cargbv.push(...hbv)
+//                     }
+
+//                     for(const hb of hbv){
+//                         if(hb.type === 'produit'){
+//                             const pro = await Produit.findByPk(hb.id_probal)
+//                             if(pro){
+//                                 prod.push(pro)
+//                             }
+//                         }else if(hb.type === 'emballage'){
+//                             const emb = await Emballage.findByPk(hb.id_probal)
+//                             if(emb){
+//                                 emba.push(emb)
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//             if(tabcc.length > 0){
+//                 for(const cc of tabcc){
+//                     const hcc = await HistSortie.findAll({
+//                         where:{receveur: cc.nom}
+//                     })
+//                     // console.log(hcc)
+//                     if(hcc && hcc.length > 0){
+//                         cargcc.push(...hcc)
+//                     }
+
+//                     for(const hc of hcc){
+//                         if(hc.type === 'produit'){
+//                             const pro = await Produit.findByPk(hc.id_probal)
+//                             if(pro){
+//                                 prod.push(pro)
+//                             }
+//                         }else if(hc.type === 'emballage'){
+//                             const emb = await Emballage.findByPk(hc.id_probal)
+//                             if(emb){
+//                                 emba.push(emb)
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+
+//             const hist = await HistCaisse.findAll()
+//             if(hist){
+//                 hc.push(...hist)
+//             }
+
+//             res.status(200).render('produitCaisse', {data: [caisseAssocier, tabbs, tabbv, cargbs, cargbv, prod, emba, tabcc, cargcc], hists: hc, msg: req.query.msg});
+//             // res.json([caisseAssocier, tabbs, tabbv, cargbs, cargbv, probal]);
+//         }else{
+//             // res.json({msg: 'nn'});
+//             res.status(200).render('produitCaisse', {data: 'null', hists: 'null', msg: req.query.msg})
+//         }
+//     })
+// }
+
 allProduitCaisse = (app) => {
     app.get('/allProduitCaisse/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant'), async (req, res) => {
-        // res.status(200).render('produitCaisse');
-        const caisseAssocier = await Caisse.findAll({
-            where: {id_employer: req.params.id}
-        })
-        // res.json(caisseAssocier);
-        const tabbs = []
-        const tabbv = []
-        const tabcc = []
-        const cargcc = []
-        const cargbs = []
-        const cargbv = []
-        const prod = []
-        const emba = []
-        const hc = []
-        if(caisseAssocier && caisseAssocier.length > 0){
-            for (const caisse of caisseAssocier){
-                if(caisse.caisse_of.split('#')[2] === 'bs'){
-                    const bars = await BarSimple.findByPk(caisse.caisse_of.split('#')[0])
-                    if(bars){
-                        // console.log('ok')
-                        tabbs.push(bars);
-                    }
-                }
-                if(caisse.caisse_of.split('#')[2] === 'bv'){
-                    const barv = await BarVip.findByPk(caisse.caisse_of.split('#')[0])
-                    if(barv){
-                        tabbv.push(barv);
-                    }
-                }
-                if(caisse.caisse_of.split('#')[2] === 'cc'){
-                    const barc = await CrazyClub.findByPk(caisse.caisse_of.split('#')[0])
-                    // console.log(barc)
-                    if(barc){
-                        tabcc.push(barc);
-                    }
-                }
-            };
-            if(tabbs.length > 0){
-                for(const bs of tabbs){
-                    const hbs = await HistSortie.findAll({
-                        where:{receveur: bs.nom}
-                    })
-                    if(hbs && hbs.length > 0){
-                        cargbs.push(...hbs)
-                    }
-                    
-                    for(const hb of hbs){
-                        console.log(hb.type)
-                        if(hb.type === 'produit'){
-                            const pro = await Produit.findByPk(hb.id_probal)
-                            if(pro){
-                                prod.push(pro)
-                            }
-                        }else if(hb.type === 'emballage'){
-                            const emb = await Emballage.findByPk(hb.id_probal)
-                            if(emb){
-                                emba.push(emb)
-                            }
+        try {
+            const caisseAssocier = await Caisse.findAll({
+                where: { id_employer: req.params.id }
+            });
+
+            const caissesData = await Promise.all(caisseAssocier.map(async (caisse) => {
+                const [idSource, nomSource, typeSource] = caisse.caisse_of.split('#');
+                
+                // 1. Récupérer TOUTES les entrées pour calculer le stock total cumulé
+                const toutesEntrees = await HistSortie.findAll({ 
+                    where: { receveur: nomSource } 
+                });
+
+                // On regroupe par produit pour identifier les derniers prix
+                // et sommer les quantités totales reçues
+                let produitsMap = {}; 
+                let emballagesMap = {};
+
+                for (const item of toutesEntrees) {
+                    const key = item.id_probal;
+                    if (item.type === 'produit') {
+                        if (!produitsMap[key] || new Date(item.created) > new Date(produitsMap[key].date)) {
+                            // Si c'est le premier passage ou une sortie plus récente, on met à jour le PRIX
+                            produitsMap[key] = { 
+                                qte_totale: (produitsMap[key]?.qte_totale || 0) + item.quantiter,
+                                prix_recent: item.prix_unit,
+                                date: item.created 
+                            };
+                        } else {
+                            produitsMap[key].qte_totale += item.quantiter;
+                        }
+                    } else {
+                        // Idem pour emballage
+                        if (!emballagesMap[key] || new Date(item.created) > new Date(emballagesMap[key].date)) {
+                            emballagesMap[key] = { 
+                                qte_totale: (emballagesMap[key]?.qte_totale || 0) + item.quantiter,
+                                prix_recent: item.prix_unit,
+                                date: item.created 
+                            };
+                        } else {
+                            emballagesMap[key].qte_totale += item.quantiter;
                         }
                     }
                 }
-            }
-            if(tabbv.length > 0){
-                for(const bv of tabbv){
-                    const hbv = await HistSortie.findAll({
-                        where:{receveur: bv.nom}
-                    })
-                    if(hbv && hbv.length > 0){
-                        cargbv.push(...hbv)
-                    }
 
-                    for(const hb of hbv){
-                        if(hb.type === 'produit'){
-                            const pro = await Produit.findByPk(hb.id_probal)
-                            if(pro){
-                                prod.push(pro)
-                            }
-                        }else if(hb.type === 'emballage'){
-                            const emb = await Emballage.findByPk(hb.id_probal)
-                            if(emb){
-                                emba.push(emb)
-                            }
-                        }
+                // 2. Préparation finale des listes avec calcul du reste en stock
+                let produitsListe = [];
+                for (const id in produitsMap) {
+                    const vendus = await HistCaisse.sum('quantiter', {
+                        where: { id_caisse: caisse.id_caisse, id_probal: id, type: 'produit' }
+                    }) || 0;
+
+                    const detail = await Produit.findByPk(id);
+                    if (detail) {
+                        produitsListe.push({
+                            id: detail.id_produit,
+                            nom: detail.nom,
+                            image: detail.image,
+                            prix_unit: produitsMap[id].prix_recent, // Dernier prix trouvé
+                            qte_dispo: produitsMap[id].qte_totale - vendus
+                        });
                     }
                 }
-            }
-            if(tabcc.length > 0){
-                for(const cc of tabcc){
-                    const hcc = await HistSortie.findAll({
-                        where:{receveur: cc.nom}
-                    })
-                    // console.log(hcc)
-                    if(hcc && hcc.length > 0){
-                        cargcc.push(...hcc)
-                    }
 
-                    for(const hc of hcc){
-                        if(hc.type === 'produit'){
-                            const pro = await Produit.findByPk(hc.id_probal)
-                            if(pro){
-                                prod.push(pro)
-                            }
-                        }else if(hc.type === 'emballage'){
-                            const emb = await Emballage.findByPk(hc.id_probal)
-                            if(emb){
-                                emba.push(emb)
-                            }
-                        }
+                let emballagesListe = [];
+                for (const id in emballagesMap) {
+                    const vendus = await HistCaisse.sum('quantiter', {
+                        where: { id_caisse: caisse.id_caisse, id_probal: id, type: 'emballage' }
+                    }) || 0;
+
+                    const detail = await Emballage.findByPk(id);
+                    if (detail) {
+                        emballagesListe.push({
+                            id: detail.id_emballage,
+                            nom: detail.nom,
+                            prix_unit: emballagesMap[id].prix_recent, // Dernier prix trouvé
+                            qte_dispo: emballagesMap[id].qte_totale - vendus
+                        });
                     }
                 }
-            }
 
-            const hist = await HistCaisse.findAll()
-            if(hist){
-                hc.push(...hist)
-                console.log(hc)
-            }
+                return {
+                    id_caisse: caisse.id_caisse,
+                    nom_caisse: caisse.nom,
+                    lieu: nomSource,
+                    produits: produitsListe,
+                    emballages: emballagesListe
+                };
+            }));
 
-            res.status(200).render('produitCaisse', {data: [caisseAssocier, tabbs, tabbv, cargbs, cargbv, prod, emba, tabcc, cargcc], hists: hc, msg: req.query.msg});
-            // res.json([caisseAssocier, tabbs, tabbv, cargbs, cargbv, probal]);
-        }else{
-            // res.json({msg: 'nn'});
-            res.status(200).render('produitCaisse', {data: 'null', msg: req.query.msg})
+            res.render('produitCaisse', { 
+                caisses: caissesData, 
+                msg: req.query.msg,
+                id_caissier: req.params.id 
+            });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Erreur serveur");
         }
-    })
-}
+    });
+};
 
 addHistCaisse = (app) => {
     app.post('/addHistCaisse', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) =>{

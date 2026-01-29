@@ -52,6 +52,14 @@ module.exports = (sequelize, DataTypes) => {
         periode:{
             type: DataTypes.STRING,
             allowNull: true
+        },
+        resetToken: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        resetTokenExpiration: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     },
     {

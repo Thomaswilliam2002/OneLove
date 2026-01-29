@@ -1,7 +1,6 @@
 const {HistSortie} = require('../../db/sequelize')
 const {Produit, Emballage} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
-
 allHSortie = (app) => {
     app.get('/allHSortie', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         HistSortie.findAll({
@@ -17,7 +16,7 @@ allHSortie = (app) => {
 addHSortie = (app) => {
     app.post('/addHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         //console.log('ici')
-        const {nbr, prix, type, idpro, dest} = req.body;
+        const {nbr, prix, type, idpro, dest, cmm} = req.body;
         if(req.query.art === 'produit'){
             console.log('id ',idpro)
             Produit.findByPk(req.params.id)
@@ -28,7 +27,8 @@ addHSortie = (app) => {
                         prix_unit: prix,
                         type: type,
                         id_probal: idpro,
-                        receveur: dest
+                        receveur: dest,
+                        commantaire: cmm
                     })
                         .then(hsortie => {
                             console.log(hsortie)
@@ -38,7 +38,6 @@ addHSortie = (app) => {
                                 where: {id_produit:produit.id_produit}
                             })
                                 .then(art => {
-
                                     res.redirect('/allProduit?type=vente&msg=ajout')
                                 })
                                 .catch(_ => console.log('erreure de update', _))

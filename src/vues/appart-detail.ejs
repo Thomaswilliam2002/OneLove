@@ -59,7 +59,7 @@
 
             <!-- Row starts -->
             <div class="row gx-3">
-              <div class="col-xxl-6 col-sm-12">
+              <div class="col-xxl-12 col-sm-12">
                 <div class="card mb-3 bg-1">
                   <div class="card-body mh-230">
 
@@ -145,13 +145,13 @@
                                 </table>
                               </div>
                             <!-- Table end -->
-                            <div class="row gx-3">
+                            <!-- <div class="row gx-3">
                               <div class="col-sm-12">
                                 <div class="card mb-3">
                                   <div class="card-header">
                                     <h5 class="card-title">Courbre de variation des recette des Bar simple par année</h5>
                                   </div>
-                                  <!-- ---------------------------------------------------------------- -->
+                                 
                                   <div class="">
                                     <div class="">
                                       <div class="card-body">
@@ -181,11 +181,11 @@
                                       </div>
                                     </div>
                                   </div>
-                                   <!-- ---------------------------------------------------------------- -->
+                                   
                                   
                                 </div>
                               </div>
-                            </div>
+                            </div> -->
                           <!-- --------------------------------b end-------------------------------- -->
                           </div>
                         </div>
@@ -287,7 +287,7 @@
 
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2024</span>
+            <span>© OneLove admin 2025</span>
           </div>
           <!-- App footer ends -->
 
@@ -306,195 +306,194 @@
     <!-- Required jQuery first, then Bootstrap Bundle JS -->
     <script src="assets/vendor/apex/apexcharts.min.js"></script>
     <%- include('script')%>
-  </body>
-
-  <script>
-    // -----------------------------------------------------------------------------------------------------
-    const text_colore = ['text-primary', 'text-info', 'text-danger', 'text-warning', 'text-success']
-    const class_colore = ['badge bg-primary', 'badge bg-info', 'badge bg-danger', 'badge bg-warning', 'badge bg-success']
-    traduct = (date) => {
-        const dates = new Date(`${date.split('-')[0]}-${date.split('-')[1]}-01`);
-        const shortMonth = dates.toLocaleString('en-US', {month: 'short'});
-        return shortMonth;
-    }
-    
-    const pp = document.getElementById('pp');
-    const tbody = document.getElementById('tbody');
-    const anner = []
-    
-
-    let recette = JSON.parse('<%- JSON.stringify(courbe_info) %>')
-    console.log(recette)
-    if(recette.length === 0){
-      let d = new Date().toISOString().slice(0,7);
-      recette.push(JSON.parse(JSON.stringify({
-          "mois": d,
-          "id_journal": 1,
-          "total_recette": 0,
-          "NomAppart": "..."
-      })))
-    }
-    console.log(recette)
-
-    recette.forEach(element => {
-      if(!anner.includes(element.mois.split('-')[0])){
-        anner.push(element.mois.split('-')[0])
+    <script>
+      // -----------------------------------------------------------------------------------------------------
+      const text_colore = ['text-primary', 'text-info', 'text-danger', 'text-warning', 'text-success']
+      const class_colore = ['badge bg-primary', 'badge bg-info', 'badge bg-danger', 'badge bg-warning', 'badge bg-success']
+      traduct = (date) => {
+          const dates = new Date(`${date.split('-')[0]}-${date.split('-')[1]}-01`);
+          const shortMonth = dates.toLocaleString('en-US', {month: 'short'});
+          return shortMonth;
       }
-    });
-
-    const nom = recette[0]['NomAppart']
-    
-
-    console.log(anner)
-    boole = 0
-    // ----------------------------------------------------------------------
-    anner.forEach((anner, ia) => {
-      const all_total = []
-
-      let total = 0
-      recette.forEach((element, index) => {
-          if(anner === element.mois.split('-')[0]){
-            total = total + element.total_recette
-          }
-        });
-        all_total.push(total);
-
-      console.log('=>',nom, all_total)
-
-      pp.insertAdjacentHTML('beforeend',`
-        <div class="card-body carousel-item ${ia === 0? 'active' : ''}" id="p${ia}">
-        </div>
-      `)
-
-      const p = document.getElementById(`p${ia}`);
-
-      const all_month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
-      const recettes = Array(12).fill(0);
+      
+      const pp = document.getElementById('pp');
+      const tbody = document.getElementById('tbody');
+      const anner = []
+      
+  
+      let recette = JSON.parse('<%- JSON.stringify(courbe_info) %>')
+      console.log(recette)
+      if(recette.length === 0){
+        let d = new Date().toISOString().slice(0,7);
+        recette.push(JSON.parse(JSON.stringify({
+            "mois": d,
+            "id_journal": 1,
+            "total_recette": 0,
+            "NomAppart": "..."
+        })))
+      }
+      // console.log(recette)
+  
       recette.forEach(element => {
-        if(anner === element.mois.split('-')[0]){
-          for(let j = 0; j < all_month.length; j++){
-            if(all_month[j] === traduct(element.mois)){
-              recettes[j] = element.total_recette
+        if(!anner.includes(element.mois.split('-')[0])){
+          anner.push(element.mois.split('-')[0])
+        }
+      });
+  
+      const nom = recette[0]['NomAppart']
+      
+  
+      console.log(anner)
+      boole = 0
+      // ----------------------------------------------------------------------
+      anner.forEach((anner, ia) => {
+        const all_total = []
+  
+        let total = 0
+        recette.forEach((element, index) => {
+            if(anner === element.mois.split('-')[0]){
+              total = total + element.total_recette
+            }
+          });
+          all_total.push(total);
+  
+        console.log('=>',nom, all_total)
+  
+        // pp.insertAdjacentHTML('beforeend',`
+        //   <div style = "background-color: red" class="card-body carousel-item ${ia === 0? 'active' : ''}" id="p${ia}">
+        //   </div>
+        // `)
+  
+        // const p = document.getElementById(`p${ia}`);
+  
+        const all_month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
+        const recettes = Array(12).fill(0);
+        recette.forEach(element => {
+          if(anner === element.mois.split('-')[0]){
+            for(let j = 0; j < all_month.length; j++){
+              if(all_month[j] === traduct(element.mois)){
+                recettes[j] = element.total_recette
+              }
             }
           }
-        }
-      })
-      var options = {
-        chart: {
-          height: 300,
-          type: "line",
-          toolbar: {
-            show: true,
-          },
-        },
-        title:{
-          text: `${nom} ${anner}`,
-          aligne: 'left',
-          style:{
-            color: `red`,
-          }
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        stroke: {
-          curve: "smooth",
-          width: 3,
-        },
-        series: [
-          {
-            name: "Recette",
-            data: recettes,
-          },
-        ],
-        grid: {
-          borderColor: "#d8dee6",
-          strokeDashArray: 5,
-          xaxis: {
-            lines: {
-              show: true,
-            },
-          },
-          yaxis: {
-            lines: {
-              show: true,
-            },
-          },
-          padding: {
-            top: 0,
-            right: 0,
-            bottom: 10,
-            left: 0,
-          },
-        },
-        xaxis: {
-          categories: all_month,
-        },
-        yaxis: {
-          labels: {
-            show: true,
-          },
-        },
-        colors: ["#116aef", "#ce313e", "#436ccf", "#dcad10", "#828382"],
-        markers: {
-          size: 0,
-          opacity: 0.3,
-          colors: ["#116aef", "#ce313e", "#436ccf", "#dcad10", "#828382"],
-          strokeColor: "#ffffff",
-          strokeWidth: 1,
-          hover: {
-            size: 7,
-          },
-        },
-        tooltip: {
-          y: {
-            formatter: function (val) {
-              return val + "FCFA";
-            },
-          },
-        },
-      };
-
-      exi = document.getElementById(`#income${ia}`);
-      console.log(exi)
-      if(!exi){
-        p.insertAdjacentHTML('beforeend',`
-          <div class="chart-height-lg">
-              <div id="income${ia}" ></div>
-          </div>
+        })
+        // var options = {
+        //   chart: {
+        //     height: 300,
+        //     type: "line",
+        //     toolbar: {
+        //       show: true,
+        //     },
+        //   },
+        //   title:{
+        //     text: `${nom} ${anner}`,
+        //     aligne: 'left',
+        //     style:{
+        //       color: `red`,
+        //     }
+        //   },
+        //   dataLabels: {
+        //     enabled: false,
+        //   },
+        //   stroke: {
+        //     curve: "smooth",
+        //     width: 3,
+        //   },
+        //   series: [
+        //     {
+        //       name: "Recette",
+        //       data: recettes,
+        //     },
+        //   ],
+        //   grid: {
+        //     borderColor: "#d8dee6",
+        //     strokeDashArray: 5,
+        //     xaxis: {
+        //       lines: {
+        //         show: true,
+        //       },
+        //     },
+        //     yaxis: {
+        //       lines: {
+        //         show: true,
+        //       },
+        //     },
+        //     padding: {
+        //       top: 0,
+        //       right: 0,
+        //       bottom: 10,
+        //       left: 0,
+        //     },
+        //   },
+        //   xaxis: {
+        //     categories: all_month,
+        //   },
+        //   yaxis: {
+        //     labels: {
+        //       show: true,
+        //     },
+        //   },
+        //   colors: ["#116aef", "#ce313e", "#436ccf", "#dcad10", "#828382"],
+        //   markers: {
+        //     size: 0,
+        //     opacity: 0.3,
+        //     colors: ["#116aef", "#ce313e", "#436ccf", "#dcad10", "#828382"],
+        //     strokeColor: "#ffffff",
+        //     strokeWidth: 1,
+        //     hover: {
+        //       size: 7,
+        //     },
+        //   },
+        //   tooltip: {
+        //     y: {
+        //       formatter: function (val) {
+        //         return val + "FCFA";
+        //       },
+        //     },
+        //   },
+        // };
+  
+        // exi = document.getElementById(`income${ia}`);
+        // console.log(exi)
+        // if(!exi){
+        //   p.insertAdjacentHTML('beforeend',`
+        //     <div class="chart-height-lg">
+        //         <div style = "background-color: green" id="income${ia}" ></div>
+        //     </div>
+        //   `)
+        // }
+        // console.log(nom, anner)
+  
+        tbody.insertAdjacentHTML('beforeend',`
+          <tr>
+            <td><span class="${class_colore[boole]}"> ${nom} ${anner}</span></td>
+            <td>${recettes[0]}</td>
+            <td>${recettes[1]}</td>
+            <td>${recettes[2]}</td>
+            <td>${recettes[3]}</td>
+            <td>${recettes[4]}</td>
+            <td>${recettes[5]}</td>
+            <td>${recettes[6]}</td>
+            <td>${recettes[7]}</td>
+            <td>${recettes[8]}</td>
+            <td>${recettes[9]}</td>
+            <td>${recettes[10]}</td>
+            <td>${recettes[11]}</td>
+            <td>${all_total} FCFA</td>
+          </tr>
         `)
-      }
-      console.log(nom, anner)
-
-      tbody.insertAdjacentHTML('beforeend',`
-        <tr>
-          <td><span class="${class_colore[boole]}"> ${nom} ${anner}</span></td>
-          <td>${recettes[0]}</td>
-          <td>${recettes[1]}</td>
-          <td>${recettes[2]}</td>
-          <td>${recettes[3]}</td>
-          <td>${recettes[4]}</td>
-          <td>${recettes[5]}</td>
-          <td>${recettes[6]}</td>
-          <td>${recettes[7]}</td>
-          <td>${recettes[8]}</td>
-          <td>${recettes[9]}</td>
-          <td>${recettes[10]}</td>
-          <td>${recettes[11]}</td>
-          <td>${all_total} FCFA</td>
-        </tr>
-      `)
-
-      const hot = document.getElementById(`income${ia}`);
-      hot.insertAdjacentHTML('beforeend',`
-        <div class="" id="d${boole}-${anner}">
-        </div>
-      `)
-      var chart = new ApexCharts(document.querySelector(`#d${boole}-${anner}`), options);
-
-      chart.render();
-      boole++
-    })
-  </script>
+  
+        // const hot = document.getElementById(`income${ia}`);
+        // hot.insertAdjacentHTML('beforeend',`
+        //   <div class="" style = "background-color: blue" id="d${boole}-${anner}">
+        //   </div>
+        // `)
+        // var chart = new ApexCharts(document.querySelector(`#d${boole}-${anner}`), options);
+  
+        // chart.render();
+        boole++
+      })
+    </script>
+  </body>
 <!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
 </html>

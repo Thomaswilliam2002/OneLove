@@ -27,38 +27,13 @@
 
     <!-- Error container starts -->
     <div class="error-container">
-      <% if (msg === 'email'){%>
-        <h1 class="mb-2" >404</h1>
-        <h3 class="fw-light mb-4"> 
-          Email invalide ou utilisateur non trouvé
-        </h3>
-      <%}else if (msg === 'serveur'){%>
-        <h1 class="mb-2">505</h1>
-        <h3 class="fw-light mb-4">
-          Erreur de serveur ou systeme en maintenance ou auperations indisponible
-        </h3>
-      <%} else if (msg === 'envoyer'){%>
-        <h1 class="mb-2">202</h1>
-        <h3 class="fw-light mb-4">
-          Email de récupération envoyé !
-        </h3>
-      <%} else if (msg === 'invalide'){%>
-        <h1 class="mb-2">400</h1>
-        <h3 class="fw-light mb-4">
-          Le lien est invalide ou a expiré.
-        </h3>
-      <%} else if (msg === 'mdpsuccess'){%>
-        <h1 class="mb-2">200</h1>
-        <h3 class="fw-light mb-4">
-          Mot de passe modifié avec succès !
-        </h3>
-        <a href="/login" class="btn btn-primary">Se connecter</a>
-      <%}else{%>
-        <h1 class="mb-2">404</h1>
-        <h3 class="fw-light mb-4">
-          Page non trouvée
-        </h3>
-      <%}%>
+
+      <h1 class="mb-2">401</h1>
+      <h5 class="fw-light mb-4" style = "color: rgb(255, 153, 0);">
+        Vous devez vous connecter pour accéder à cette page ou effectuée cette action <br>
+        Il se peut que votre compte ait été désactivé ou suspendu. <br>
+        Veuillez vous <u style = "color: rgb(0, 38, 255);"><a href="/login">reconnecter</a></u> et, si cela persiste, contacter l’administrateur.
+      </h5>
     </div>
     <!-- Error container ends -->
 

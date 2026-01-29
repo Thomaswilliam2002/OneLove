@@ -119,9 +119,9 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <% i = 1; emballages.forEach(emballage => { %> 
+                          <% emballages.forEach((emballage, index) => {const matricule = String(index + 1).padStart(4, "0"); %> 
                           <tr class="text-center">
-                            <td><%= i %></td>
+                            <td><%= matricule %></td>
                             <td>
                               <%= emballage.nom %>
                             </td>
@@ -413,7 +413,7 @@
                               </div>
                             </td>
                           </tr>
-                          <% i++ }) %>
+                          <%}) %>
                         </tbody>
                       </table>
                     </div>
@@ -432,7 +432,7 @@
 
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2024</span>
+            <span>© OneLove admin 2026</span>
           </div>
           <!-- App footer ends -->
 

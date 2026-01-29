@@ -6,6 +6,10 @@ const {sequelize, Occupe, Personnel, Poste, BarSimpleJournal, BarVipJournal, App
     Emballage,
     Caisse,
     CaisseJournal} = require('./src/db/sequelize');
+
+const {stockJob} = require('./src/mail/email')
+
+
 const methodOverride = require('method-override');
 const path = require('path'); 
 const session = require('express-session');
@@ -41,6 +45,7 @@ const histSortie = require('./src/routes/hist/histSortie')
 const pointage = require('./src/routes/presence/presence')
 const occupent = require('./src/routes/occupent/occupent')
 const caisseProduit = require('./src/routes/produit/produitCaisse')
+const forgot = require('./src/mail/forgotMail')
 
 const {MaisonColse, Chambre, Cuisine} = require('./src/db/sequelize')
 const {BarSimple} = require('./src/db/sequelize')
@@ -81,7 +86,8 @@ app.use(infos);
 
 //route roote
 app.get('/', (req, res) => {
-    res.json('Hello heroku !🤩')
+    res.render('login', {msg: req.query.msg})
+    // res.json('Hello heroku !🤩')
 })
 // ------------------------------------------------------------------------------------------
 app.get('/expo', (req, res) => {
@@ -91,7 +97,12 @@ app.get('/expo', (req, res) => {
 
 //route page not found
 app.get('/notFound', (req, res) => {
-    res.render('page-not-found')
+    res.render('page-not-found', {msg: req.query.msg})
+})
+
+//route acount not found or probleme validation
+app.get('/validation', (req, res) => {
+    res.render('validation')
 })
 
 //route cree une fiche de paie
@@ -245,20 +256,10 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
     }catch(e){
         console.log(e)
     }
-    // const nb_personnel = await Personnel.count()
-    // if(nb_personnel){
-    //     dataf.personnel = nb_personnel
-    //     data.push(nb_personnel)
-    //     const nb_appart = await Appartement.count()
-    //     if(nb_appart){
-    //         data.push(nb_appart)
-            
-    //     }
-    // }else{
-
-    // }
-    // res.render('index')
 })
+
+// verrifie la liste des produit et emballage en rupture de stock toutte les heure et envoi un mail aux admin
+stockJob.start();
 
 //route presence
 app.get('/presence', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
@@ -392,7 +393,7 @@ app.get('/Add', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
 // })
 
 //route edit-bar-club
-app.get('/editBarClub/:id', protrctionRoot, authorise('admin'), (req, res) => {
+app.get('/editBarClub/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
     //console.log("ok")
     if(req.query.type === "bs"){
         BarSimple.findByPk(req.params.id)
@@ -420,7 +421,7 @@ app.get('/editBarClub/:id', protrctionRoot, authorise('admin'), (req, res) => {
 
 
 //route afficher bar simple,vip and crazy club
-app.get('/allBarClub', protrctionRoot, authorise('admin'), (req, res) => {
+app.get('/allBarClub', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
     BarSimple.findAll()
         .then(bars => {
             BarVip.findAll()
@@ -676,6 +677,7 @@ caisse.caisseBareVip(app);
 caisse.caisseAppart(app);
 caisse.caisseMClose(app);
 caisse.caisseCClub(app);
+caisse.caisseCuisine(app);
 
 caisseProduit.allProduitCaisse(app);
 caisseProduit.addHistCaisse(app);
@@ -779,6 +781,9 @@ pointage.deletePresence(app);
 
 occupent.AddOccupent(app);
 occupent.deleteOccupent(app);
+
+forgot.forgotPassword(app);
+forgot.resetPassword(app);
 
 // app.listen(port, () => console.log('serveur en cour sur http://localhost:' + port));
 

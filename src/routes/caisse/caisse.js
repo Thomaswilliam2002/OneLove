@@ -1,5 +1,5 @@
 const {Caisse, BarSimpleJournal, BarVipJournal, AppartFondJournal, ChambreJournal, BarSimple, BarVip} = require('../../db/sequelize')
-const {Poste, Appartement, MaisonColse, CrazyClub, CrazyClubJournal, HistCaisse} = require('../../db/sequelize')
+const {Poste, Appartement, MaisonColse, CrazyClub, CrazyClubJournal, HistCaisse, CuisineJournal} = require('../../db/sequelize')
 const {Personnel} = require('../../db/sequelize')
 const {Occupe} = require('../../db/sequelize')
 const occupe = require('../../models/occupe')
@@ -123,6 +123,27 @@ caisseAppart = (app) => {
             if(all_bs_casse){
                 //res.json(all_bs_casse);
                 res.render('caisseAppart', {all_bs_casse})
+            }
+        }catch(e){
+            console.log(e)
+        }
+    })
+}
+
+caisseCuisine = (app) => {
+    app.get('/caisseCuisine', protrctionRoot, authorise('admin', 'comptable'), async (req, res) =>{
+        try{
+            const all_bs_casse = await CuisineJournal.findAll({
+                attributes:[ 
+                    [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 
+                    [fn('SUM', col('montant_verser')),'total_recette'],
+                ],
+                    group: ["mois"],
+                    row:true
+            });
+            if(all_bs_casse){
+                //res.json(all_bs_casse);
+                res.render('caisseCuisine', {all_bs_casse})
             }
         }catch(e){
             console.log(e)
@@ -281,5 +302,6 @@ module.exports = {
     caisseBareVip,
     caisseAppart,
     caisseMClose,
-    caisseCClub
+    caisseCClub,
+    caisseCuisine
 }

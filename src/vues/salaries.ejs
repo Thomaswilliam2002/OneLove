@@ -107,7 +107,7 @@
 
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2024</span>
+            <span>© OneLove admin 2026</span>
           </div>
           <!-- App footer ends -->
 
@@ -130,7 +130,7 @@
       const tbody = document.getElementById("tbody")
       let data = JSON.parse('<%- JSON.stringify(datas) %>')
       
-      console.log(data[0])
+      // console.log(data[0])
       let c = 0
       data[0].forEach((staff, inst) => {
         data[1].forEach((punition, inpu) => {
@@ -155,7 +155,7 @@
               <td>${staff.Personnel.periode}</td>
               <td>${sanction[inst]}</td>
               <td>${staff.Personnel.periode === 'Mensuel' ? staff.Poste.salaire - sanction[inst] : staff.Personnel.periode === 'Hebdomadaire' ?
-                (staff.Poste.salaire - sanction[inst])/4 : staff.Personnel.periode === 'Quinzaine' ? staff.Poste.salaire / 2 : staff.Personnel.periode === 'Journalier' ? 
+                (staff.Poste.salaire - (sanction[inst]/4))/4 : staff.Personnel.periode === 'Quinzaine' ? (staff.Poste.salaire - (sanction[inst]/2)) / 2 : staff.Personnel.periode === 'Journalier' ? 
                 (staff.Poste.salaire - sanction[inst])/30 : 'Indefini'}</td>
               <td></td>
             </tr>

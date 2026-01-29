@@ -1,41 +1,58 @@
-const {CronJob} = require("cron")
-const nodemeiler = require('nodemailer')
-const fs = require("fs")
-const inlineCss = require("inline-css")
-
-email = async (resive, sujet, msg) => {
-    const transporter = nodemeiler.createTransport({
-        service: "gmail",
-        auth:{
-            user: "w98464103@gmail.com",
-            pass:"98464103william"
+const { CronJob } = require("cron");
+const nodemailer = require('nodemailer');
+const { Produit, Emballage } = require('../db/sequelize');
+// --- 1. FONCTION D'ENVOI (MOTEUR) ---
+const sendStockAlert = async (emails, message) => {
+    const transporter = nodemailer.createTransport({
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+          user: "5665c3ea8a96ad", // TON USER MAILTRAP
+          pass: "85b636efcc7adb"        // TON PASS MAILTRAP (Vérifie bien ces 2 codes sur Mailtrap !)
         }
-    })
+    });
 
-    const templateFile = fs.readFileSync("./template/template.html", 'utf-8')
+    const mailOptions = {
+        from: '"Stock One Love" <test@onelove.com>', //"One Love Test" <test@onelove.com>
+        to: emails.join(','),
+        subject: "⚠️ ALERTE : Seuil de stock atteint",
+        text: message
+    };
 
-    const mailOption = {
-        from: "w98464103@gmail.com",
-        to: resive,
-        subject: sujet,
-        text: msg
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log("✅ Email envoyé à Mailtrap !");
+    } catch (error) {
+        console.error("❌ Erreur d'envoi SMTP :", error.message);
     }
+};
 
-    await transporter.sendMail(mailOption, (e, info) => {
-        if (e) {
-            console.log(e)
-        } else {
-            console.log("Email envoyer avec succes:" + info.response)
+// --- 2. LOGIQUE DE SURVEILLANCE (CRON) ---
+const admins = ["ton-email@test.com"];
+
+const stockJob = new CronJob('0 0 * * * *', async () => {
+    console.log("🔍 Vérification des seuils...");
+    try {
+        const produits = await Produit.findAll();
+        const emballages = await Emballage.findAll();
+
+        let msg = "";
+
+        for (const produit of produits) {
+            if (produit.quantiter <= produit.seuil) {
+                msg += `⚠️ Le produit ${produit.nom} est en rupture de stock ! I est actuellement a ${produit.quantiter} .\n`;
+            }
         }
-    })
-}
 
-const job = new CronJob(
-    cronTime= "* * * * * *",
-    onTick= () => {
-        console.log("ok")
-    },
-    start= false
-)
+        for (const emballage of emballages) {
+            if (emballage.quantiter <= emballage.seuil) {
+                msg += `⚠️ L'emballage ${emballage.nom} est en rupture de stock ! Il est actuellement a ${emballage.quantiter} .\n`;
+            }
+        }
+        await sendStockAlert(admins, msg);
+    } catch (err) {
+        console.error("❌ Erreur dans le calcul du Cron :", err.message);
+    }
+});
 
-job.start()
+module.exports = { stockJob };

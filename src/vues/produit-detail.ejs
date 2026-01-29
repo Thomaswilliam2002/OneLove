@@ -4,7 +4,14 @@
   
 <!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/accordions.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:35 GMT -->
 <%- include('head')%>
+  <style>
+    .wrap-text {
+  white-space: normal !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
 
+  </style>
   <body>
 
     <!-- Page wrapper starts -->
@@ -121,7 +128,7 @@
                       aria-labelledby="headingSpecialTitle<%= produit.id_produit %>" data-bs-parent="#accordionSpecialTitle<%= produit.id_produit %>">
                       <div class="accordion-body">
                         <div class="table-responsive">
-                          <table id="customButtons"  class="table truncate m-0 align-middle " >
+                          <table id=""  class="table truncate m-0 align-middle customButtone" >
                             <thead class="text-center">
                               <tr>
                                 <th>ID</th>
@@ -240,7 +247,7 @@
                       aria-labelledby="<%= produit.id_produit %>headingSpecialTitle<%= produit.id_produit %>" data-bs-parent="#<%= produit.id_produit %>accordionSpecialTitle<%= produit.id_produit %>">
                       <div class="accordion-body">
                         <div class="table-responsive">
-                          <table id="customButtonss" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                          <table id="" class="table truncate m-0 align-middle dataTable customButtone" aria-describedby="basicExample_filter">
                             <thead class="text-center">
                               <tr>
                                 <th>ID</th>
@@ -248,6 +255,7 @@
                                 <th>Prix a l'uniter</th>
                                 <th>Montant</th>
                                 <th>Destinataire</th>
+                                <th>Commantaire</th>
                                 <th>Date de l'operation</th>
                                 <th>Heure de l'operation</th>
                                 <th>Action</th> 
@@ -261,6 +269,7 @@
                                 <td><%= hvente.prix_unit %></td>
                                 <td class="calcule2"><%= hvente.prix_unit * hvente.quantiter %></td>
                                 <td><%= hvente.receveur %></td>
+                                <td class="wrap-text"><%= hvente.commantaire %></td>
                                 <td><%= new Date(hvente.created).getDate() %>-<%= new Date(hvente.created).getMonth() + 1 %>-<%= new Date(hvente.created).getFullYear()%></td>
                                 <td><%= new Date(hvente.created).getHours() %>-<%= new Date(hvente.created).getMinutes() %>-<%= new Date(hvente.created).getSeconds()%></td>
                                 <td>
@@ -385,7 +394,7 @@
 
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2024</span>
+            <span>© OneLove admin 2026</span>
           </div>
           <!-- App footer ends -->
 

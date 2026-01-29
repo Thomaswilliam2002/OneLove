@@ -86,6 +86,20 @@
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
                               <div class="mb-3">
+                                <label for="" class="form-label"><strong>N° CNSS :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
+                                <label for="" class="form-label"><strong>IFU :</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-3">
                                 <label for="" class="form-label"><strong>TEL :</strong></label>
                               </div>
                               <!-- Form group end -->
@@ -127,16 +141,21 @@
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
                               <div class="mt-4">
-                                <label for="invNumber" class="form-label"><strong>MOIS DE :</strong></label>
+                                <label for="invNumber" class="form-label"><strong>PERIODE:</strong></label>
                               </div>
                               <!-- Form group end -->
                             </div>
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
-                              <div class="mt-3">
-                                <h2 style="display: none;" id="h2"></h2>
-                                <input type="text" id="lieu" class="form-control nomove"
-                                  placeholder="Lieu de l'édition de la fiche" style="margin-left: -10px;">
+                              <div class="mt-4">
+                                <label for="invNumber" class="form-label"><strong>Date d'EDITION:</strong></label>
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mt-4">
+                                <label for="invNumber" class="form-label"><strong>Lieu d'EDITION:</strong></label>
                               </div>
                               <!-- Form group end -->
                             </div>
@@ -167,6 +186,22 @@
                             </div>
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
+                              <div class="mb-2">
+                                <input type="text" id="invNumber" class="form-control nomove"
+                                  placeholder="Entrer le numero CNSS" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mb-2">
+                                <input type="text" id="invNumber" class="form-control nomove"
+                                  placeholder="Entrer le numero IFU" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
                               <div class="mb-3">
                                 <input type="text" id="invNumber" class="form-control nomove"
                                   placeholder="Entrer le numero" style="margin-left: -10px;">
@@ -175,9 +210,16 @@
                             </div>
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
-                              <div class="mb-3">
-                                <input type="text" id="customerName" class="form-control nomove"
-                                  placeholder="Situation matrimoniale" style="margin-left: -10px;">
+                              <div class="mb-4">
+                                <!-- <input type="text" id="customerName" class="form-control nomove"
+                                  placeholder="Situation matrimoniale" style="margin-left: -10px;"> -->
+                                  <select class="form-select aussi nomove" id="poste" name="periode" style="margin-left: -10px;">
+                                    <option value="Célibataire">Célibataire</option>
+                                    <option value="Marié(e)">Marié(e)</option>
+                                    <option value="Divorcé(e)">Divorcé(e)</option>
+                                    <option value="Veuf(ve)">Veuf(ve)</option>
+                                    <option value="Concubin(e)">Concubin(e)</option>
+                                  </select>
                               </div>
                               <!-- Form group end -->
                             </div>
@@ -234,10 +276,26 @@
                             </div>
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
-                              <div class="mt-2">
+                              <div class="mt-1">
+                                <span style="display: none; background-color: tomato;" id="h2"></span>
+                                <input type="text" id="lieu" class="form-control nomove" maxlength="50"
+                                  placeholder="Lieu de l'édition de la fiche" style="margin-left: -10px;">
+                              </div>
+                              <!-- Form group end -->
+                            </div>
+                            <div class="col-sm-6 col-12">
+                              <!-- Form group start -->
+                              <div class="mt-4">
                                 <label for="invNumber" class="form-label"><strong>RESIDENCE ONELOVE</strong></label>
                               </div>
                               <!-- Form group end -->
+                            </div>
+                            
+                            <div class="col-sm-6 col-12 mt-auto">
+                              <div class="form-check" id = "container_check">
+                                <input class="form-check-input" type="checkbox" id="flexCheckChecked" checked>
+                                <label class="form-check-label" for="flexCheckChecked">Déclaré</label>
+                              </div>
                             </div>
                           </div>
                           <!-- Row end -->
@@ -245,7 +303,7 @@
                       </div>
                       <!-- Row end -->
                     </div>
-
+                    <!-- ---------------------------------------------------------------- -->
                     <!-- Row start -->
                     <div class="row">
                       <div class="col-12">
@@ -254,8 +312,7 @@
                             <thead class="text-center">
                               <tr>
                                 <th>Libellé</th>
-                                <th>Bae</th>
-                                <th>Montant</th>
+                                <th>Base</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -270,14 +327,7 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control" id="price" style="text-align: center;">
-                                  </div>
-                                  <!-- Form group end -->
-                                </td>
-                                <td>
-                                  <!-- Form group start -->
-                                  <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control" id="vat" style="text-align: center;">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control brut" id="price" style="text-align: center;">
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -293,14 +343,7 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
-                                  </div>
-                                  <!-- Form group end -->
-                                </td>
-                                <td>
-                                  <!-- Form group start -->
-                                  <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center brut" id="price" style="text-align: center;">
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -316,14 +359,7 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
-                                  </div>
-                                  <!-- Form group end -->
-                                </td>
-                                <td>
-                                  <!-- Form group start -->
-                                  <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center brut" id="price" style="text-align: center;">
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -339,14 +375,7 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
-                                  </div>
-                                  <!-- Form group end -->
-                                </td>
-                                <td>
-                                  <!-- Form group start -->
-                                  <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center brut" id="price" style="text-align: center;">
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -362,14 +391,7 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
-                                  </div>
-                                  <!-- Form group end -->
-                                </td>
-                                <td>
-                                  <!-- Form group start -->
-                                  <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="totalBrut" style="text-align: center;" readonly>
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -378,21 +400,78 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="m-0">
-                                    <h5 class="text-center">Retenues Obligatoires</h5>
+                                    <h5 class="text-center">ITS</h5>
                                   </div>
                                   <!-- Form group end -->
                                 </td>
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center retenue" id="its" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">AIB</h5>
                                   </div>
                                   <!-- Form group end -->
                                 </td>
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                    <input type="number" readonly min="0" step="0.01" value="0" class="form-control center" id="aib" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Manquant</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center retenue" id="manquant" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Sanction</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center retenue" id="sanction" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Avance</h5>
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="input-group m-0">
+                                    <input type="number" min="0" step="0.01" value="0" class="form-control center retenue" id="avance" style="text-align: center;">
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -408,14 +487,23 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="price" style="text-align: center;">
+                                    <input type="number" readonly min="0" step="0.01" value="0" class="form-control center" id="cnss" style="text-align: center;">
+                                  </div>
+                                  <!-- Form group end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <!-- Form group start -->
+                                  <div class="m-0">
+                                    <h5 class="text-center">Retenue Salariale</h5>
                                   </div>
                                   <!-- Form group end -->
                                 </td>
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                    <input type="number" readonly min="0" step="0.01" value="0" class="form-control center" id="retenueSalariale" style="text-align: center;">
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -431,14 +519,7 @@
                                 <td>
                                   <!-- Form group start -->
                                   <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0"  class="form-control center" id="price" style="text-align: center;">
-                                  </div>
-                                  <!-- Form group end -->
-                                </td>
-                                <td>
-                                  <!-- Form group start -->
-                                  <div class="input-group m-0">
-                                    <input type="number" min="0" step="0.01" value="0" class="form-control center" id="vat" style="text-align: center;">
+                                    <input type="number" readonly min="0" step="0.01" value="0"  class="form-control center" id="salaireNet" style="text-align: center;">
                                   </div>
                                   <!-- Form group end -->
                                 </td>
@@ -465,7 +546,7 @@
 
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2024</span>
+            <span>© OneLove admin 2026</span>
           </div>
           <!-- App footer ends -->
 
@@ -486,6 +567,55 @@
     <script src="assets/fact/html2canvas.min.js"></script>
 
     <script>
+    function calculerPaie() {
+      // 🔹 TOTAL BRUT
+      let totalBrut = 0;
+      document.querySelectorAll('.brut').forEach(el => {
+        totalBrut += Number(el.value) || 0;
+      });
+
+      // 🔹 statut déclaré
+      const declarer = document.getElementById('flexCheckChecked').checked;
+
+      let cnss = 0;
+      let aib = 0;
+
+      if (declarer) {
+        cnss = totalBrut * 0.036;
+        aib = 0;
+      } else {
+        cnss = 0;
+        aib = totalBrut * 0.05;
+      }
+
+      // 🔹 retenues saisies manuellement
+      const its       = Number(document.getElementById('its')?.value) || 0;
+      const avance    = Number(document.getElementById('avance')?.value) || 0;
+      const sanction  = Number(document.getElementById('sanction')?.value) || 0;
+      const manquant  = Number(document.getElementById('manquant')?.value) || 0;
+
+      // 🔹 RETENUE SALARIALE TOTALE
+      const retenueSalariale =
+        its + aib + avance + sanction + manquant + cnss;
+
+      // 🔹 SALAIRE NET
+      const salaireNet = totalBrut - retenueSalariale;
+
+      // 🔹 affichage
+      document.getElementById('totalBrut').value = totalBrut.toFixed(2);
+      document.getElementById('cnss').value = cnss.toFixed(2);
+      document.getElementById('aib').value = aib.toFixed(2);
+      document.getElementById('retenueSalariale').value = retenueSalariale.toFixed(2);
+      document.getElementById('salaireNet').value = salaireNet.toFixed(2);
+    }
+
+    // 🔥 recalcul automatique (Excel-like)
+    document.querySelectorAll('.brut, .retenue').forEach(el => {
+      el.addEventListener('input', calculerPaie);
+    });
+
+    document.getElementById('flexCheckChecked').addEventListener('change', calculerPaie);
+    // ------------------------------------------------------------------------------------------------------
     document.getElementById('btnExportPDF').addEventListener('click', () => {
       const h2 = document.getElementById("h2")
       const lieu = document.getElementById("lieu")
@@ -502,12 +632,18 @@
           color: transparent; /* masque tous les placeholders */
         }
       `;
+      document.getElementById("container_check").style.display = "none";
 
       document.head.appendChild(style);
 
       document.querySelectorAll("input").forEach(input => {
         input.placeholder = "";
       });
+
+      // 👉 Affichage pour le PDF
+      h2.innerText = lieu.value;
+      h2.style.display = "block";
+      lieu.style.display = "none";
 
       document.querySelectorAll('.hide-in-pdf').forEach(el => {
         el.style.display = 'none';
@@ -519,13 +655,6 @@
 
       const invoice = document.querySelector('.create-invoice-wrapper'); // zone facture
       html2canvas(invoice).then(canvas => {
-        // h2.style.display = 'block'
-        // h2.innerText = lieu.value
-        // lieu.style.display = 'none'
-
-      h2.innerText = lieu.value;
-      h2.style.display = "block";
-      lieu.style.display = "none";
 
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jspdf.jsPDF('p', 'mm', 'a4'); // portrait A4
@@ -548,6 +677,7 @@
       // });
       // location.reload();
     });
+    
     </script>
   </body>
 

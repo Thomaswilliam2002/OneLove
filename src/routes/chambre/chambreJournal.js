@@ -32,13 +32,13 @@ oneChJournal = (app) => {
 
 addChJournal = (app) => {
     app.post('/addChJournal', (req, res) => {
-        const {mclose1, chambre1, montant, date, commentaire} = req.body;
+        const {mclose1, chambre2, montant, date, commentaire} = req.body;
         ChambreJournal.create({
             loyer:montant,
             motif: '',
             description: commentaire,
             date: date,
-            id_chambre: chambre1,
+            id_chambre: chambre2,
             id_mclose: mclose1
         })
             .then(chambreJournal => {
