@@ -34,7 +34,7 @@ oneAppart = (app) => {
             if(appartement){
                 const all_appart_font = await AppartFondJournal.findAll({
                     attributes:[ 
-                        [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 
+                        [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 
                         [fn('SUM', col('recette')),'total_recette'],
                         [col("Appartement.nom_appart"), "NomAppart"]
                     ],

@@ -541,7 +541,7 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin','comptable'), async 
     try{
         const fbs = await BarSimpleJournal.findAll({
             attributes:[
-                [fn('DATE_FORMAT', col('date'), '%Y-%m'), 'mois'],
+                [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
                 [fn('SUM', col('recette')),'total_recette']],
                 group: ['mois'],
                 order: [['mois', 'ASC']]
@@ -551,7 +551,7 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin','comptable'), async 
             try{
                 const fbv = await BarVipJournal.findAll({
                     attributes:[
-                        [fn('DATE_FORMAT', col('date'), '%Y-%m'), 'mois'],
+                        [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
                         [fn('SUM', col('recette')),'total_recette']],
                         group: [literal('mois')],
                         order: [[literal('mois'), 'ASC']
@@ -562,7 +562,7 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin','comptable'), async 
                     try{
                         const fap = await AppartFondJournal.findAll({
                             attributes:[
-                                [fn('DATE_FORMAT', col('date'), '%Y-%m'), 'mois'],
+                                [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
                                 [fn('SUM', col('recette')),'total_recette']],
                                 group: [literal('mois')],
                                 order: [[literal('mois'), 'ASC']
@@ -573,7 +573,7 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin','comptable'), async 
                             try{
                                 const fcui = await CuisineJournal.findAll({
                                     attributes:[
-                                        [fn('DATE_FORMAT', col('date'), '%Y-%m'), 'mois'],
+                                        [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
                                         [fn('SUM', col('montant_verser')),'total_recette']],
                                         group: [literal('mois')],
                                         order: [[literal('mois'), 'ASC']
@@ -584,7 +584,7 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin','comptable'), async 
                                     try{
                                         const fmc = await ChambreJournal.findAll({
                                             attributes:[
-                                                [fn('DATE_FORMAT', col('date'), '%Y-%m'), 'mois'],
+                                                [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
                                                 [fn('SUM', col('loyer')),'total_recette']],
                                                 group: [literal('mois')],
                                                 order: [[literal('mois'), 'ASC']
@@ -594,7 +594,7 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin','comptable'), async 
                                         if(fmc){
                                             const fcc = await CrazyClubJournal.findAll({
                                                 attributes:[
-                                                    [fn('DATE_FORMAT', col('date'), '%Y-%m'), 'mois'],
+                                                    [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
                                                     [fn('SUM', col('recette')),'total_recette']],
                                                     group: [literal('mois')],
                                                     order: [[literal('mois'), 'ASC']

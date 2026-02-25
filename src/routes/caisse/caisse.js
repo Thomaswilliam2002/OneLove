@@ -45,7 +45,7 @@ caisseBareSimple = (app) => {
         try{
             const all_bs_casse = await BarSimpleJournal.findAll({
                 attributes:[ 
-                    [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 'id_barSimple', 
+                    [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 'id_barSimple', 
                     [fn('SUM', col('recette')),'total_recette'],
                     [col("BarSimple.nom"), "NomBar"]
                 ],
@@ -74,7 +74,7 @@ caisseBareVip = (app) => {
         try{
             const all_bs_casse = await BarVipJournal.findAll({
                 attributes:[ 
-                    [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 'id_barVip', 
+                    [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 'id_barVip', 
                     [fn('SUM', col('recette')),'total_recette'],
                     [col("BarVip.nom"), "NomBar"]
                 ],
@@ -103,7 +103,7 @@ caisseCClub = (app) => {
         try{
             const all_bs_casse = await CrazyClubJournal.findAll({
                 attributes:[ 
-                    [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 'id_cclub', 
+                    [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 'id_cclub', 
                     [fn('SUM', col('recette')),'total_recette'],
                     [col("CrazyClub.nom"), "NomCc"]
                 ],
@@ -132,7 +132,7 @@ caisseAppart = (app) => {
         try{
             const all_bs_casse = await AppartFondJournal.findAll({
                 attributes:[ 
-                    [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 
+                    [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 
                     [fn('SUM', col('recette')),'total_recette'],
                 ],
                     group: ["mois"],
@@ -155,7 +155,7 @@ caisseCuisine = (app) => {
         try{
             const all_bs_casse = await CuisineJournal.findAll({
                 attributes:[ 
-                    [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 
+                    [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 
                     [fn('SUM', col('montant_verser')),'total_recette'],
                 ],
                     group: ["mois"],
@@ -178,7 +178,7 @@ caisseMClose = (app) => {
         try{
             const all_bs_casse = await ChambreJournal.findAll({
                 attributes:[ 
-                    [literal("DATE_FORMAT(date, '%Y-%m')"), "mois"], 'id_mclose',
+                    [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 'id_mclose',
                     [fn('SUM', col('loyer')),'total_recette'],
                     [col("MaisonClose.nom"), "NomMc"]],
                     include: [{

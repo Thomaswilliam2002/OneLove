@@ -17,7 +17,7 @@ allProduit = (app) => {
                         //console.log(produits)
                         HistEntrer.findAll({
                             attributes:[ 
-                                [literal("DATE_FORMAT(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
+                                [literal("TO_CHAR(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
                                 [literal("SUM(quantiter * prix_unit)"),'total_recette'],
                                 [literal("(SELECT nom FROM Produits where Produits.id_produit = HistEntrer.id_probal)"),'nom'],
                             ],
@@ -103,7 +103,7 @@ oneProduit = (app) => {
                             .then(hventes => {
                                 HistEntrer.findAll({
                                     attributes:[
-                                        [fn('DATE_FORMAT', col('created'), '%Y-%m'), 'mois'],'id_probal',
+                                        [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
                                         [literal("SUM(quantiter * prix_unit)"),'recette']],
                                         where: {
                                             id_probal: produit.id_produit, type: 'produit'
@@ -114,7 +114,7 @@ oneProduit = (app) => {
                                     .then(hr => {
                                         HistSortie.findAll({
                                             attributes:[
-                                                [fn('DATE_FORMAT', col('created'), '%Y-%m'), 'mois'],'id_probal',
+                                                [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
                                                 [literal("SUM(quantiter * prix_unit)"),'recette']],
                                                 where: {
                                                     id_probal: produit.id_produit, type: 'produit'

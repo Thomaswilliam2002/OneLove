@@ -79,7 +79,7 @@ oneEmballage = (app) => {
                             .then(hventes => {
                                 HistEntrer.findAll({
                                     attributes:[
-                                        [fn('DATE_FORMAT', col('created'), '%Y-%m'), 'mois'],'id_probal',
+                                        [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
                                         [literal("SUM(quantiter * prix_unit)"),'recette']],
                                         where: {
                                             id_probal: emballage.id_emballage, type: 'emballage'
@@ -90,7 +90,7 @@ oneEmballage = (app) => {
                                     .then(hr => {
                                         HistSortie.findAll({
                                             attributes:[
-                                                [fn('DATE_FORMAT', col('created'), '%Y-%m'), 'mois'],'id_probal',
+                                                [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
                                                 [literal("SUM(quantiter * prix_unit)"),'recette']],
                                                 where: {
                                                     id_probal: emballage.id_emballage, type: 'emballage'
