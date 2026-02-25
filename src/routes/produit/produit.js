@@ -19,11 +19,11 @@ allProduit = (app) => {
                             attributes:[ 
                                 [literal("TO_CHAR(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
                                 [literal("SUM(quantiter * prix_unit)"),'total_recette'],
-                                [literal("(SELECT nom FROM produits where produits.id_produit = histEntrer.id_probal)"),'nom'],
+                                [literal("(SELECT nom FROM produits where produits.id_produit = histEntrers.id_probal)"),'nom'],
                             ],
                                 where: {
                                     type:{
-                                        [Op.in]: ["produit"]
+                                        [Op.in]: ["produits"]
                                     }
                                 },
                                 group: ["id_probal", "mois"],
