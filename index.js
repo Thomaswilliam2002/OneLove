@@ -61,6 +61,7 @@ const appartFondJournal = require('./src/models/appartFondJournal');
 //const article = require('./src/models/article')
 
 const app = express();
+app.set('trust proxy', 1); // Indispensable pour que le cookie passe sur Render
 
 app.set('view engine', 'ejs');
 app.set('views', 'src/vues')
@@ -79,10 +80,13 @@ app.use(session({
     store: mySessionStore,
     resave: false,
     saveUninitialized: false,
+    proxy: true, // Ajoute cette ligne aussi
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production' || true,
         httpOnly: true,
+        // sameSite: 'lax' // Recommandé pour éviter les problèmes de redirection
+        sameSite: 'none',     // Nécessaire si le cookie traverse des domaines
     }
 }));
 
