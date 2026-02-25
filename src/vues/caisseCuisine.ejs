@@ -178,7 +178,15 @@
     <!-- Required jQuery first, then Bootstrap Bundle JS  style = "height= 100%"--> 
     <script src="assets/vendor/apex/apexcharts.min.js"></script>
     <script>
-        
+      window.addEventListener("pageshow", function (event) {
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance != "undefined" && 
+                                window.performance.navigation.type === 2);
+        if (historyTraversal) {
+            // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+            window.location.reload();
+        }
+      });
       const text_colore = ['text-primary', 'text-info', 'text-danger', 'text-warning', 'text-success']
       color = ['blue', 'red', 'orange', 'green', 'pink']
       const class_colore = ['badge bg-primary', 'badge bg-info', 'badge bg-danger', 'badge bg-warning', 'badge bg-success']

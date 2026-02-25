@@ -11,7 +11,10 @@ allJournal = (app) => {
             .then(journals => {
                 res.status(200).render('appartJournal', {journals: journals, msg: req.query.msg, indice: req.query.indice})
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                //console.log('erreure de selection all', _)
+                res.redirect('/notFound');
+            })
     })
 }
 
@@ -23,7 +26,8 @@ appartFondJournal = (app) => {
         if(hfond){
             res.status(200).render('appartJournal', {hfonds: hfond, msg: req.query.msg, indice: req.query.indice})
         }else{
-            console.log('erreure de selection all', _)
+            // console.log('erreure de selection all', _)
+            res.redirect('/notFound');
         }
     })
     
@@ -36,7 +40,10 @@ oneJournal = (app) => {
                 const msg = "Journal recuperer avec succes"
                 res.json({msg, data: journal})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                //console.log('erreure de selection');
+                res.redirect('/notFound');
+            })
     })
 }
 
@@ -52,7 +59,10 @@ addJournal = (app) => {
             .then(journal => {
                 res.redirect('/formFondBarClub?msg=ajout&type=appart')
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => {
+                //console.log('erreure de ajout', _)
+                res.redirect('/notFound');
+            })
     })
 }
 
@@ -65,7 +75,10 @@ updateJournal = (app) => {
                 const msg = "Modification du journal avec succes"
                 res.json({msg})
             })
-            .catch(_ => console.log('erreure de modification'))
+            .catch(_ => {
+                //console.log('erreure de modification')
+                res.redirect('/notFound');
+            })
     })
 }
 
@@ -80,7 +93,10 @@ deleteFondJournal = (app) => {
                         // res.json({msg})
                         res.redirect('/appartFondJournal?msd=sup&indice=admin')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        //console.log('erreure de suppression', _)
+                        res.redirect('/notFound');
+                    })
             })
     })
 }
@@ -96,7 +112,7 @@ deleteJournal = (app) => {
                         // res.json({msg})
                         res.redirect('/appartJournal?msd=sup&indice=admin')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {res.redirect('/notFound');})
             })
     })
 }

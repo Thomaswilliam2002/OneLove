@@ -16,7 +16,11 @@ allPersonnel = (app) => {
                 const msg = "Liste recuperer avec succes"
                 res.status(200).render('staff-list', {personnels: personnels, msg: req.query.msg, type:req.query.type, allType: req.query.allType});
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -31,6 +35,7 @@ validation = (app) => {
             res.redirect('/allPersonnel?msg=modif&type=admin');
         }else{
             res.redirect('/notFound');
+            return;
         }
     })
 }
@@ -54,12 +59,20 @@ onePersonnel = (app) => {
                     .then(caisses => {
                         res.status(200).render('staff-profil', {occupe: occupe, indice: req.query.indice, caisses: caisses});
                     })
-                    .catch(_ => console.log('erreure de selection', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
                 }else{
                     res.status(200).render('staff-profil', {occupe: occupe, indice: req.query.indice});
                 }
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -74,11 +87,27 @@ formAddPersonnel = (app) =>{
                                 CrazyClub.findAll()
                                     .then(cc => {
                                         res.status(200).render('add-staff', {postes: postes,barSimples: bs, barVips: bv, crazycs: cc, indice: req.query.indice, msg: req.query.msg})
-                                    }).catch(_ => console.log('erreure de selection', _))
-                            }).catch(_ => console.log('erreure de selection', _))
-                    }).catch(_ => console.log('erreure de selection', _))
+                                    }).catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
+                            }).catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
+                    }).catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -103,9 +132,17 @@ formEditAdmin = (app) =>{
                     //res.json(occupe)
                     res.status(200).render('edit-admin', {personnel: personnel, occupe: occupe})
                 })
-                .catch(_ => console.log('erreure de selection', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -117,9 +154,17 @@ formEditPersonnel = (app) =>{
                 .then(postes => {
                     res.status(200).render('edit-staff', {personnel: personnel, postes: postes})
                 })
-                .catch(_ => console.log('erreure de selection', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -169,8 +214,9 @@ addPersonnel = (app) => {
                     type = 'gerant'
                 }
             }catch (e){
-                console.log(e)
-                return;
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             }
         }
 
@@ -209,11 +255,23 @@ addPersonnel = (app) => {
 
                                 }
                             })
-                            .catch(_ => console.log('erreure de creation de Occupe p', _))
+                            .catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure ', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de ajout p', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -247,11 +305,23 @@ updatePersonnel = (app) => {
                                 .then(occupe =>{
                                     res.redirect(`/onePersonnel/${req.params.id}`);
                                 })
-                                .catch(_ => console.log('erreure de creation de Occupe p', _))
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
                         })
-                        .catch(_ => console.log('erreure ', _))
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
                 })
-                .catch(_ => console.log('erreure de mise a jour', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
         }
         else if(req.query.type === 'admin'){
             const {nom, prenom, email, numero, age, selectGenderOptions, qualification, poste, departement, sdepartement, salaire, desc, adresse} = req.body;
@@ -276,9 +346,17 @@ updatePersonnel = (app) => {
                                 .then(occupe =>{
                                     res.redirect('/allPersonnel?allType=admin&msg=modif&type=admin');
                                 })
-                                .catch(_ => console.log('erreure de creation de Occupe p', _))
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
                 })
-                .catch(_ => console.log('erreure de mise a jour', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
         }
     })
 }
@@ -303,9 +381,17 @@ deletePersonnel = (app) => {
                                             }
                                         })
                                 })
-                                .catch(_ => console.log('erreure de suppression', _))
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
                         })
-                        .catch(_ => console.log('non trouver', _))
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
                 
                 
                 //     Personnel.destroy({where: {id_personnel: appartDel.id_personnel}})
@@ -325,6 +411,10 @@ deletePersonnel = (app) => {
                 //         }
                 //     })
                 //     .catch(_ => console.log('erreure de suppression', _))
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

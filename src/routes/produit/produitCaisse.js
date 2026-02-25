@@ -231,7 +231,8 @@ allProduitCaisse = (app) => {
 
         } catch (error) {
             console.error(error);
-            res.status(500).send("Erreur serveur");
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     });
 };
@@ -269,7 +270,9 @@ addHistCaisse = (app) => {
                 res.redirect(`/allProduitCaisse/${caissier}?msg=ajout`)
             }
         }catch (e){
-            console.log(e)
+            console.error(e);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
         
     }
@@ -289,7 +292,9 @@ allHistCaisse = (app) => {
 
             res.status(200).render('allHistCaisse', {hists: hist,msg: req.query.msg})
         }catch(e){
-            console.log(e)
+            console.error(e);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     }
     
@@ -316,11 +321,28 @@ deleteHistCaisse = (app) => {
                                         // console.log(histDel.prix_unit * histDel.quantiter, up, caisse.recette)
                                         res.redirect(`/allHistCaisse/${histDel.id_caissier}?msg=sup`)
                                     })
-                                    .catch(_ => console.log('erreure de modification', _))
+                                    .catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
                             })
-                            .catch(_ => console.log('erreure de selection', _))
+                            .catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            })
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     }
 )}

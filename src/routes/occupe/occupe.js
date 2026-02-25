@@ -9,4 +9,8 @@ Occupe.create({
     .then(occupe =>{
         res.redirect('/allPersonnel?allType=pas_admin&msg=ajout&type=staff');
     })
-    .catch(_ => console.log('erreure de creation de Occupe p', _))
+    .catch(_ => {
+        console.error(_);
+        res.redirect('/notFound');
+        return; // On stoppe tout ici !
+    })

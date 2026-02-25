@@ -1,3 +1,4 @@
+const e = require('express');
 const {Presence, Personnel} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
@@ -24,6 +25,9 @@ addPresence = (app) => {
             if(presence){
                 res.redirect('/presence?msg=Presence maquer pour ' + personnel.nom + ' ' + personnel.prenom + '&type=presence')
             }
+        }else{
+            res.redirect('/notFound');
+            return
         }
     })
 }
@@ -73,6 +77,9 @@ addAbsence = (app) => {
                 })
                 if(absence){
                     res.redirect('/presence?msg=Absence maquer pour ' + personnel.nom + ' ' + personnel.prenom  + '&type=absence')
+                }else{
+                    res.redirect('/notFound');
+                    return
                 }
             }
             
@@ -128,7 +135,11 @@ deletePresence = (app) => {
                             res.redirect('/allAbsence?indice=pas_admin')
                         }
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
     })
 }

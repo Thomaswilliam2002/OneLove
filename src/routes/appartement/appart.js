@@ -13,7 +13,10 @@ allAppart = (app) => {
                 //console.log(appartements);
                 res.status(200).render('appart-list', {appartements: appartements, msg: req.query.msg});
             })
-            .catch(_ => console.log('erreure de selection all'))
+            .catch(_ => {
+                // console.log('erreure de selection all')
+                res.redirect('/notFound');
+            })
     })
 }
 
@@ -56,7 +59,8 @@ oneAppart = (app) => {
             }
             
         }catch(e){
-            console.log(e)
+            res.redirect('/notFound');
+            // console.log(e)
         }
         
             // .then(appartement => {
@@ -91,7 +95,10 @@ addAppart = (app) => {
                 console.log("Appartement " + req.body.nom + "a ete ajouter avec succes")
                 res.redirect('/allAppart?msg=ajout');
             })
-            .catch(_ => console.log('erreure de ajout'))
+            .catch(_ => {
+                // console.log('erreure de ajout')
+                res.redirect('/notFound');
+            })
     })
 }
 
@@ -106,7 +113,9 @@ formEditAppart = (app) =>{
             .then(appartement => {
                 res.status(200).render('edit-appart', {appartement: appartement})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                //console.log('erreure de selection');
+                 res.redirect('/notFound');})
     })
 }
 
@@ -131,7 +140,9 @@ updateAppart = (app) => {
                 console.log("Modification de l'Appartement avec succes")
                 res.redirect('/allAppart?msg=modif');
             })
-            .catch(_ => console.log('erreure de modification' , _))
+            .catch(_ => {
+                //console.log('erreure de modification' , _);
+                 res.redirect('/notFound');})
     })
 }
 
@@ -146,7 +157,10 @@ deleteAppart = (app) => {
                         //res.json({msg})
                         res.redirect('/allAppart?msg=sup');
                     })
-                    .catch(_ => console.log('erreure de suppression'))
+                    .catch(_ => {
+                        //console.log('erreure de suppression')
+                        res.redirect('/notFound');
+                    })
             })
     })
 }

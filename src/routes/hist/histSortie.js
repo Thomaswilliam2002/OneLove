@@ -9,7 +9,11 @@ allHSortie = (app) => {
             .then(hprobal=> {
                 res.status(200).render('')
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -40,11 +44,23 @@ addHSortie = (app) => {
                                 .then(art => {
                                     res.redirect('/allProduit?type=vente&msg=ajout')
                                 })
-                                .catch(_ => console.log('erreure de update', _))
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
                         })
-                        .catch(_ => console.log('erreure de ajout', _))
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
                 })
-                .catch(_ => console.log('erreure de select', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
         }
         else if(req.query.art === 'emballage'){
             Emballage.findByPk(req.params.id)
@@ -67,11 +83,23 @@ addHSortie = (app) => {
                                 .then(art => {
                                     res.redirect('/allEmballage?type=vente&msg=ajout')
                                 })
-                                .catch(_ => console.log('erreure de update', _))
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
                         })
-                        .catch(_ => console.log('erreure de ajout', _))
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
                 })
-                .catch(_ => console.log('erreure de select', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
         }
     })
 }
@@ -89,7 +117,15 @@ deleteHSortie = (app) => {
                             res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=achat')
                         }
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

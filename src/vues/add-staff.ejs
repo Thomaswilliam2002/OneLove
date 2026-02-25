@@ -327,6 +327,15 @@
     <%- include('script')%>
   </body>
   <script>
+    window.addEventListener("pageshow", function (event) {
+      var historyTraversal = event.persisted || 
+                              (typeof window.performance != "undefined" && 
+                              window.performance.navigation.type === 2);
+      if (historyTraversal) {
+          // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+          window.location.reload();
+      }
+    });
     let sender = "<%= indice %>"
     //alert(sender)
     let pwd = document.getElementById("Pwd");

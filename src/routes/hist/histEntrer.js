@@ -10,7 +10,11 @@ allHEntrer = (app) => {
             .then(harticles => {
                 res.status(200).render('')
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -39,11 +43,23 @@ addHEntrer = (app) => {
                                 .then(prod => {
                                     res.redirect('/allProduit?type=achat&msg=ajout')
                                 })
-                                .catch(_ => console.log('erreure de update', _))
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
                         })
-                        .catch(_ => console.log('erreure de ajout', _))
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
                 })
-                .catch(_ => console.log('erreure de select', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
         }
         else if(req.query.art === 'emballage'){
             Emballage.findByPk(req.params.id)
@@ -67,11 +83,23 @@ addHEntrer = (app) => {
                                 .then(prod => {
                                     res.redirect('/allEmballage?type=achat&msg=ajout')
                                 })
-                                .catch(_ => console.log('erreure de update', _))
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
                         })
-                        .catch(_ => console.log('erreure de ajout', _))
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
                 })
-                .catch(_ => console.log('erreure de select', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
         }
         
     })
@@ -90,7 +118,11 @@ deleteHEntrer = (app) => {
                             res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=achat')
                         }
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
         
     })

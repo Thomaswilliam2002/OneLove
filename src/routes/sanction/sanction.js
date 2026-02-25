@@ -12,7 +12,11 @@ allSanction = (app) => {
                 const msg = "Liste recuperer avec succes"
                 res.json({msg, data: sanctions})
             })
-            .catch(_ => console.log('erreure de selection all'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -30,7 +34,11 @@ oneSanction = (app) => {
                 const msg = "sanction recuperer avec succes"
                 res.json({msg, data: sanction})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -56,11 +64,23 @@ addSanction = (app) => {
                             .then(sanction => {
                                 res.redirect('/allPersonnel?allType=pas_admin');
                             })
-                            .catch(_ => console.log('erreure de ajout', _))
+                            .catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure de selection', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
         
 
         
@@ -76,7 +96,11 @@ updateSanction = (app) => {
                 const msg = "Modification de la sanction avec succes"
                 res.json({msg})
             })
-            .catch(_ => console.log('erreure de modification'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -90,7 +114,11 @@ deleteSanction = (app) => {
                         const msg = "Suppression de la sanction avec succes"
                         res.json({msg})
                     })
-                    .catch(_ => console.log('erreure de suppression'))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
     })
 }

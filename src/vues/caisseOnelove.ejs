@@ -180,6 +180,15 @@
     <!-- Custom JS files -->
 
     <script>
+      window.addEventListener("pageshow", function (event) {
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance != "undefined" && 
+                                window.performance.navigation.type === 2);
+        if (historyTraversal) {
+            // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+            window.location.reload();
+        }
+      });
       const text_colore = ['text-primary', 'text-info', 'text-danger', 'text-warning', 'text-success', 'text-light']
       const class_colore = ['badge bg-primary', 'badge bg-info', 'badge bg-danger', 'badge bg-warning', 'badge bg-success', 'badge bg-dark']
       traduct = (date) => {

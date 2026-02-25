@@ -12,7 +12,11 @@ allCuJournal = (app) => {
             .then(jcuisines => {
                 res.status(200).render('cuisineJournal', {jcuisines: jcuisines, msg: req.query.msg, indice: req.query.indice})
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -23,7 +27,11 @@ oneCuJournal = (app) => {
                 const msg = "chambre Journal recuperer avec succes"
                 res.json({msg, data: cuisine})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -40,7 +48,11 @@ addCuJournal = (app) => {
                 msg = 'Journal ajouter avec succes'
                 res.redirect('/formFondBarClub?type=cuisine&msg=' + msg)
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -53,7 +65,11 @@ updateCuJournal = (app) => {
                 const msg = "Modification de cuisine Journal avec succes"
                 res.json({msg})
             })
-            .catch(_ => console.log('erreure de modification'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -66,7 +82,15 @@ deleteCuJournal = (app) => {
                     .then(_ => {
                         res.redirect('/allCuJournal?msg=sup&indice' + req.query.indice)
                     })
-                    .catch(_ => console.log('erreure de suppression'))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

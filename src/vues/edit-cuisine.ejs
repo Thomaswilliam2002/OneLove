@@ -198,7 +198,7 @@
 
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2024</span>
+            <span>© OneLove admin 2026</span>
           </div>
           <!-- App footer ends -->
 
@@ -214,7 +214,18 @@
     <!-- *************
 			************ JavaScript Files *************
 		************* -->
-        <%- include('script')%>
+      <%- include('script')%>
+      <script>
+        window.addEventListener("pageshow", function (event) {
+          var historyTraversal = event.persisted || 
+                                (typeof window.performance != "undefined" && 
+                                  window.performance.navigation.type === 2);
+          if (historyTraversal) {
+              // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+              window.location.reload();
+          }
+        });
+      </script>
   </body>
 
 

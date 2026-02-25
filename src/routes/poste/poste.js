@@ -31,7 +31,11 @@ allPoste = (app) => {
                 //res.json({msg, data: postes})
                 res.status(200).render('poste', {postes: postes, msg: req.query.msg});
             })
-            .catch(_ => console.log('erreure de selection all'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -42,7 +46,11 @@ onePoste = (app) => {
                 const msg = "personnel recuperer avec succes"
                 res.json({msg, data: poste})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -59,7 +67,11 @@ addPoste = (app) => {
                 //res.json({msg, data: poste})
                 res.redirect('allPoste?msg=ajout');
             })
-            .catch(_ => console.log('erreure de ajout'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -76,7 +88,11 @@ updatePoste = (app) => {
             .then(_ => {
                 res.redirect('/allPoste?msg=modif');
             })
-            .catch(_ => console.log('erreure de modification', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -89,7 +105,11 @@ deletePoste = (app) => {
                     .then(_ => {
                         res.redirect('/allPoste?msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
     })
 }

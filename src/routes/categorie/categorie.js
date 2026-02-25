@@ -10,7 +10,11 @@ allCateg = (app) => {
                 //const msg = "Liste recuperer avec succes"
                 res.status(200).render('add-categ', {categories: categories, msg: req.query.msg});
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -32,7 +36,11 @@ addCateg = (app) => {
                 //res.json({msg, data: categorie})
                 res.redirect('/allCateg?&msg=ajout')
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -65,7 +73,15 @@ deleteCateg = (app) => {
                     .then(_ => {
                         res.redirect('/allCateg?msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

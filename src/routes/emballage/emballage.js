@@ -20,13 +20,33 @@ allEmballage = (app) => {
                                         CrazyClub.findAll()
                                             .then(cc => {
                                                 res.status(200).render('emballage', {emballages: emballages, categories: categories, barSimples: bs, barVips: bv, crazycs: cc, msg: req.query.msg, type: req.query.type});
-                                            }).catch(_ => console.log('erreure de selection', _))
-                                    }).catch(_ => console.log('erreure de selection', _))
-                            }).catch(_ => console.log('erreure de selection', _))
+                                            }).catch(_ => {
+                                                console.error(_);
+                                                res.redirect('/notFound');
+                                                return; // On stoppe tout ici !
+                                            })
+                                    }).catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
+                            }).catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure de selection all', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -37,7 +57,11 @@ formAddEmballage = (app) => {
                 //const msg = "Liste recuperer avec succes"
                 res.status(200).render('add-emballage', {categories: categories});
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -77,15 +101,35 @@ oneEmballage = (app) => {
                                             .then(hs => {
                                                 res.status(200).render('emballage-detail', {histe: hr, hists: hs, emballage: emballage, hachats: hachats, hventes: hventes, msg: req.query.msg, type: req.query.type})
                                             })
-                                            .catch(_ => console.log('erreure de selection', _))
+                                            .catch(_ => {
+                                                console.error(_);
+                                                res.redirect('/notFound');
+                                                return; // On stoppe tout ici !
+                                            })
                                     })
-                                    .catch(_ => console.log('erreure de selection', _))
+                                    .catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
                             })
-                            .catch(_ => console.log('erreure de selection', _))
+                            .catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure de selection', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 addEmballage = (app) => {
@@ -103,7 +147,11 @@ addEmballage = (app) => {
                 //res.json({msg, data: categorie})
                 res.redirect('/allEmballage?type=article&msg=ajout')
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -123,7 +171,11 @@ updateEmballage = (app) => {
                 // res.json({msg})
                 res.redirect('/allEmballage?type=article&msg=modif')
             })
-            .catch(_ => console.log('erreure de modification', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -136,7 +188,15 @@ deleteEmballage = (app) => {
                     .then(_ => {
                         res.redirect('/allEmballage?type=article&msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

@@ -11,7 +11,11 @@ allCClub = (app) => {
                 res.json({msg, data: cclubs})
                 res.redirect('all-Bar-club', {cclubs: cclubs, type: req.query.type, msg: req.query.msg})
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -22,7 +26,11 @@ oneCClub = (app) => {
                 const msg = "Bar recuperer avec succes"
                 res.json({msg, data: cclub})
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -40,7 +48,11 @@ addCClub = (app) => {
                 //res.json({msg, data: barS})
                 res.redirect('/allBarClub?type=crazyc&msg=ajout')
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -59,7 +71,11 @@ updateCClub = (app) => {
                 // res.json({msg})
                 res.redirect('/allBarClub?type=crazyc&msg=modif')
             })
-            .catch(_ => console.log('erreure de modification', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -72,7 +88,15 @@ deleteCClub = (app) => {
                     .then(_ => {
                         res.redirect('/allBarClub?type=crazyc&msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

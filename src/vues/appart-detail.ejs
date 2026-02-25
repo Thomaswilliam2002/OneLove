@@ -287,7 +287,7 @@
 
           <!-- App footer starts -->
           <div class="app-footer bg-white">
-            <span>© OneLove admin 2025</span>
+            <span>© OneLove admin 2026</span>
           </div>
           <!-- App footer ends -->
 
@@ -307,6 +307,15 @@
     <script src="assets/vendor/apex/apexcharts.min.js"></script>
     <%- include('script')%>
     <script>
+      window.addEventListener("pageshow", function (event) {
+          var historyTraversal = event.persisted || 
+                                (typeof window.performance != "undefined" && 
+                                  window.performance.navigation.type === 2);
+          if (historyTraversal) {
+              // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+              window.location.reload();
+          }
+      });
       // -----------------------------------------------------------------------------------------------------
       const text_colore = ['text-primary', 'text-info', 'text-danger', 'text-warning', 'text-success']
       const class_colore = ['badge bg-primary', 'badge bg-info', 'badge bg-danger', 'badge bg-warning', 'badge bg-success']

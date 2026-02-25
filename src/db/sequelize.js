@@ -1,5 +1,6 @@
 const {Sequelize, DataTypes,Op} = require('sequelize');
 const bcrypt = require('bcrypt')
+require('dotenv').config();
 
 const Appartement_m = require('../models/appartement')
 const AppartJournal_m = require('../models/appartJournal')
@@ -33,13 +34,13 @@ const HistCaisse_m = require('../models/histCaise');
 const occupe = require('../models/occupe');
 
 const sequelize = new Sequelize(
-    'onelove',
-    'root',
-    'root',
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASS,
     {
-        host: 'localhost',
+        host: process.env.DB_HOST || 'localhost',
         dialect: 'mariadb',
-        port: 3306
+        port: process.env.DB_PORT || 3306
     }
 )
 
@@ -375,6 +376,7 @@ Sanction.belongsTo(Occupe, {
 //     .catch(_ => console.log('erreure de count', _))
 
 module.exports = {
+    sequelize,
     Appartement,
     AppartJournal,
     BarSimple,

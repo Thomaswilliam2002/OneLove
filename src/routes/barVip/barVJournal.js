@@ -13,7 +13,7 @@ allBVJournal = (app) => {
                 // res.json({msg, data: barVipJournals})
                 res.status(200).render('allJournal', {Journals: barVipJournals, type: 'vip', msg: req.query.msg, indice: req.query.indice})
             })
-            .catch(_ => console.log('erreure de selection all'))
+            .catch(_ => res.redirect('/notFound'))
     })
 }
 
@@ -24,7 +24,7 @@ oneBVJournal = (app) => {
                 const msg = "Journal recuperer avec succes"
                 res.json({msg, data: barVipJournal})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => res.redirect('/notFound'))
     })
 }
 
@@ -59,7 +59,7 @@ addBVJournal = (app) => {
             }
             res.redirect('/formFondBarClub?msg=ajout&type=bc' )
         }catch(e){
-            console.log(e)
+            res.redirect('/notFound')
         }
     })
 }
@@ -73,7 +73,7 @@ updateBVJournal = (app) => {
                 const msg = "Modification du journal avec succes"
                 res.json({msg})
             })
-            .catch(_ => console.log('erreure de modification'))
+            .catch(_ => res.redirect('/notFound'))
     })
 }
 
@@ -86,7 +86,7 @@ deleteBVJournal = (app) => {
                     .then(_ => {
                         res.redirect('/allBVJournal?msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => res.redirect('/notFound'))
             })
     })
 }

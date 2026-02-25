@@ -13,7 +13,11 @@ allChambre = (app) => {
                 const msg = "Liste recuperer avec succes"
                 res.json({msg, data: chambres})
             })
-            .catch(_ => console.log('erreure de selection all'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -33,13 +37,29 @@ oneChambre = (app) => {
                                     .then(cj => {
                                         res.status(200).render('chambre-detail', {chambre: chambre, maisonColse: maisonColse, occupent: occupent, chambreJournals: cj})
                                     })
-                                    .catch(_ => console.log('erreure de selection', _))
+                                    .catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
                             })
-                            .catch(_ => console.log('erreure de selection'))
+                            .catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure de selection'))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
         
     })
 }
@@ -59,7 +79,11 @@ addChambre = (app) => {
                 // res.json({msg, data: chambre})
                 res.redirect('/allMClose')
             })
-            .catch(_ => console.log('erreure de ajout'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -79,7 +103,11 @@ updateChambre = (app) => {
                 // res.json({msg})
                 res.redirect('/allMClose')
             })
-            .catch(_ => console.log('erreure de modification'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -95,7 +123,11 @@ deleteChambre = (app) => {
                         //console.log('fais')
                         res.redirect('/allMClose')
                     })
-                    .catch(_ => console.log('erreure de suppression'))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
     })
 }

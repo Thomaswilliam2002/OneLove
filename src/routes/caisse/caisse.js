@@ -19,12 +19,24 @@ allCaisse = (app) => {
                          .then(histcaise => {
                             res.status(200).render('caisse-list', {caisses: caisses, personnels:personnels,histcaises: histcaise, msg: req.query.msg})
                          })
-                         .catch(err => console.log('erreure de selection all', _))
+                         .catch(err => {
+                            console.error(err);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
                         //res.json({msg, data: caisses})
                     })
-                    .catch(err => console.log('erreure de selection all', _))
+                    .catch(err => {
+                        console.error(err);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(err => console.log('erreure de selection all' + err))
+            .catch(err => {
+                console.error(err);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -50,7 +62,9 @@ caisseBareSimple = (app) => {
                 res.render('caisseBareSimple', {all_bs_casse})
             }
         }catch(e){
-            console.log(e)
+            console.error(err);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     })
 }
@@ -77,7 +91,9 @@ caisseBareVip = (app) => {
                 res.render('caisseBarVip', {all_bs_casse})
             }
         }catch(e){
-            console.log(e)
+            console.error(e);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     })
 }
@@ -104,7 +120,9 @@ caisseCClub = (app) => {
                 res.render('caisseCclub', {all_bs_casse})
             }
         }catch(e){
-            console.log(e)
+            console.error(e);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     })
 }
@@ -125,7 +143,9 @@ caisseAppart = (app) => {
                 res.render('caisseAppart', {all_bs_casse})
             }
         }catch(e){
-            console.log(e)
+            console.error(e);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     })
 }
@@ -146,7 +166,9 @@ caisseCuisine = (app) => {
                 res.render('caisseCuisine', {all_bs_casse})
             }
         }catch(e){
-            console.log(e)
+            console.error(e);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     })
 }
@@ -171,7 +193,9 @@ caisseMClose = (app) => {
                 res.render('caisseMclose', {all_bs_casse})
             }
         }catch(e){
-            console.log(e)
+            console.error(e);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
     })
 }
@@ -192,11 +216,27 @@ formAddCaisse = (app) =>{
                                 CrazyClub.findAll()
                                     .then(cc => {
                                         res.status(200).render('add-caisse', {personnels: personnels, barSimples: bs, barVips: bv, crazycs: cc,})
-                                    }).catch(_ => console.log('erreure de selection', _))
-                            }).catch(_ => console.log('erreure de selection', _))
-                    }).catch(_ => console.log('erreure de selection', _))
+                                    }).catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
+                            }).catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
+                    }).catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de recuperation des poste', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
         
     })
 }
@@ -215,9 +255,17 @@ formEditCaisse = (app) =>{
                     //const msg = "caisse recuperer avec succes"
                     res.status(200).render('edit-caisse', {caisse: caisse, personnels: personnels})
                 })
-                .catch(_ => console.log('erreure de selection', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
         })
-        .catch(_ => console.log('erreure de selection', _))
+        .catch(_ => {
+            console.error(_);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
+        })
         
     })
 }
@@ -229,7 +277,11 @@ oneCaisse = (app) => {
                 const msg = "caisse recuperer avec succes"
                 res.json({msg, data: caisse})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -249,7 +301,11 @@ addCaisse = (app) => {
                 res.redirect('/allCaisse?msg=ajout')
                 //res.json({msg, data: caisse})
             })
-            .catch(err => console.log('erreure de ajout' + err))
+            .catch(err => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -270,7 +326,11 @@ updateCaisse = (app) => {
                 // res.json({msg})
                 res.redirect('/allCaisse?msg=modif')
             })
-            .catch(_ => console.log('erreure de modification', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -285,7 +345,11 @@ deleteCaisse = (app) => {
                         // res.json({msg})
                         res.redirect('/allCaisse?msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
     })
 }

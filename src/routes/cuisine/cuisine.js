@@ -11,7 +11,11 @@ allCuisine = (app) => {
                 // res.json({msg, data: cuisines})
                 res.status(200).render('all-cuisine',{cuisines: cuisines, msg: req.query.msg})
             })
-            .catch(err => console.log('erreure de selection all' + err))
+            .catch(err => {
+                console.error(err);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -27,7 +31,11 @@ formEditCuisine = (app) =>{
             .then(cuisine => {
                 res.status(200).render('edit-cuisine', {cuisine: cuisine})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -38,7 +46,11 @@ oneCuisine = (app) => {
                 const msg = "cuisine recuperer avec succes"
                 res.json({msg, data: cuisine})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -58,7 +70,11 @@ addCuisine = (app) => {
                 const msg = "la cuisine " + req.body.name + "a ete ajouter avec succes"
                 res.redirect('/allCuisine?msg=ajout')
             })
-            .catch(_ => console.log('erreure de ajout'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -81,7 +97,11 @@ updateCuisine = (app) => {
                 // res.json({_})
                 res.redirect('/allCuisine?msg=modif')
             })
-            .catch(_ => console.log('erreure de modification', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -96,7 +116,15 @@ deleteCuisine = (app) => {
                         // res.json({msg})
                         res.redirect('/allCuisine?msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

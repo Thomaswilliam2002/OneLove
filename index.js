@@ -1,3 +1,4 @@
+require('dotenv').config();
 const {sequelize, Occupe, Personnel, Poste, BarSimpleJournal, BarVipJournal, AppartFondJournal, CuisineJournal, 
     ChambreJournal, Sanction, CrazyClubJournal,
     Appartement,
@@ -5,7 +6,7 @@ const {sequelize, Occupe, Personnel, Poste, BarSimpleJournal, BarVipJournal, App
     Produit,
     Emballage,
     Caisse,
-    CaisseJournal} = require('./src/db/sequelize');
+    CaisseJournal,} = require('./src/db/sequelize');
 
 const {stockJob} = require('./src/mail/email')
 
@@ -13,6 +14,7 @@ const {stockJob} = require('./src/mail/email')
 const methodOverride = require('method-override');
 const path = require('path'); 
 const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const bcrypt = require('bcrypt');
 const {protrctionRoot, authorise, infos} = require('./src/middleware/protectRoot');
 const {fn, col, literal, json, where, Op} = require('sequelize');
@@ -63,17 +65,31 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'src/vues')
 
+const mySessionStore = new SequelizeStore({
+    db: sequelize,
+    tableName: 'Sessions', // Nom de la table qui sera créée automatiquement
+    logging: false, // <--- Ajoute cette ligne pour cacher les logs SQL des sessions
+    checkExpirationInterval: 15 * 60 * 1000, // Nettoie les sessions expirées toutes les 15 min
+    expiration: 7 * 24 * 60 * 60 * 1000  // Durée max de 1 semaine
+});
+
 app.use(session({
     name: "session_name",
+    secret: process.env.SESSION_SECRET || 'mon_secret_ultra_sur',
+    store: mySessionStore,
     resave: false,
     saveUninitialized: false,
-    secret: 'session_secret_key',
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: false, // true en production
-    },
-    //store:
-}))
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+    }
+}));
+
+
+// TRÈS IMPORTANT : Créer la table dans MariaDB si elle n'existe pas
+mySessionStore.sync();
+
 app.use(methodOverride('_method'));
 
 app.use('/assets', express.static(path.join(__dirname, 'src/vues/assets')))
@@ -84,10 +100,19 @@ const port = process.env.PORT || 3000;
 
 app.use(infos);
 
+//no-store : Interdit au navigateur de sauvegarder la page sur le disque.
+//must-revalidate : Force le navigateur à vérifier si le contenu a changé.
+//max-stale=0 : Considère que toute version en cache est immédiatement périmée.
+
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    next();
+});
+
 //route roote
 app.get('/', (req, res) => {
-    res.render('login', {msg: req.query.msg})
-    // res.json('Hello heroku !🤩')
+    // res.render('login', {msg: req.query.msg})
+    res.json('Hello heroku !🤩')
 })
 // ------------------------------------------------------------------------------------------
 app.get('/expo', (req, res) => {
@@ -291,25 +316,26 @@ app.post('/connexion', async (req, res) => {
         if(verif){
             if(personnel.Personnel.validation === true){
                 req.session.user = personnel;
+                req.session.isLoggedIn = true;
                 // res.locals.user = personnel;
                 //console.log(res.locals.user)
                 if(personnel.Poste.nom_poste === 'Admin'){
                     res.redirect('/index');
                 }else{
-                    console.log('oui')
+                    // console.log('oui')
                     res.redirect('/onePersonnel/' + personnel.Personnel.id_personnel)
                 }
             }else{
-                console.log('compte nom valider');
+                // console.log('compte nom valider');
                 res.redirect('login?msg=validation')
             }
             
         }else{
-            console.log('mdp incorrect');
+            // console.log('mdp incorrect');
             res.redirect('login?msg=mdp')
         }
     }else{
-        console.log('utilisateur non trouver');
+        // console.log('utilisateur non trouver');
         res.redirect('login?msg=user')
     }
 })
@@ -355,7 +381,7 @@ app.put('/resetTraitement/:id', protrctionRoot, async (req, res) => {
                     res.redirect('/login')
                 }catch(e){
                     res.redirect('/notFond')
-                    console.log(e)
+                    // console.log(e)
                 }
             }
         }else{

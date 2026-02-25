@@ -8,7 +8,8 @@ formAddClient = (app) =>{
         if(appartements){
             res.status(200).render('add-client', {appartements: appartements})
         }else{
-            console.log('erreure de selection all')
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
         }
         
     })
@@ -28,9 +29,17 @@ allClient = (app) => {
                     .then(appj =>{
                         res.status(200).render('client-list', {clients: clients,msg: req.query.msg, japparts: appj});
                     })
-                    .catch(_ => console.log('erreure de selection all', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -57,7 +66,9 @@ addClient = (app) => {
                 })
                 res.redirect('/allClient?msg=ajout');
             }catch (e){
-                console.log('erreure de ajout', e)
+                console.error(e);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             }
             
         }else{
@@ -81,7 +92,9 @@ addClient = (app) => {
                     })
                     res.redirect('/allClient?msg=ajout');
                 }catch (e){
-                    console.log('erreure de ajout', e.message)
+                    console.error(e);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
                 }
             }
         }
@@ -98,7 +111,15 @@ deleteClient = (app) => {
                     .then(_ => {
                         res.redirect('/allClient?msg=sup');
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
+            }).catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

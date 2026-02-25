@@ -11,7 +11,7 @@ allBarV = (app) => {
                 res.json({msg, data: barVs})
 
             })
-            .catch(_ => console.log('erreure de selection all'))
+            .catch(_ => res.redirect('/notFound'))
     })
 }
 
@@ -22,7 +22,7 @@ oneBarV = (app) => {
                 const msg = "Bar recuperer avec succes"
                 res.json({msg, data: barV})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => res.redirect('/notFound'))
     })
 }
 
@@ -40,7 +40,7 @@ addBarV = (app) => {
                 //res.json({msg, data: barS})
                 res.redirect('/allBarClub?type=barv&msg=ajout')
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => res.redirect('/notFound'))
     })
 }
 
@@ -60,7 +60,7 @@ updateBarV = (app) => {
                 // res.json({msg})
                 res.redirect('/allBarClub?type=barv&msg=modif')
             })
-            .catch(_ => console.log('erreure de modification', _))
+            .catch(_ => res.redirect('/notFound'))
     })
 }
 
@@ -73,7 +73,7 @@ deleteBarV = (app) => {
                     .then(_ => {
                         res.redirect('/allBarClub?type=barv&msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => res.redirect('/notFound'))
             })
     })
 }

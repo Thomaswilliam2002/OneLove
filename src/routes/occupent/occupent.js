@@ -18,10 +18,12 @@ AddOccupent = (app) => {
                 res.redirect('/oneChambre/' + chambre + '/' + mclose)
             }else{
                 res.redirect('/notFound')
+                return
             }
         }catch(e){
             console.log(e)
             res.redirect('/notFound')
+            return
         }
     })
 }
@@ -35,7 +37,11 @@ deleteOccupent = (app) => {
                     .then(_ => {
                         res.redirect('/oneChambre/' + req.params.chambre + '/' + req.params.mclose)
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
     })
 }

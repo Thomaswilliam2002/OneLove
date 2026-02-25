@@ -567,6 +567,15 @@
     <script src="assets/fact/html2canvas.min.js"></script>
 
     <script>
+      window.addEventListener("pageshow", function (event) {
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance != "undefined" && 
+                                window.performance.navigation.type === 2);
+        if (historyTraversal) {
+            // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+            window.location.reload();
+        }
+      });
     function calculerPaie() {
       // 🔹 TOTAL BRUT
       let totalBrut = 0;

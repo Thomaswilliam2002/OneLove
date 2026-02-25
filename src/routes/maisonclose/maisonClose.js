@@ -27,9 +27,17 @@ allMClose = (app) => {
                         res.status(200).render('mclose',{maisonColses: maisonColses, chambres: chambres})
                     })
                 //const msg = "Liste recuperer avec succes"
-                .catch(_ => console.log('erreure de selection all', _))
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -46,7 +54,11 @@ oneMClose = (app) => {
                     })
                 //res.status(200).render('mclose-detail')
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -63,7 +75,11 @@ addMClose = (app) => {
                 // res.json({msg, data: maisonColse})
                 res.redirect('/allMClose')
             })
-            .catch(_ => console.log('erreure de ajout'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -82,7 +98,11 @@ updateMClose = (app) => {
                 // res.json({msg})
                 res.redirect('/allMClose')
             })
-            .catch(_ => console.log('erreure de modification'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -107,12 +127,24 @@ deleteMClose = (app) => {
                                     .then(_ => {
                                         res.redirect('/allMClose')
                                     })
-                                    .catch(_ => console.log('erreure de suppression', _))
+                                    .catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
                             })
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de suppression', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 

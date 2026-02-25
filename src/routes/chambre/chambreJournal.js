@@ -15,7 +15,11 @@ allChJournal = (app) => {
                 //console.log(chambreJournals)
                 res.status(200).render('histMClose', {journals:chambreJournals, msg: req.query.msg, indice: req.query.indice})
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -26,7 +30,11 @@ oneChJournal = (app) => {
                 const msg = "chambre Journal recuperer avec succes"
                 res.json({msg, data: chambreJournal})
             })
-            .catch(_ => console.log('erreure de selection'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -44,7 +52,11 @@ addChJournal = (app) => {
             .then(chambreJournal => {
                 res.redirect('/formFondBarClub?msg=ajout&type=mclose')
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -58,7 +70,11 @@ updateChJournal = (app) => {
                 const msg = "Modification de chambre Journal avec succes"
                 res.json({msg})
             })
-            .catch(_ => console.log('erreure de modification'))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -77,9 +93,17 @@ deleteChJournal = (app) => {
                             res.redirect('/allChJournal')
                         }
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de suppression', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 

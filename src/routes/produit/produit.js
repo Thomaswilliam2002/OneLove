@@ -38,15 +38,39 @@ allProduit = (app) => {
                                                 CrazyClub.findAll()
                                                     .then(cc => {
                                                         res.status(200).render('produit', {produits: produits,sumhes: sumhe, categories: categories, barSimples: bs, barVips: bv, crazycs: cc, msg: req.query.msg, type: req.query.type});
-                                                    }).catch(_ => console.log('erreure de selection', _))
-                                            }).catch(_ => console.log('erreure de selection', _))
-                                    }).catch(_ => console.log('erreure de selection', _))
+                                                    }).catch(_ => {
+                                                        console.error(_);
+                                                        res.redirect('/notFound');
+                                                        return; // On stoppe tout ici !
+                                                    })
+                                            }).catch(_ =>{
+                                                console.error(_);
+                                                res.redirect('/notFound');
+                                                return; // On stoppe tout ici !
+                                            })
+                                    }).catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
                             })
-                            .catch(_ => console.log('erreure de selection', _))
+                            .catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure de selection all', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -57,7 +81,11 @@ formAddProduit = (app) => {
                 //const msg = "Liste recuperer avec succes"
                 res.status(200).render('add-produit', {categories: categories});
             })
-            .catch(_ => console.log('erreure de selection all', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -98,15 +126,35 @@ oneProduit = (app) => {
                                                 //res.json(hr)
                                                 res.status(200).render('produit-detail', {histe: hr, hists: hs, produit: produit, hachats: hachats, hventes: hventes, msg: req.query.msg, type: req.query.type})
                                             })
-                                            .catch(_ => console.log('erreure de selection', _))
+                                            .catch(_ => {
+                                                console.error(_);
+                                                res.redirect('/notFound');
+                                                return; // On stoppe tout ici !
+                                            })
                                     })
-                                    .catch(_ => console.log('erreure de selection', _))
+                                    .catch(_ => {
+                                        console.error(_);
+                                        res.redirect('/notFound');
+                                        return; // On stoppe tout ici !
+                                    })
                             })
-                            .catch(_ => console.log('erreure de selection', _))
+                            .catch(_ => {
+                                console.error(_);
+                                res.redirect('/notFound');
+                                return; // On stoppe tout ici !
+                            })
                     })
-                    .catch(_ => console.log('erreure de selection', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
-            .catch(_ => console.log('erreure de selection', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 addProduit = (app) => {
@@ -124,7 +172,11 @@ addProduit = (app) => {
                 //res.json({msg, data: categorie})
                 res.redirect('/allProduit?type=article&msg=ajout')
             })
-            .catch(_ => console.log('erreure de ajout', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -144,7 +196,11 @@ updateProduit = (app) => {
                 // res.json({msg})
                 res.redirect('/allProduit?type=article&msg=modif')
             })
-            .catch(_ => console.log('erreure de modification', _))
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
     })
 }
 
@@ -157,7 +213,11 @@ deleteProduit = (app) => {
                     .then(_ => {
                         res.redirect('/allProduit?type=article&msg=sup')
                     })
-                    .catch(_ => console.log('erreure de suppression', _))
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
     })
 }
