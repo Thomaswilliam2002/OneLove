@@ -23,3 +23,7 @@ const sequelize = new Sequelize(
 //         port: process.env.DB_PORT || 3306
 //     }
 // )
+
+// remplace DATE_FORMAT par TO_CHAR
+// MySQL utilise DATE_FORMAT().
+// PostgreSQL (celui de Render) utilise TO_CHAR().
