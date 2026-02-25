@@ -80,13 +80,13 @@ app.use(session({
     store: mySessionStore,
     resave: false,
     saveUninitialized: false,
-    proxy: true, // Ajoute cette ligne aussi
+    // proxy: true, // Ajoute cette ligne aussi
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         secure: process.env.NODE_ENV === 'production' || true,
         httpOnly: true,
         // sameSite: 'lax' // Recommandé pour éviter les problèmes de redirection
-        sameSite: 'none',     // Nécessaire si le cookie traverse des domaines
+        // sameSite: 'none',     // Nécessaire si le cookie traverse des domaines
     }
 }));
 
