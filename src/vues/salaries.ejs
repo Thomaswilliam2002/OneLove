@@ -76,9 +76,8 @@
                             <th>Poste</th>
                             <th>Salaire de Base</th>
                             <th>Periode</th>
-                            <th>Punition</th>
+                            <th>Retenue</th>
                             <th>A payer</th>
-                            <th>Action</th>
                           </tr> 
                         </thead>
                         <tbody id="tbody" class="text-center">
@@ -151,16 +150,48 @@
                 ${staff.Personnel.nom} ${staff.Personnel.prenom}
               </td>
               <td>${staff.Poste.nom_poste}</td>
-              <td class = "calcule">${staff.Poste.salaire}</td>
-              <td>${staff.Personnel.periode}</td>
-              <td>${sanction[inst]}</td>
-              <td>${staff.Personnel.periode === 'Mensuel' ? staff.Poste.salaire - sanction[inst] : staff.Personnel.periode === 'Hebdomadaire' ?
-                (staff.Poste.salaire - (sanction[inst]/4))/4 : staff.Personnel.periode === 'Quinzaine' ? (staff.Poste.salaire - (sanction[inst]/2)) / 2 : staff.Personnel.periode === 'Journalier' ? 
-                (staff.Poste.salaire - sanction[inst])/30 : 'Indefini'}</td>
-              <td></td>
+              <td class = "salaire" data-salaire="${staff.Poste.salaire}">${staff.Poste.salaire}</td>
+              <td class="periode">${staff.Personnel.periode}</td>
+              <td><input type="number" min="0" value="0" step="0.01" class="form-control sanction"></td>
+              <td class="resultat calcule">${(calculerSalaire(staff.Poste.salaire, staff.Personnel.periode)).toFixed(2)}</td>
             </tr>
           
         `)
+      });
+
+      function calculerSalaire(salaire, periode) {
+        switch (periode.toLowerCase()) {
+          case 'journalier':
+            return salaire / 30;
+          case 'hebdomadaire':
+            return salaire / 4;
+          case 'quinzaine':
+            return salaire / 2;
+          case 'horaire':
+            return salaire / (30 * 8);
+          case 'mensuel':
+          default:
+            return salaire;
+        }
+      }
+
+      document.addEventListener('input', function (e) {
+        if (!e.target.classList.contains('sanction')) return;
+
+        const row = e.target.closest('tr');
+
+        const salaireBase = parseFloat(
+          row.querySelector('.salaire').dataset.salaire
+        );
+
+        const periode = row.querySelector('.periode').textContent.trim();
+        const sanction = parseFloat(e.target.value) || 0;
+
+        const salairePeriode = calculerSalaire(salaireBase, periode);
+        const resultat = salairePeriode - sanction;
+
+        row.querySelector('.resultat').textContent =
+          resultat > 0 ? resultat.toFixed(2) : '0.00';
       });
 
       const resulta = document.getElementById('resulta')
@@ -190,6 +221,6 @@
     </script>
   </body>
 
-
+  <!-- <td>${sanction[inst]}</td> -->
 <!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/salaries.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:25 GMT -->
 </html>

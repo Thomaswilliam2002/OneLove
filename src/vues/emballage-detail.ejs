@@ -248,6 +248,7 @@
                                 <th>Prix a l'uniter</th>
                                 <th>Montant</th>
                                 <th>Destinataire</th>
+                                <th>Commantaire</th>
                                 <th>Date de l'operation</th>
                                 <th>Heure de l'operation</th>
                                 <th>Action</th>
@@ -261,6 +262,7 @@
                                 <td><%= hvente.prix_unit %></td>
                                 <td class="calcule2"><%= hvente.prix_unit * hvente.quantiter %></td>
                                 <td><%= hvente.receveur %></td>
+                                <td class="wrap-text"><%= hvente.commantaire %></td>
                                 <td><%= new Date(hvente.created).getDate() %>-<%= new Date(hvente.created).getMonth() + 1 %>-<%= new Date(hvente.created).getFullYear()%></td>
                                 <td><%= new Date(hvente.created).getHours() %>-<%= new Date(hvente.created).getMinutes() %>-<%= new Date(hvente.created).getSeconds()%></td>
                                 <td>

@@ -82,7 +82,7 @@
                             </div>
                           </div>
             
-                          <%- include('partials/modalVente', {item: p, type: 'produit', id_caisse: caisse.id_caisse, id_caissier: id_caissier}) %>
+                          <%- include('partials/modalVente', {item: p, type: 'produit', id_caisse: caisse.id_caisse, id_caissier: id_caissier, lieu: caisse.lieu}) %>
                         <% }) %>
             
                         <% caisse.emballages.forEach(e => { %>
@@ -104,7 +104,7 @@
                             </div>
                           </div>
             
-                          <%- include('partials/modalVente', {item: e, type: 'emballage', id_caisse: caisse.id_caisse, id_caissier: id_caissier}) %>
+                          <%- include('partials/modalVente', {item: e, type: 'emballage', id_caisse: caisse.id_caisse, id_caissier: id_caissier, lieu: caisse.lieu}) %>
                         <% }) %>
             
                       </div>

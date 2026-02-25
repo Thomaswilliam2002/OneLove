@@ -2,7 +2,7 @@ const { CronJob } = require("cron");
 const nodemailer = require('nodemailer');
 const { Produit, Emballage } = require('../db/sequelize');
 // --- 1. FONCTION D'ENVOI (MOTEUR) ---
-const sendStockAlert = async (emails, message) => {
+const sendAlert = async (emails, message, sujet, from) => {
     const transporter = nodemailer.createTransport({
         host: "sandbox.smtp.mailtrap.io",
         port: 2525,
@@ -13,9 +13,9 @@ const sendStockAlert = async (emails, message) => {
     });
 
     const mailOptions = {
-        from: '"Stock One Love" <test@onelove.com>', //"One Love Test" <test@onelove.com>
+        from: from, //"One Love Test" <test@onelove.com>
         to: emails.join(','),
-        subject: "⚠️ ALERTE : Seuil de stock atteint",
+        subject: sujet, //,
         text: message
     };
 
@@ -49,10 +49,10 @@ const stockJob = new CronJob('0 0 * * * *', async () => {
                 msg += `⚠️ L'emballage ${emballage.nom} est en rupture de stock ! Il est actuellement a ${emballage.quantiter} .\n`;
             }
         }
-        await sendStockAlert(admins, msg);
+        await sendAlert(admins, msg, "⚠️ ALERTE : Seuil de stock atteint", '"Stock One Love" <test@onelove.com>');
     } catch (err) {
         console.error("❌ Erreur dans le calcul du Cron :", err.message);
     }
 });
 
-module.exports = { stockJob };
+module.exports = { sendAlert,stockJob };

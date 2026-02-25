@@ -55,7 +55,8 @@ addHSortie = (app) => {
                         prix_unit: prix,
                         type: type,
                         id_probal: idpro,
-                        receveur: dest
+                        receveur: dest,
+                        commantaire: cmm
                     })
                         .then(hsortie => {
                             Emballage.update({

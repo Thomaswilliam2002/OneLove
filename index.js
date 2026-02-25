@@ -327,7 +327,7 @@ app.get('/deconnexion', protrctionRoot, (req, res) => {
 })
 
 //route mdp oublier
-app.get('/forgot', protrctionRoot, (req, res) => {
+app.get('/forgot', (req, res) => { //, protrctionRoot
     res.render('forgot-password')
 })
 

@@ -9,16 +9,17 @@
           <div class="modal-body">
             <p>Prix unitaire : <strong><%= item.prix_unit %> FCFA</strong></p>
             
-            <input type="hidden" name="id_probal" value="<%= item.id %>">
+            <input type="hidden" name="idpro" value="<%= item.id %>">
             <input type="hidden" name="type" value="<%= type %>">
-            <input type="hidden" name="id_caisse" value="<%= id_caisse %>">
-            <input type="hidden" name="id_caissier" value="<%= id_caissier %>">
-            <input type="hidden" name="prix_unit" value="<%= item.prix_unit %>">
+            <input type="hidden" name="barclub" value="<%= lieu %>">
+            <input type="hidden" name="caisse" value="<%= id_caisse %>">
+            <input type="hidden" name="caissier" value="<%= id_caissier %>">
+            <input type="hidden" name="prix" value="<%= item.prix_unit %>">
             <input type="hidden" name="nom" value="<%= item.nom %>">
   
             <div class="mb-3">
               <label class="form-label">Quantité à vendre (Max: <%= item.qte_dispo %>)</label>
-              <input type="number" name="quantiter" class="form-control" min="1" max="<%= item.qte_dispo %>" required>
+              <input type="number" name="qte" class="form-control" min="1" max="<%= item.qte_dispo %>" required>
             </div>
           </div>
           <div class="modal-footer">

@@ -1,12 +1,12 @@
 const crypto = require('crypto'); // Module natif de Node.js
 const { Personnel } = require('../db/sequelize');
-const { sendEmail } = require('./emailService'); // On réutilise ton service email
 const bcrypt = require('bcrypt')
+const {sendAlert} = require('./email')
 
 // Route : POST /forgot-password 
 forgotPassword = (app) =>{
-    app.get('/forgotPassword',async (req, res) => {
-        const { email } = req.body;
+    app.post('/forgotPassword',async (req, res) => {
+        const {email} = req.body;
 
         try {
             const user = await Personnel.findOne({ where: { email: email } });
@@ -30,7 +30,7 @@ forgotPassword = (app) =>{
             const link = `http://localhost:3000/reset-password/${token}`;
             const message = `Vous avez demandé la réinitialisation de votre mot de passe. Cliquez ici : ${link}`;
             
-            await sendEmail([user.email], "Réinitialisation de mot de passe", message);
+            await sendAlert([user.email], message, "Réinitialisation de mot de passe", "One Love");
 
             return res.redirect("/notFound?msg=envoyer");
         } catch (error) {
