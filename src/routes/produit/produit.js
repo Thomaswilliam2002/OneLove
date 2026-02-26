@@ -15,27 +15,47 @@ allProduit = (app) => {
                     .then(categories => {
                         //const msg = "Liste recuperer avec succes"
                         //console.log(produits)
+                        // HistEntrer.findAll({
+                        //     attributes:[ 
+                        //         // 1. Correction du format date pour Postgres (YYYY-MM)
+                        //         [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), "mois"], 
+                        //         'id_probal', 
+                        //         'type',
+                        //         [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'total_recette'],
+                        //         // 2. Correction du SELECT interne : Majuscule à Produits + S à la fin
+                        //         [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom'],
+                        //         // [literal("TO_CHAR(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
+                        //         // [literal("SUM(quantiter * prix_unit)"),'total_recette'],
+                        //         // [literal("(SELECT nom FROM produits where produits.id_produit = histEntrers.id_probal)"),'nom'],
+                        //     ],
+                        //         where: {
+                        //             type:{
+                        //                 [Op.in]: ["produits"]
+                        //             }
+                        //         },
+                        //         group: ["id_probal", "mois"],
+                        //         order: [["type"],['mois','ASC']],
+                        //         row:true
+                        // })
                         HistEntrer.findAll({
-                            attributes:[ 
-                                // 1. Correction du format date pour Postgres (YYYY-MM)
+                            attributes: [
+                                // Utilisation de YYYY-MM pour Postgres
                                 [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), "mois"], 
                                 'id_probal', 
                                 'type',
                                 [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'total_recette'],
-                                // 2. Correction du SELECT interne : Majuscule à Produits + S à la fin
+                                // On force "Produits" avec majuscule et guillemets pour correspondre à ta DB
                                 [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom'],
-                                // [literal("TO_CHAR(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
-                                // [literal("SUM(quantiter * prix_unit)"),'total_recette'],
-                                // [literal("(SELECT nom FROM produits where produits.id_produit = histEntrers.id_probal)"),'nom'],
                             ],
-                                where: {
-                                    type:{
-                                        [Op.in]: ["produits"]
-                                    }
-                                },
-                                group: ["id_probal", "mois"],
-                                order: [["type"],['mois','ASC']],
-                                row:true
+                            where: {
+                                type: {
+                                    [Op.in]: ["produit"] // Attention : "produit" au singulier comme dans ton where plus bas
+                                }
+                            },
+                            // Groupement complet requis par Postgres
+                            group: ["id_probal", "type", "HistEntrer.id_hist", literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')")],
+                            order: [["type"], [literal("mois"), 'ASC']],
+                            raw: true // Correction de 'row' en 'raw'
                         })
                             .then(sumhe => {
                                 BarSimple.findAll()
@@ -109,14 +129,29 @@ oneProduit = (app) => {
                         })
                             .then(hventes => {
                                 HistEntrer.findAll({
-                                    attributes:[
-                                        [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
-                                        [literal("SUM(quantiter * prix_unit)"),'recette']],
-                                        where: {
-                                            id_probal: produit.id_produit, type: 'produit'
-                                        },
-                                        group: [literal('mois')],
-                                        order: [[literal('mois'), 'ASC']]
+                                    // attributes:[
+                                    //     [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
+                                    //     [literal("SUM(quantiter * prix_unit)"),'recette']],
+                                    //     where: {
+                                    //         id_probal: produit.id_produit, type: 'produit'
+                                    //     },
+                                    //     group: [literal('mois')],
+                                    //     order: [[literal('mois'), 'ASC']]
+                                    // Pour HistEntrer (ligne 98 env.)
+                                    attributes: [
+                                        [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), 'mois'],
+                                        'id_probal',
+                                        [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'recette']
+                                    ],
+                                    group: [literal("mois"), "id_probal", "HistEntrer.id_hist"],
+
+                                    // Pour HistSortie (ligne 112 env.)
+                                    attributes: [
+                                        [literal("TO_CHAR(\"HistSortie\".\"created\", 'YYYY-MM')"), 'mois'],
+                                        'id_probal',
+                                        [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'recette']
+                                    ],
+                                    group: [literal("mois"), "id_probal", "HistSortie.id_hist"],
                                 })
                                     .then(hr => {
                                         HistSortie.findAll({
