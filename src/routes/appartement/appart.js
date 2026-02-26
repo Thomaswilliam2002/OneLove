@@ -29,51 +29,49 @@ ell = (app) =>{
 
 oneAppart = (app) => {
     app.get('/oneAppart/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
-        try{
+        try {
             const appartement = await Appartement.findByPk(req.params.id);
-            if(appartement){
-                const all_appart_font = await AppartFondJournal.findAll({
-                    attributes:[ 
-                        [literal("TO_CHAR(date, '%Y-%m')"), "mois"], 
-                        [fn('SUM', col('recette')),'total_recette'],
-                        [col("Appartement.nom_appart"), "NomAppart"]
-                    ],
-                        where:{id_appart:req.params.id},
-                        include: [{
-                            model: Appartement,
-                            attributes: [],
-                        }],
-                        group: ["mois","NomAppart"],
-                        order: [['mois','ASC']],
-                        row:true
-                });
-                if(all_appart_font){
-                    const history = await AppartFondJournal.findAll({
-                        where: {id_appart: req.params.id}
-                    })
-                    if(history){
-                        // console.log(history)
-                        res.status(200).render('appart-detail', {appartement: appartement, courbe_info: all_appart_font, historys: history})
-                    }
-                }
+            
+            if (!appartement) {
+                return res.redirect('/notFound');
             }
-            
-        }catch(e){
-            res.redirect('/notFound');
-            // console.log(e)
-        }
-        
-            // .then(appartement => {
-            //     const msg = "Appartement recuperer avec succes"
-            //     //res.json({msg, data: appartement})
-            //     // console.log(appartement)
-                
-            //     res.status(200).render('appart-detail', {appartement: appartement})
-            // })
-            // .catch(_ => console.log('erreure de selection'))
 
-            
-    })
+            // Définition de l'expression de mois pour réutilisation dans attributes et group
+            const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
+
+            const all_appart_font = await AppartFondJournal.findAll({
+                attributes: [ 
+                    [moisExpr, "mois"], 
+                    [fn('SUM', col('recette')), 'total_recette'],
+                    [col("Appartement.nom_appart"), "NomAppart"]
+                ],
+                where: { id_appart: req.params.id },
+                include: [{
+                    model: Appartement,
+                    attributes: [],
+                }],
+                // Sous Postgres, on doit grouper par l'expression exacte et la colonne d'inclusion
+                group: [moisExpr, col("Appartement.nom_appart")],
+                order: [[moisExpr, 'ASC']],
+                raw: true // Correction : 'raw' au lieu de 'row'
+            });
+
+            const history = await AppartFondJournal.findAll({
+                where: { id_appart: req.params.id },
+                order: [['date', 'DESC']] // Optionnel : trier l'historique
+            });
+
+            res.status(200).render('appart-detail', {
+                appartement: appartement, 
+                courbe_info: all_appart_font, 
+                historys: history
+            });
+
+        } catch (e) {
+            console.error("Erreur oneAppart:", e);
+            res.redirect('/notFound');
+        }
+    });
 }
 
 addAppart = (app) => {

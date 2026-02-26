@@ -69,69 +69,70 @@ oneEmballage = (app) => {
     app.get('/oneEmballage/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         Emballage.findByPk(req.params.id)
             .then(emballage => {
-                HistEntrer.findAll({
-                    where: {id_probal: emballage.id_emballage, type: 'emballage'}
-                })
-                    .then(hachats => {
-                        HistSortie.findAll({
-                            where: {id_probal: emballage.id_emballage, type: 'emballage'}
-                        })
-                            .then(hventes => {
-                                HistEntrer.findAll({
-                                    attributes:[
-                                        [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
-                                        [literal("SUM(quantiter * prix_unit)"),'recette']],
-                                        where: {
-                                            id_probal: emballage.id_emballage, type: 'emballage'
-                                        },
-                                        group: [literal('mois')],
-                                        order: [[literal('mois'), 'ASC']]
-                                })
-                                    .then(hr => {
-                                        HistSortie.findAll({
-                                            attributes:[
-                                                [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
-                                                [literal("SUM(quantiter * prix_unit)"),'recette']],
-                                                where: {
-                                                    id_probal: emballage.id_emballage, type: 'emballage'
-                                                },
-                                                group: [literal('mois')],
-                                                order: [[literal('mois'), 'ASC']]
-                                        })
-                                            .then(hs => {
-                                                res.status(200).render('emballage-detail', {histe: hr, hists: hs, emballage: emballage, hachats: hachats, hventes: hventes, msg: req.query.msg, type: req.query.type})
-                                            })
-                                            .catch(_ => {
-                                                console.error(_);
-                                                res.redirect('/notFound');
-                                                return; // On stoppe tout ici !
-                                            })
-                                    })
-                                    .catch(_ => {
-                                        console.error(_);
-                                        res.redirect('/notFound');
-                                        return; // On stoppe tout ici !
-                                    })
-                            })
-                            .catch(_ => {
-                                console.error(_);
-                                res.redirect('/notFound');
-                                return; // On stoppe tout ici !
-                            })
+                if (!emballage) return res.redirect('/notFound');
+
+                // 1. Historique groupé des entrées (Postgres compatible)
+                const pEntreeGrouped = HistEntrer.findAll({
+                    attributes: [
+                        [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
+                        'id_probal',
+                        [fn('SUM', literal('quantiter * prix_unit')), 'recette']
+                    ],
+                    where: { id_probal: emballage.id_emballage, type: 'emballage' },
+                    group: [
+                        fn('TO_CHAR', col('created'), 'YYYY-MM'), 
+                        'id_probal', 
+                        'id_hist' // Clé primaire obligatoire dans le group by sur Postgres
+                    ],
+                    order: [[fn('TO_CHAR', col('created'), 'YYYY-MM'), 'ASC']],
+                    raw: true
+                });
+
+                // 2. Historique groupé des sorties (Postgres compatible)
+                const pSortieGrouped = HistSortie.findAll({
+                    attributes: [
+                        [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
+                        'id_probal',
+                        [fn('SUM', literal('quantiter * prix_unit')), 'recette']
+                    ],
+                    where: { id_probal: emballage.id_emballage, type: 'emballage' },
+                    group: [
+                        fn('TO_CHAR', col('created'), 'YYYY-MM'), 
+                        'id_probal', 
+                        'id_hist'
+                    ],
+                    order: [[fn('TO_CHAR', col('created'), 'YYYY-MM'), 'ASC']],
+                    raw: true
+                });
+
+                // 3. Historiques détaillés (pour hachats et hventes si nécessaire)
+                const pEntreeDetail = HistEntrer.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage' } });
+                const pSortieDetail = HistSortie.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage' } });
+
+                Promise.all([pEntreeGrouped, pSortieGrouped, pEntreeDetail, pSortieDetail])
+                    .then(([hr, hs, hachats, hventes]) => {
+                        res.status(200).render('emballage-detail', {
+                            histe: hr, 
+                            hists: hs, 
+                            emballage: emballage, 
+                            hachats: hachats, 
+                            hventes: hventes, 
+                            msg: req.query.msg, 
+                            type: req.query.type
+                        });
                     })
-                    .catch(_ => {
-                        console.error(_);
+                    .catch(err => {
+                        console.error(err);
                         res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
+                    });
             })
-            .catch(_ => {
-                console.error(_);
+            .catch(err => {
+                console.error(err);
                 res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
-    })
+            });
+    });
 }
+
 addEmballage = (app) => {
     app.post('/addEmballage', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         const {nom, categ, qt, seuil, desc} = req.body;

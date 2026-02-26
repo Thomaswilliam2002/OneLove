@@ -158,134 +158,71 @@ const getDay = () => {
 
 //route dashboard
 app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
-    const nvdate = new Date()
-    const {firstDayISO, lastDayISO} = getDay()
-    // console.log(firstDayISO, lastDayISO)
-    try{
-        const nb_personnel = await Personnel.count()
-        const nb_appart = await Appartement.count()
-        const nb_barSimple = await BarSimple.count()
-        const nb_barVip = await BarVip.count()
-        const nb_crazyClub = await CrazyClub.count()
-        const sum_bc = nb_barSimple + nb_barVip + nb_crazyClub
-        // -----------------------------------------------------------
-        const sum_bs = await BarSimpleJournal.sum("recette", {
-            where: {
-                date: {
-                    [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-                    [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-                }
-            }
-        })
-        // -----------------------------------------------------------
-        const sum_bv = await BarVipJournal.sum("recette", {
-            where: {
-                date: {
-                    [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-                    [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-                }
-            }
-        })
-        // -----------------------------------------------------------
-        const sum_cc = await CrazyClubJournal.sum("recette", {
-            where: {
-                date: {
-                    [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-                    [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-                }
-            }
-        })
-         // -----------------------------------------------------------
-        const sum_cui = await CuisineJournal.sum("montant_verser", {
-            where: {
-                date: {
-                    [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-                    [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-                }
-            }
-        })
-         // -----------------------------------------------------------
-        const sum_ap = await AppartFondJournal.sum("recette", {
-            where: {
-                date: {
-                    [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-                    [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-                }
-            }
-        })
-         // -----------------------------------------------------------
-        const sum_ch = await ChambreJournal.sum("loyer", {
-            where: {
-                date: {
-                    [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-                    [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-                }
-            }
-        })
-        // -----------------------------------------------------------
-         const sum_caisse_recette = await Caisse.sum("recette")
-        // -----------------------------------------------------------
-        // const sum_caisse_solde = await Caisse.sum("solde", {
-        //     where: {
-        //         date: {
-        //             [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-        //             [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-        //         }
-        //     }
-        // })
-        // -----------------------------------------------------------
-        // const sum_caisse_depense = await Caisse.sum("depense", {
-        //     where: {
-        //         date: {
-        //             [Op.gte]: new Date(nvdate.getFullYear(), nvdate.getMonth(), 1),
-        //             [Op.lt]: new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1)
-        //         }
-        //     }
-        // // -----------------------------------------------------------
-        // })
-        const nb_mc = await MaisonColse.count()
-        // -----------------------------------------------------------
-        const nb_ch = await Chambre.count()
-        // -----------------------------------------------------------
-        const nb_cu = await Cuisine.count()
-        // -----------------------------------------------------------
-        const nb_cat = await Categorie.count()
-        // -----------------------------------------------------------
-        const nb_prod = await Produit.count()
-        // -----------------------------------------------------------
-        const nb_emb = await Emballage.count()
-        // -----------------------------------------------------------
-        const nb_cai = await Caisse.count()
-        // -----------------------------------------------------------
+    const nvdate = new Date();
+    // Début et fin du mois en cours pour le filtrage
+    const firstDay = new Date(nvdate.getFullYear(), nvdate.getMonth(), 1);
+    const lastDay = new Date(nvdate.getFullYear(), nvdate.getMonth() + 1, 1);
+
+    try {
+        // On lance TOUTES les requêtes en parallèle pour gagner en performance
+        const [
+            nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
+            sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
+            sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai
+        ] = await Promise.all([
+            Personnel.count(),
+            Appartement.count(),
+            BarSimple.count(),
+            BarVip.count(),
+            CrazyClub.count(),
+            // Sommes avec gestion de la période (Gte = Supérieur ou égal, Lt = Strictement inférieur)
+            BarSimpleJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            BarVipJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            CrazyClubJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            CuisineJournal.sum("montant_verser", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            AppartFondJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            ChambreJournal.sum("loyer", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            // Totaux globaux
+            Caisse.sum("recette"),
+            MaisonColse.count(),
+            Chambre.count(),
+            Cuisine.count(),
+            Categorie.count(),
+            Produit.count(),
+            Emballage.count(),
+            Caisse.count()
+        ]);
+
         const data = {
-            "personnel": nb_personnel ?? 0,
-            "nbAppart" : nb_appart ?? 0,
-            "nbBarSimple" : nb_barSimple ?? 0,
-            "nbBarVip" : nb_barVip ?? 0,
-            "nbCrazyClub" : nb_crazyClub ?? 0,
-            "nbMaisonClose" : nb_mc ?? 0,
-            "nbChambre" : nb_ch ?? 0,
-            "nbCuisine" : nb_cu ?? 0,
-            "nbProduit" : nb_prod ?? 0,
-            "nbCaisse" : nb_cai ?? 0,
-            "nbEmballage" : nb_emb ?? 0,
-            "nbCategorieArticle" : nb_cat ?? 0,
-            "nbTotalBarClub" : sum_bc ?? 0,
-            "recetteBarSimple" : sum_bs ?? 0,
-            "recetteBarVip" : sum_bv ?? 0,
-            "recetteCrazyClub" : sum_cc ?? 0,
-            "recetteCuisine" : sum_cui ?? 0,
-            "recetteAppart" : sum_ap ?? 0,
-            "recetteChambre" : sum_ch ?? 0,
-            "sum_caisse_recette" : sum_caisse_recette ?? 0,
-            // "sum_caisse_solde" : sum_caisse_solde ?? 0,
-            // "sum_caisse_depense" : sum_caisse_depense ?? 0,
-        }
-        res.render('index', {data: data})
-    }catch(e){
-        console.log(e)
+            "personnel": nb_personnel || 0,
+            "nbAppart": nb_appart || 0,
+            "nbBarSimple": nb_barSimple || 0,
+            "nbBarVip": nb_barVip || 0,
+            "nbCrazyClub": nb_crazyClub || 0,
+            "nbMaisonClose": nb_mc || 0,
+            "nbChambre": nb_ch || 0,
+            "nbCuisine": nb_cu || 0,
+            "nbProduit": nb_prod || 0,
+            "nbCaisse": nb_cai || 0,
+            "nbEmballage": nb_emb || 0,
+            "nbCategorieArticle": nb_cat || 0,
+            "nbTotalBarClub": (nb_barSimple || 0) + (nb_barVip || 0) + (nb_crazyClub || 0),
+            "recetteBarSimple": sum_bs || 0,
+            "recetteBarVip": sum_bv || 0,
+            "recetteCrazyClub": sum_cc || 0,
+            "recetteCuisine": sum_cui || 0,
+            "recetteAppart": sum_ap || 0,
+            "recetteChambre": sum_ch || 0,
+            "sum_caisse_recette": sum_caisse_recette || 0
+        };
+
+        res.render('index', { data: data });
+
+    } catch (e) {
+        console.error("Erreur Dashboard Index:", e);
+        res.status(500).send("Erreur lors du chargement du tableau de bord");
     }
-})
+});
 
 // verrifie la liste des produit et emballage en rupture de stock toutte les heure et envoi un mail aux admin
 stockJob.start();
@@ -536,105 +473,61 @@ app.get('/formFondBarClub', protrctionRoot, authorise('admin','comptable','caiss
 })
 
 // route pour la caisse general one love
-app.get('/caisseOnelove', protrctionRoot, authorise('admin','comptable'), async (req, res) => {
-    const all_recette = [];
-    try{
-        const fbs = await BarSimpleJournal.findAll({
-            attributes:[
-                [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
-                [fn('SUM', col('recette')),'total_recette']],
-                group: ['mois'],
-                order: [['mois', 'ASC']]
-        });
-        all_recette.push(fbs.map(row => row.toJSON()));
-        if(fbs){
-            try{
-                const fbv = await BarVipJournal.findAll({
-                    attributes:[
-                        [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
-                        [fn('SUM', col('recette')),'total_recette']],
-                        group: [literal('mois')],
-                        order: [[literal('mois'), 'ASC']
-                    ]
-                });
-                all_recette.push(fbv.map(row => row.toJSON()));
-                if(fbv){
-                    try{
-                        const fap = await AppartFondJournal.findAll({
-                            attributes:[
-                                [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
-                                [fn('SUM', col('recette')),'total_recette']],
-                                group: [literal('mois')],
-                                order: [[literal('mois'), 'ASC']
-                            ]
-                        });
-                        all_recette.push(fap.map(row => row.toJSON()));
-                        if(fap){
-                            try{
-                                const fcui = await CuisineJournal.findAll({
-                                    attributes:[
-                                        [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
-                                        [fn('SUM', col('montant_verser')),'total_recette']],
-                                        group: [literal('mois')],
-                                        order: [[literal('mois'), 'ASC']
-                                    ]
-                                });
-                                all_recette.push(fcui.map(row => row.toJSON()));
-                                if(fcui){
-                                    try{
-                                        const fmc = await ChambreJournal.findAll({
-                                            attributes:[
-                                                [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
-                                                [fn('SUM', col('loyer')),'total_recette']],
-                                                group: [literal('mois')],
-                                                order: [[literal('mois'), 'ASC']
-                                            ]
-                                        });
-                                        all_recette.push(fmc.map(row => row.toJSON()));
-                                        if(fmc){
-                                            const fcc = await CrazyClubJournal.findAll({
-                                                attributes:[
-                                                    [fn('TO_CHAR', col('date'), '%Y-%m'), 'mois'],
-                                                    [fn('SUM', col('recette')),'total_recette']],
-                                                    group: [literal('mois')],
-                                                    order: [[literal('mois'), 'ASC']
-                                                ]
-                                            });
-                                            all_recette.push(fcc.map(row => row.toJSON()));
-                                           // const vall = JSON.stringify(all_recette)
-                                            res.render('caisseOnelove', {all_recette})
-                                        }else{
-                                            console.log('erreur de calcul de la somme de fcm')
-                                        }
-                                    }catch(e){
-                                        console.log(e)
-                                    }
-                                }else{
-                                    console.log('erreur de calcul de la somme de fcui')
-                                }
-                            }catch(e){
-                                console.log(e)
-                            }
-                        }else{
-                            console.log('erreur de calcul de la somme de fap')
-                        }
-                    }catch(e){
-                        console.log(e)
-                    }
-                }else{
-                    console.log('erreur de calcul de la somme de fbv')
-                    console.log(fbv)
-                }
-            }catch(e){
-                console.log(e)
-            }
-        }else{
-            console.log('erreur de calcul de la somme de fbs')
-        }
-    }catch(e){
-        console.log(e)
+app.get('/caisseOnelove', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+    try {
+        // Définition de l'expression de date pour Postgres
+        const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
+
+        // On lance toutes les requêtes en parallèle pour plus de performance
+        const [fbs, fbv, fap, fcui, fmc, fcc] = await Promise.all([
+            BarSimpleJournal.findAll({
+                attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
+                group: [moisExpr], // Groupement par l'expression de date
+                order: [[moisExpr, 'ASC']],
+                raw: true
+            }),
+            BarVipJournal.findAll({
+                attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
+                group: [moisExpr],
+                order: [[moisExpr, 'ASC']],
+                raw: true
+            }),
+            AppartFondJournal.findAll({
+                attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
+                group: [moisExpr],
+                order: [[moisExpr, 'ASC']],
+                raw: true
+            }),
+            CuisineJournal.findAll({
+                attributes: [[moisExpr, 'mois'], [fn('SUM', col('montant_verser')), 'total_recette']],
+                group: [moisExpr],
+                order: [[moisExpr, 'ASC']],
+                raw: true
+            }),
+            ChambreJournal.findAll({
+                attributes: [[moisExpr, 'mois'], [fn('SUM', col('loyer')), 'total_recette']],
+                group: [moisExpr],
+                order: [[moisExpr, 'ASC']],
+                raw: true
+            }),
+            CrazyClubJournal.findAll({ // Assure-toi que le modèle est bien importé
+                attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
+                group: [moisExpr],
+                order: [[moisExpr, 'ASC']],
+                raw: true
+            })
+        ]);
+
+        // Construction du tableau final
+        const all_recette = [fbs, fbv, fap, fcui, fmc, fcc];
+
+        res.render('caisseOnelove', { all_recette });
+
+    } catch (e) {
+        console.error("Erreur dans la route caisseOnelove :", e);
+        res.redirect('/notFound');
     }
-})
+});
 
 // les routes commence ici allBarClub
 //appart.ell(app);
