@@ -483,37 +483,37 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin', 'comptable'), async
             BarSimpleJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr], // Groupement par l'expression de date
-                order: [[moisExpr, 'ASC']],
+                order: [[literal('"mois"'), 'ASC']],
                 raw: true
             }),
             BarVipJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr],
-                order: [[moisExpr, 'ASC']],
+                order: [[literal('"mois"'), 'ASC']],
                 raw: true
             }),
             AppartFondJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr],
-                order: [[moisExpr, 'ASC']],
+                order: [[literal('"mois"'), 'ASC']],
                 raw: true
             }),
             CuisineJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('montant_verser')), 'total_recette']],
                 group: [moisExpr],
-                order: [[moisExpr, 'ASC']],
+                order: [[literal('"mois"'), 'ASC']],
                 raw: true
             }),
             ChambreJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('loyer')), 'total_recette']],
                 group: [moisExpr],
-                order: [[moisExpr, 'ASC']],
+                order: [[literal('"mois"'), 'ASC']],
                 raw: true
             }),
             CrazyClubJournal.findAll({ // Assure-toi que le modèle est bien importé
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr],
-                order: [[moisExpr, 'ASC']],
+                order: [[literal('"mois"'), 'ASC']],
                 raw: true
             })
         ]);

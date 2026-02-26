@@ -215,6 +215,11 @@
         })
       });
 
+      if(anner.length === 0){
+        anner.push(new Date().getFullYear())
+        // data = [[],[],[],[],[],[]]
+      }
+
       anner.forEach((anner, index) => {
         pp.insertAdjacentHTML('beforeend',`
           <div class="card-body carousel-item ${index === 0? 'active' : ''}" id="p${index}">
@@ -252,6 +257,7 @@
         for(let i = 0; i < data.length; i++){
           const ref = Array(12).fill('-');
           let total = 0;
+
           data[i].forEach(element => {
             for(let j = 0; j < all_month.length; j++){
               if(traduct(element.mois) === all_month[j] && anner === element.mois.split('-')[0]){

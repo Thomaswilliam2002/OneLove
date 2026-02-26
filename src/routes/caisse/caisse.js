@@ -32,8 +32,11 @@ caisseBareSimple = (app) => {
                     [col("BarSimple.nom"), "NomBar"]
                 ],
                 include: [{ model: BarSimple, attributes: [] }],
-                group: [moisExpr, 'id_barSimple', col("BarSimple.nom")],
-                order: [['id_barSimple', 'ASC']],
+                group: [moisExpr, col('BarSimpleJournal.id_barSimple'), col("BarSimple.nom")],
+                order: [
+                    [literal('"mois"'), 'ASC'], 
+                    [col('BarSimpleJournal.id_barSimple'), 'ASC']
+                ],
                 raw: true
             });
             res.render('caisseBareSimple', { all_bs_casse });
@@ -57,8 +60,11 @@ caisseBareVip = (app) => {
                     [col("BarVip.nom"), "NomBar"]
                 ],
                 include: [{ model: BarVip, attributes: [] }],
-                group: [moisExpr, 'id_barVip', col("BarVip.nom")],
-                order: [['id_barVip', 'ASC']],
+                group: [moisExpr, col('BarVipJournal.id_barVip'), col("BarVip.nom")],
+                order: [
+                    [literal('"mois"'), 'ASC'], 
+                    [col('BarVipJournal.id_barVip'), 'ASC']
+                ],
                 raw: true
             });
             res.render('caisseBarVip', { all_bs_casse });
@@ -82,8 +88,11 @@ caisseCClub = (app) => {
                     [col("CrazyClub.nom"), "NomCc"]
                 ],
                 include: [{ model: CrazyClub, attributes: [] }],
-                group: [moisExpr, 'id_cclub', col("CrazyClub.nom")],
-                order: [['id_cclub', 'ASC']],
+                group: [moisExpr, col('CrazyClubJournal.id_cclub'), col("CrazyClub.nom")],
+                order: [
+                    [literal('"mois"'), 'ASC'], 
+                    [col('CrazyClubJournal.id_cclub'), 'ASC']
+                ],
                 raw: true
             });
             res.render('caisseCclub', { all_bs_casse });
@@ -149,8 +158,8 @@ caisseMClose = (app) => {
                     [col("MaisonClose.nom"), "NomMc"]
                 ],
                 include: [{ model: MaisonColse, attributes: [] }],
-                group: [moisExpr, 'id_mclose', col("MaisonClose.nom")],
-                order: [[moisExpr, 'ASC'], ['id_mclose', 'ASC']],
+                group: [moisExpr, col('ChambreJournal.id_mclose'), col("MaisonClose.nom")],
+                order: [[moisExpr, 'ASC'], [col('ChambreJournal.id_mclose'), 'ASC']],
                 raw: true
             });
             res.render('caisseMclose', { all_bs_casse });
