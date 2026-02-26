@@ -17,9 +17,16 @@ allProduit = (app) => {
                         //console.log(produits)
                         HistEntrer.findAll({
                             attributes:[ 
-                                [literal("TO_CHAR(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
-                                [literal("SUM(quantiter * prix_unit)"),'total_recette'],
-                                [literal("(SELECT nom FROM produits where produits.id_produit = histEntrers.id_probal)"),'nom'],
+                                // 1. Correction du format date pour Postgres (YYYY-MM)
+                                [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), "mois"], 
+                                'id_probal', 
+                                'type',
+                                [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'total_recette'],
+                                // 2. Correction du SELECT interne : Majuscule à Produits + S à la fin
+                                [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom'],
+                                // [literal("TO_CHAR(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
+                                // [literal("SUM(quantiter * prix_unit)"),'total_recette'],
+                                // [literal("(SELECT nom FROM produits where produits.id_produit = histEntrers.id_probal)"),'nom'],
                             ],
                                 where: {
                                     type:{
