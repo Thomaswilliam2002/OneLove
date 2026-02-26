@@ -85,8 +85,9 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 7,
         secure: process.env.NODE_ENV === 'production' || true,
         httpOnly: true,
-        // sameSite: 'lax' // Recommandé pour éviter les problèmes de redirection
-        sameSite: 'none',     // Nécessaire si le cookie traverse des domaines
+        sameSite: 'lax' // Recommandé pour éviter les problèmes de redirection
+        // sameSite: 'none',     // Nécessaire si le cookie traverse des domaines
+        //Note importante sur sameSite: 'none' : > Si ton application (le frontend) et ton serveur (le backend) sont sur le même nom de domaine (ce qui semble être le cas sur Render), il vaut mieux utiliser sameSite: 'lax'.
     }
 }));
 
