@@ -88,10 +88,10 @@ caisseCClub = (app) => {
                     [col("CrazyClub.nom"), "NomCc"]
                 ],
                 include: [{ model: CrazyClub, attributes: [] }],
-                group: [moisExpr, col('CrazyClubJournal.id_cclub'), col("CrazyClub.nom")],
+                group: [moisExpr, col('CClubJournal.id_cclub'), col("CrazyClub.nom")],
                 order: [
                     [literal('"mois"'), 'ASC'], 
-                    [col('CrazyClubJournal.id_cclub'), 'ASC']
+                    [col('CClubJournal.id_cclub'), 'ASC']
                 ],
                 raw: true
             });
