@@ -229,7 +229,22 @@ deleteCaisse = (app) => {
     })
 }
 
+// Ajoute la fonction si elle manque
+oneCaisse = (app) => {
+    app.get('/oneCaisse/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+        Caisse.findByPk(req.params.id)
+            .then(caisse => {
+                if(!caisse) return res.redirect('/notFound');
+                res.status(200).render('caisse-detail', { caisse });
+            })
+            .catch(err => {
+                console.error(err);
+                res.redirect('/notFound');
+            });
+    });
+};
+
 module.exports = {
     allCaisse, caisseBareSimple, caisseBareVip, caisseAppart, caisseMClose, caisseCClub, caisseCuisine,
-    formAddCaisse, formEditCaisse, addCaisse, updateCaisse, deleteCaisse
+    formAddCaisse, formEditCaisse, addCaisse, updateCaisse, deleteCaisse, oneCaisse
 };
