@@ -129,29 +129,27 @@ oneProduit = (app) => {
                         })
                             .then(hventes => {
                                 HistEntrer.findAll({
-                                    // attributes:[
-                                    //     [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
-                                    //     [literal("SUM(quantiter * prix_unit)"),'recette']],
-                                    //     where: {
-                                    //         id_probal: produit.id_produit, type: 'produit'
-                                    //     },
-                                    //     group: [literal('mois')],
-                                    //     order: [[literal('mois'), 'ASC']]
-                                    // Pour HistEntrer (ligne 98 env.)
                                     attributes: [
-                                        [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), 'mois'],
-                                        'id_probal',
-                                        [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'recette']
+                                        // Correction de la date pour PostgreSQL
+                                        [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), "mois"], 
+                                        'id_probal', 
+                                        'type',
+                                        [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'total_recette'],
+                                        // Correction CRITIQUE : "Produits" avec majuscule et guillemets doubles
+                                        [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom'],
                                     ],
-                                    group: [literal("mois"), "id_probal", "HistEntrer.id_hist"],
-
-                                    // Pour HistSortie (ligne 112 env.)
-                                    attributes: [
-                                        [literal("TO_CHAR(\"HistSortie\".\"created\", 'YYYY-MM')"), 'mois'],
-                                        'id_probal',
-                                        [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'recette']
+                                    where: {
+                                        type: { [Op.in]: ["produit"] }
+                                    },
+                                    // Ajout de la clé primaire correcte 'id_hist' au groupement
+                                    group: [
+                                        "id_probal", 
+                                        "type", 
+                                        "HistEntrer.id_hist", 
+                                        literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')")
                                     ],
-                                    group: [literal("mois"), "id_probal", "HistSortie.id_hist"],
+                                    order: [["type"], [literal("mois"), 'ASC']],
+                                    raw: true // Assurez-vous que c'est bien 'raw' et non 'row'
                                 })
                                     .then(hr => {
                                         HistSortie.findAll({
