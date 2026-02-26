@@ -153,14 +153,18 @@ oneProduit = (app) => {
                                 })
                                     .then(hr => {
                                         HistSortie.findAll({
-                                            attributes:[
-                                                [fn('TO_CHAR', col('created'), '%Y-%m'), 'mois'],'id_probal',
-                                                [literal("SUM(quantiter * prix_unit)"),'recette']],
-                                                where: {
-                                                    id_probal: produit.id_produit, type: 'produit'
-                                                },
-                                                group: [literal('mois')],
-                                                order: [[literal('mois'), 'ASC']]
+                                            attributes: [
+                                                [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
+                                                'id_probal',
+                                                [fn('SUM', literal('quantiter * prix_unit')), 'recette']
+                                            ],
+                                            where: { id_probal: req.params.id },
+                                            group: [
+                                                fn('TO_CHAR', col('created'), 'YYYY-MM'), 
+                                                'id_probal', 
+                                                'id_hist'
+                                        ],
+                                            raw: true
                                         })
                                             .then(hs => {
                                                 //res.json(hr)
