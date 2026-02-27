@@ -171,6 +171,12 @@ formEditPersonnel = (app) =>{
 addPersonnel = (app) => {
     app.post(['/addPersonnel', '/addAdmin'],async (req, res) => {
         const {nom, prenom, email, mdp, numero, age, selectGenderOptions, poste, dep,  desc, adresse, periode} = req.body;
+        
+        // On enlève les espaces avant de tester la valeur
+        const cleanAge = age?.trim(); 
+
+        const ageData = (cleanAge && !isNaN(cleanAge)) ? parseInt(cleanAge, 10) : 0;
+
         const verif = await Personnel.findOne({
             where:{email: email}
         })
