@@ -32,6 +32,7 @@ const Occupent_m = require('../models/occupent')
 const AppartFondJournal_m = require('../models/appartFondJournal');
 const HistCaisse_m = require('../models/histCaise');
 const occupe = require('../models/occupe');
+const { on } = require('nodemailer/lib/xoauth2');
 
 // On utilise l'URL de Render (DATABASE_URL)
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
@@ -83,7 +84,8 @@ sequelize.authenticate()
 
 // liaison entre bar simple et son journal
 BarSimple.hasMany(BarSimpleJournal, {
-    foreignKey: 'id_barSimple'
+    foreignKey: 'id_barSimple',
+    onDelete: 'CASCADE', // Suppression en cascade. si on supprime un bar simple on supprime son journal
 });
 BarSimpleJournal.belongsTo(BarSimple, {
     foreignKey: 'id_barSimple'
@@ -91,7 +93,8 @@ BarSimpleJournal.belongsTo(BarSimple, {
 
 // liaison entre appartement et son journal
 Appartement.hasMany(AppartJournal, {
-    foreignKey: 'id_appart'
+    foreignKey: 'id_appart',
+    onDelete: 'CASCADE',
 });
 AppartJournal.belongsTo(Appartement, {
     foreignKey: 'id_appart'
@@ -99,7 +102,8 @@ AppartJournal.belongsTo(Appartement, {
 
 // liaison entre appartement et appart font journal
 Appartement.hasMany(AppartFondJournal, {
-    foreignKey: 'id_appart'
+    foreignKey: 'id_appart',
+    onDelete: 'CASCADE',
 });
 AppartFondJournal.belongsTo(Appartement, {
     foreignKey: 'id_appart'
@@ -130,14 +134,16 @@ AppartFondJournal.belongsTo(Appartement, {
 
 // liaison entre bar vip et son journal
 BarVip.hasMany(BarVipJournal, {
-    foreignKey: 'id_barVip'
+    foreignKey: 'id_barVip',
+    onDelete: 'CASCADE',
 });
 BarVipJournal.belongsTo(BarVip, {
     foreignKey: 'id_barVip'
 });
 
 CrazyClub.hasMany(CrazyClubJournal, {
-    foreignKey: 'id_cclub'
+    foreignKey: 'id_cclub',
+    onDelete: 'CASCADE',
 });
 CrazyClubJournal.belongsTo(CrazyClub, {
     foreignKey: 'id_cclub'
@@ -145,7 +151,8 @@ CrazyClubJournal.belongsTo(CrazyClub, {
 
 // liaison entre bar cuisine et son journal
 Cuisine.hasMany(CuisineJournal, {
-    foreignKey: 'id_cuisine'
+    foreignKey: 'id_cuisine',
+    onDelete: 'CASCADE',
 });
 CuisineJournal.belongsTo(Cuisine, {
     foreignKey: 'id_cuisine'
@@ -153,7 +160,8 @@ CuisineJournal.belongsTo(Cuisine, {
 
 // liaison entre maison close et chambre
 MaisonColse.hasMany(Chambre, {
-    foreignKey: 'id_mclose'
+    foreignKey: 'id_mclose',
+    onDelete: 'CASCADE',
 });
 Chambre.belongsTo(MaisonColse, {
     foreignKey: 'id_mclose'
@@ -161,7 +169,8 @@ Chambre.belongsTo(MaisonColse, {
 
 // liaison entre chambre et son journal
 Chambre.hasMany(ChambreJournal, {
-    foreignKey: 'id_chambre'
+    foreignKey: 'id_chambre',
+    onDelete: 'CASCADE',
 });
 ChambreJournal.belongsTo(Chambre, {
     foreignKey: 'id_chambre'
@@ -169,7 +178,8 @@ ChambreJournal.belongsTo(Chambre, {
 
 // liaison entre maison close et journal chambre
 MaisonColse.hasMany(ChambreJournal, {
-    foreignKey: 'id_mclose'
+    foreignKey: 'id_mclose',
+    onDelete: 'CASCADE',
 });
 ChambreJournal.belongsTo(MaisonColse, {
     foreignKey: 'id_mclose'
@@ -177,7 +187,8 @@ ChambreJournal.belongsTo(MaisonColse, {
 
 // liaison entre caisse et son journal
 Caisse.hasMany(CaisseJournal, {
-    foreignKey: 'id_caisse'
+    foreignKey: 'id_caisse',
+    onDelete: 'CASCADE',
 });
 CaisseJournal.belongsTo(Caisse, {
     foreignKey: 'id_caisse'
@@ -185,47 +196,48 @@ CaisseJournal.belongsTo(Caisse, {
 
 // liaison entre caisse et bar simple
 Caisse.hasMany(BarSimple, {
-    foreignKey: 'id_caisse'
+    foreignKey: 'id_caisse',
 });
 BarSimple.belongsTo(Caisse, {
-    foreignKey: 'id_caisse'
+    foreignKey: 'id_caisse',
 });
 
 // liaison entre caisse et appartement
-Caisse.hasMany(Appartement, {
-    foreignKey: 'id_caisse'
-});
-Appartement.belongsTo(Caisse, {
-    foreignKey: 'id_caisse'
-});
+// Caisse.hasMany(Appartement, {
+//     foreignKey: 'id_caisse'
+// });
+// Appartement.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
 
-// liaison entre caisse et bar vip
-Caisse.hasMany(BarVip, {
-    foreignKey: 'id_caisse'
-});
-BarVip.belongsTo(Caisse, {
-    foreignKey: 'id_caisse'
-});
+// // liaison entre caisse et bar vip
+// Caisse.hasMany(BarVip, {
+//     foreignKey: 'id_caisse'
+// });
+// BarVip.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
 
-// liaison entre caisse et cuisine
-Caisse.hasMany(Cuisine, {
-    foreignKey: 'id_caisse'
-});
-Cuisine.belongsTo(Caisse, {
-    foreignKey: 'id_caisse'
-});
+// // liaison entre caisse et cuisine
+// Caisse.hasMany(Cuisine, {
+//     foreignKey: 'id_caisse'
+// });
+// Cuisine.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
 
-// liaison entre caisse et maison close
-Caisse.hasMany(MaisonColse, {
-    foreignKey: 'id_caisse'
-});
-MaisonColse.belongsTo(Caisse, {
-    foreignKey: 'id_caisse'
-});
+// // liaison entre caisse et maison close
+// Caisse.hasMany(MaisonColse, {
+//     foreignKey: 'id_caisse'
+// });
+// MaisonColse.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
 
 // liaison entre personnel et occupe
 Personnel.hasMany(Occupe, {
-    foreignKey: 'id_personnel'
+    foreignKey: 'id_personnel',
+    onDelete: 'CASCADE'
 });
 Occupe.belongsTo(Personnel, {
     foreignKey: 'id_personnel'
@@ -233,7 +245,8 @@ Occupe.belongsTo(Personnel, {
 
 // liaison entre personnel et presence
 Personnel.hasMany(Presence, {
-    foreignKey: 'id_personnel'
+    foreignKey: 'id_personnel',
+    onDelete: 'CASCADE'
 });
 Presence.belongsTo(Personnel, {
     foreignKey: 'id_personnel'
@@ -241,7 +254,8 @@ Presence.belongsTo(Personnel, {
 
 // liaison entre occupe et poste
 Poste.hasMany(Occupe, {
-    foreignKey: 'id_poste'
+    foreignKey: 'id_poste',
+    onDelete: 'CASCADE'
 });
 Occupe.belongsTo(Poste, {
     foreignKey: 'id_poste'
@@ -250,7 +264,8 @@ Occupe.belongsTo(Poste, {
 
 // liaison entre occupe et sanction
 Occupe.hasMany(Sanction, {
-    foreignKey: 'id_occupe'
+    foreignKey: 'id_occupe',
+    onDelete: 'CASCADE'
 });
 Sanction.belongsTo(Occupe, {
     foreignKey: 'id_occupe'
@@ -282,7 +297,7 @@ Sanction.belongsTo(Occupe, {
 
 (async () =>{
     try{
-        await sequelize.sync({force:true}); //{alter: false}
+        await sequelize.sync(); //{alter: false}
         console.log('Base synchronisee')
 
         const count = await Poste.count({
