@@ -233,7 +233,7 @@ addPersonnel = (app) => {
             email: email,
             mdp: hash_pass,
             numero: numero,
-            age: age ? parseInt(age) : null,
+            age: ageData,
             genre: selectGenderOptions,
             type_personnel: type,
             description: desc,
