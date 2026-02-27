@@ -171,20 +171,24 @@ formEditPersonnel = (app) =>{
 addPersonnel = (app) => {
     app.post(['/addPersonnel', '/addAdmin'],async (req, res) => {
         const {nom, prenom, email, mdp, numero, age, selectGenderOptions, poste, dep,  desc, adresse, periode} = req.body;
-        
+        let verif = false
         // On enlève les espaces avant de tester la valeur
-        const cleanAge = age?.trim(); 
+        const cleanAge = age?.trim();
+        const emailtrim = email?.trim();
+        // const emailReg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; 
 
         const ageData = (cleanAge && !isNaN(cleanAge)) ? parseInt(cleanAge, 10) : 0;
-
-        const verif = await Personnel.findOne({
-            where:{email: email}
-        })
+        if (emailtrim && emailtrim.includes('@')) {
+            verif = await Personnel.findOne({
+                where: { email: emailtrim }
+            });
+        }
+        
         if(verif){
             msg = "Cette email existe déjà! Choisisez un autre."
-            if(req.path === '/addPersonnel' && req.query.sender === 'admin'){
-                res.redirect('/formAddPersonnel?indice=admin&msg=' + msg)
-            }else if(req.path === '/addPersonnel' && req.query.sender === 'staff'){
+            // if(req.path === '/addPersonnel' && req.query.sender === 'admin'){
+            //     res.redirect('/formAddPersonnel?indice=admin&msg=' + msg)
+            if(req.path === '/addPersonnel' && req.query.sender === 'staff'){
                 res.redirect('/inscription?msg=' + msg)
             } else if(req.path === '/addAdmin'){
                 res.redirect('/formAddAdmin?msg=' + msg)
@@ -230,7 +234,7 @@ addPersonnel = (app) => {
             nom: nom, 
             prenom: prenom,
             adresse: adresse,
-            email: email,
+            email: emailtrim,
             mdp: hash_pass,
             numero: numero,
             age: ageData,
