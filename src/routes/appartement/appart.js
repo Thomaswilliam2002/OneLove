@@ -106,7 +106,7 @@ formAddAppart = (app) =>{
     })
 }
 formEditAppart = (app) =>{
-    app.get('/formEditAppart/:id', protrctionRoot, authorise('admin'), (req, res) => {
+    app.get('/formEditAppart/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         Appartement.findByPk(req.params.id)
             .then(appartement => {
                 res.status(200).render('edit-appart', {appartement: appartement})
