@@ -227,7 +227,7 @@ addPersonnel = (app) => {
             email: email,
             mdp: hash_pass,
             numero: numero,
-            age: age,
+            age: age ? parseInt(age) : null,
             genre: selectGenderOptions,
             type_personnel: type,
             description: desc,
