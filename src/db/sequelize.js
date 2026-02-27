@@ -297,7 +297,7 @@ Sanction.belongsTo(Occupe, {
 
 (async () =>{
     try{
-        await sequelize.sync(); //{alter: false}
+        await sequelize.sync({force:true}); //{alter: false}
         console.log('Base synchronisee')
 
         const count = await Poste.count({
