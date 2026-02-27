@@ -333,7 +333,7 @@ Sanction.belongsTo(Occupe, {
             try{
                 const salt = await bcrypt.genSalt(10);
                 const hash_pass = await bcrypt.hash('adminadmin', salt)
-                Personnel.create({
+                const admin = await Personnel.create({
                     nom: 'admin', 
                     prenom: 'admin',
                     adresse: '',
@@ -348,11 +348,12 @@ Sanction.belongsTo(Occupe, {
                     periode: 'Mensuel'
                 })
 
-                Occupe.create(
+                await Occupe.create(
                     {salaire:0,
-                    id_personnel: 1,
+                    id_personnel: admin.id_personnel,
                     id_poste: 1}
                 )
+                console.log('Compte Admin et affectation créés avec succès');
             }catch (e){
                 console.log(e)
             }
