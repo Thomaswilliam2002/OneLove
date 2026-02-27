@@ -116,8 +116,8 @@ app.use((req, res, next) => {
 
 //route roote
 app.get('/', (req, res) => {
-    // res.render('login', {msg: req.query.msg})
-    res.json('Hello heroku !🤩')
+    res.render('login', {msg: req.query.msg})
+    //res.json('Hello heroku !🤩')
 })
 // ------------------------------------------------------------------------------------------
 app.get('/expo', (req, res) => {
