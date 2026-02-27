@@ -103,12 +103,21 @@
                             <input type="text" class="form-control" id="a2" placeholder="Entrer le prenom" name="prenom" required>
                           </div>
                         </div>
-                        <div class="col-xxl-3 col-lg-4 col-sm-6">
-                          <div class="mb-3">
-                            <label class="form-label" for="a2">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="a2" placeholder="Enter un email valide" name="email" required>
+                        <% if (user?.Poste?.nom_poste.toLowerCase() === 'comptable'){%>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Email <span class="text-danger">*</span></label>
+                              <input type="email" class="form-control" id="a2" placeholder="Enter un email valide" name="email">
+                            </div>
                           </div>
-                        </div>
+                        <% }else{ %>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a2">Email <span class="text-danger">*</span></label>
+                              <input type="email" class="form-control" id="a2" placeholder="Enter un email valide" name="email" required>
+                            </div>
+                          </div>
+                        <% }%>
                         <div class="col-xxl-3 col-lg-4 col-sm-6">
                           <div class="mb-3">
                             <label class="form-label" for="a3">Numero de Telephone<span class="text-danger">*</span></label>
@@ -133,12 +142,21 @@
                             </div>
                           </div>
                         </div>
-                        <div class="col-xxl-3 col-lg-4 col-sm-6">
-                          <div class="mb-3">
-                            <label class="form-label" for="a4">age<span class="text-danger">*</span></label>
-                            <input type="number" min="18" class="form-control" id="a4" placeholder="Entrer l'age" name="age" required>
+                        <% if (user?.Poste?.nom_poste.toLowerCase() === 'comptable'){%>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a4">age<span class="text-danger">*</span></label>
+                              <input type="number" min="18" class="form-control" id="a4" placeholder="Entrer l'age" name="age">
+                            </div>
                           </div>
-                        </div>
+                        <% }else{ %>
+                          <div class="col-xxl-3 col-lg-4 col-sm-6">
+                            <div class="mb-3">
+                              <label class="form-label" for="a4">age<span class="text-danger">*</span></label>
+                              <input type="number" min="18" class="form-control" id="a4" placeholder="Entrer l'age" name="age" required>
+                            </div>
+                          </div>
+                        <% }%>
                         <div class="col-xxl-3 col-lg-4 col-sm-6">
                           <div class="mb-3">
                             <label class="form-label" for="a5">Qualification <span class="text-danger">*</span></label>

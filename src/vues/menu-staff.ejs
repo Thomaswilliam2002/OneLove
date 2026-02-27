@@ -21,7 +21,7 @@
             <span class="menu-text">Dashboard</span>
           </a>
         </li>
-        <%  if(user.Poste.nom_poste.toLowerCase() === 'caissier') { %>
+        <%  if(user?.Poste?.nom_poste.toLowerCase() === 'caissier') { %>
           <!---------------------------------------------------------------------->
           <li class="items">
             <a href="/presence">
@@ -65,7 +65,7 @@
               <span class="menu-text">Historique des Produit/Emballage vendue</span>
             </a>
           </li>
-        <% }; if(user.Poste.nom_poste.toLowerCase() === 'caissier central' 
+        <% }; if(user?.Poste?.nom_poste.toLowerCase() === 'caissier central' 
         || user.Poste.nom_poste.toLowerCase() === 'comptable'){%>
           <li class="treeview items">
             <a href="#!">
@@ -115,7 +115,7 @@
             </ul>
           </li>
           <!--  -->
-        <% } if(user.Poste.nom_poste.toLowerCase() === 'comptable') {%>
+        <% } if(user?.Poste?.nom_poste.toLowerCase() === 'comptable') {%>
           <!---------------------------------------------------------------------->
           <li class="treeview items">
             <a href="#!">
@@ -277,7 +277,7 @@
               <span class="menu-text">Autre Ajout</span>
             </a>
           </li>
-        <% }  if(user.Poste.nom_poste.toLowerCase() === 'gerant') {%>
+        <% }  if(user?.Poste?.nom_poste.toLowerCase() === 'gerant') {%>
           <li class="items">
             <a href="/allClient">
               <i class="ri-home-6-line"></i>
