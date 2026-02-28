@@ -9,8 +9,9 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 allPersonnel = (app) => {
     app.get('/allPersonnel', protrctionRoot, authorise('admin', 'comptable', 'caissier'), (req, res) => {
-        Personnel.findAll({
+        Occupe.findAll({
             include: [
+                {model: Personnel},
                 {model: Poste}
             ],
             order:[['id_personnel', 'DESC']]
