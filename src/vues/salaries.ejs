@@ -136,9 +136,11 @@
       });
       const sanction = []
       const tbody = document.getElementById("tbody")
-      let data = JSON.parse('<%- JSON.stringify(datas) %>')
+      // let data = JSON.parse('<%- JSON.stringify(datas) %>')
+      const rawData = `<%- JSON.stringify(datas) %>`;
+      const data = JSON.parse(rawData);
       
-      // console.log(data[0])
+      console.log(data)
       let c = 0
       data[0].forEach((staff, inst) => {
         data[1].forEach((punition, inpu) => {

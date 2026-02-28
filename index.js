@@ -408,21 +408,29 @@ app.get('/allBarClub', protrctionRoot, authorise('admin', 'comptable'), (req, re
 // la route vers la liste des salarier
 app.get('/salarier', protrctionRoot, authorise('admin', 'comptable'), async (req, res) =>{
     const data = []
-    const salariers = await Occupe.findAll({
-        include:[
-            {model: Personnel},
-            {model: Poste}
-        ],
-        order:[['id_occupe', 'DESC']]
-    })
-    if(salariers){
-        data.push(salariers)
-        const sanction = await Sanction.findAll()
-        if(sanction){
-            data.push(sanction)
-            res.render('salaries', {datas: data})
+    try{
+        const salariers = await Occupe.findAll({
+            include:[
+                {model: Personnel},
+                {model: Poste}
+            ],
+            order:[['id_occupe', 'DESC']]
+        })
+        if(salariers){
+            data.push(salariers)
+            const sanction = await Sanction.findAll()
+            if(sanction){
+                data.push(sanction)
+                res.render('salaries', {datas: data})
+            }
+        }else{
+            res.redirect('/notFound')
         }
+    }catch(e){
+        console.log(e)
+        res.redirect('/notFound')
     }
+    // Personnel.findAll()
         // .then(salariers =>{
         //     //res.json(salariers)
         //     res.render('salaries', {salariers: salariers})

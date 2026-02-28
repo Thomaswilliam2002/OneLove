@@ -118,6 +118,7 @@
                             <th aria-controls="basicExample">ID</th>
                             <th>Nom</th>
                             <th>Prenom</th>
+                            <th>Poste occuper</th>
                             <th>Status</th>
                             <th>Actions</th>
                           </tr>
@@ -132,6 +133,7 @@
                             <td>
                               <%= personnel.prenom %>
                             </td>
+                            <td><%= personnel.Poste.nom_poste %></td>
                             <td><%= personnel.type_personnel %></td>
                             <td>
                               <div class="d-inline-flex gap-1">
