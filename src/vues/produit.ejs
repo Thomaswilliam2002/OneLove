@@ -510,8 +510,8 @@
       const anner = []
       
 
-      const recette = JSON.parse('<%- JSON.stringify(sumhes) %>')
-      console.log('r', recette)
+      const recette = JSON.parse(`<%- JSON.stringify(sumhes) %>`)
+      // console.log('r', recette)
 
       recette.forEach(element => {
         if(!anner.includes(element.mois.split('-')[0])){
@@ -519,7 +519,7 @@
         }
       });
 
-      console.log(anner)
+      // console.log(anner)
 
       // ----------------------------------------------------------------------
       anner.forEach((anner, ia) => {
@@ -661,7 +661,7 @@
             `)
           }
 
-          console.log(id, anner)
+          // console.log(id, anner)
 
 
           const hot = document.getElementById(`income${ia}`);

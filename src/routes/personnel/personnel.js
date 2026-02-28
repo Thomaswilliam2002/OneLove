@@ -14,7 +14,7 @@ allPersonnel = (app) => {
                 {model: Personnel},
                 {model: Poste}
             ],
-            order:[['id_personnel', 'DESC']]
+            order:[['id_occupe', 'DESC']]
         })
             .then(personnels => {
                 const msg = "Liste recuperer avec succes"

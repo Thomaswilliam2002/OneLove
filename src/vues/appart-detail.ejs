@@ -330,7 +330,7 @@
       const anner = []
       
   
-      let recette = JSON.parse('<%- JSON.stringify(courbe_info) %>')
+      let recette = JSON.parse(`<%- JSON.stringify(courbe_info) %>`)
       console.log(recette)
       if(recette.length === 0){
         let d = new Date().toISOString().slice(0,7);

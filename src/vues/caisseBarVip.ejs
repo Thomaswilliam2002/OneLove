@@ -205,7 +205,7 @@
       const anner = []
       
 
-      let recette = JSON.parse('<%- JSON.stringify(all_bs_casse) %>')
+      let recette = JSON.parse(`<%- JSON.stringify(all_bs_casse) %>`)
       if(recette.length === 0){
         let d = new Date().toISOString().slice(0,7);
         recette.push(JSON.parse(JSON.stringify({

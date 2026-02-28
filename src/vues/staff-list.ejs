@@ -138,7 +138,7 @@
                             <td>
                               <div class="d-inline-flex gap-1">
                                 <!-- ----------------------------------------------------------------------------------- -->
-                                <% if(personnel.type_personnel !== 'admin'){%>
+                                <% if(personnel.Personnel.type_personnel !== 'admin'){%>
                                   <!-- Card starts -->
                                       <!-- Button trigger modal -->
                                       <button type="button" data-bs-toggle="modal"
@@ -158,13 +158,13 @@
                                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body" style="white-space: normal; word-wrap: break-word; overflow: break-word;">
-                                              <p>Voulez-vous vraiment supprimer <%= personnel.nom %> <%= personnel.prenom %> ?</p>
+                                              <p>Voulez-vous vraiment supprimer <%= personnel.Personnel.nom %> <%= personnel.Personnel.prenom %> ?</p>
                                             </div>
                                             <div class="modal-footer">
                                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                 annuler
                                               </button>
-                                              <form action="/deletePersonnel/<%= personnel.id_personnel %>?_method=DELETE" method="post">
+                                              <form action="/deletePersonnel/<%= personnel.Personnel.id_personnel %>?_method=DELETE" method="post">
                                                 <div class="col-sm-12">
                                                   <div class="d-flex gap-2 justify-content-end">
                                                     <button type="submit" class="btn btn-danger">Supprimer</button>
@@ -180,30 +180,30 @@
                                 <% }%>
                                 <% if(user.Personnel.type_personnel === 'comptable'){if(personnel.type_personnel !== 'admin'){%>
                                 <!-- ----------------------------------------------------------------------------------------- -->
-                                  <a href="<%= allType === 'admin' ? '/formEditAdmin/' + personnel.id_personnel : 'formEditPersonnel/' + personnel.id_personnel %>" class="btn btn-outline-success btn-sm"
+                                  <a href="<%= allType === 'admin' ? '/formEditAdmin/' + personnel.Personnel.id_personnel : 'formEditPersonnel/' + personnel.Personnel.id_personnel %>" class="btn btn-outline-success btn-sm"
                                     data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
                                     <i class="ri-edit-box-line"></i>
                                   </a>
                                 <% }} else if(user.Personnel.type_personnel === 'admin'){%>
-                                  <a href="<%= allType === 'admin' ? '/formEditAdmin/' + personnel.id_personnel : 'formEditPersonnel/' + personnel.id_personnel %>" class="btn btn-outline-success btn-sm"
+                                  <a href="<%= allType === 'admin' ? '/formEditAdmin/' + personnel.Personnel.id_personnel : 'formEditPersonnel/' + personnel.Personnel.id_personnel %>" class="btn btn-outline-success btn-sm"
                                     data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
                                     <i class="ri-edit-box-line"></i>
                                   </a>
                                 <%} %>
 
                                 <% if(!['admin'].includes(personnel.type_personnel)) {%>
-                                  <a href="/onePersonnel/<%= personnel.id_personnel %>?indice=admin" class="btn btn-outline-info btn-sm"
+                                  <a href="/onePersonnel/<%= personnel.Personnel.id_personnel %>?indice=admin" class="btn btn-outline-info btn-sm"
                                     data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="voir le Profile">
                                     <i class="ri-eye-line"></i> 
                                   </a>
-                                  <a href="/formAddSamction/<%= personnel.id_personnel %>" class="btn btn-outline-warning btn-sm"
+                                  <a href="/formAddSamction/<%= personnel.Personnel.id_personnel %>" class="btn btn-outline-warning btn-sm"
                                     data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Sanctionnée">
                                     <i class="ri-speak-line"></i>
                                   </a>
-                                <% }; if(user.Personnel.type_personnel === 'admin'){ if(['caissier central', 'caissier', 'comptable'].includes(personnel.type_personnel) || user.Personnel.id_personnel !== personnel.id_personnel){%>
-                                  <a href="/validation/<%= personnel.id_personnel%>/<%- personnel.validation === true ? false : true %>?" class="btn btn-outline-info btn-sm"
+                                <% }; if(user.Personnel.type_personnel === 'admin'){ if(['caissier central', 'caissier', 'comptable'].includes(personnel.Personnel.type_personnel) || user.Personnel.id_personnel !== personnel.Personnel.id_personnel){%>
+                                  <a href="/validation/<%= personnel.Personnel.id_personnel%>/<%- personnel.Personnel.validation === true ? false : true %>?" class="btn btn-outline-info btn-sm"
                                     data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="<%- personnel.validation === true ? 'Suspendre le compte' : 'Valider le compte'%>">
-                                    <i class="<%- personnel.validation === true ? 'ri-close-line' : 'ri-check-fill'%>"></i>
+                                    <i class="<%- personnel.Personnel.validation === true ? 'ri-close-line' : 'ri-check-fill'%>"></i>
                                   </a>
                                 <%}} %>
                                 </div>
