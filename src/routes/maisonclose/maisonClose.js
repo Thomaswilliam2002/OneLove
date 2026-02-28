@@ -50,7 +50,7 @@ oneMClose = (app) => {
                 })
                     .then(chambres => {
                         //res.json(maisonColses)
-                        //res.status(200).render('mclose-detail',{maisonColse: maisonColse, chambres: chambres})
+                        res.status(200).render('mclose-detail',{maisonColse: maisonColse, chambres: chambres})
                     })
                 //res.status(200).render('mclose-detail')
             })
