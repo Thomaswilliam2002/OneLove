@@ -2,7 +2,7 @@ require('dotenv').config();
 const {sequelize, Occupe, Personnel, Poste, BarSimpleJournal, BarVipJournal, AppartFondJournal, CuisineJournal, 
     ChambreJournal, Sanction, CrazyClubJournal,
     Appartement,
-    Categorie,
+    Categorie,AppartJournal,
     Produit,
     Emballage,
     Caisse,Depense,
@@ -185,7 +185,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             BarVipJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             CrazyClubJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             CuisineJournal.sum("montant_verser", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            AppartFondJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            AppartJournal.sum("loyer", { where: { date_debut: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             ChambreJournal.sum("loyer", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             // Totaux globaux
             Caisse.sum("recette"),
