@@ -1,5 +1,5 @@
 const { Caisse, BarSimpleJournal, BarVipJournal, AppartFondJournal, ChambreJournal, BarSimple, BarVip } = require('../../db/sequelize')
-const { Poste, Appartement, MaisonColse, CrazyClub, CrazyClubJournal, HistCaisse, CuisineJournal } = require('../../db/sequelize')
+const { Poste, Appartement, MaisonColse, CrazyClub, CrazyClubJournal, HistCaisse, CuisineJournal, AppartJournal } = require('../../db/sequelize')
 const { Personnel } = require('../../db/sequelize')
 const { Occupe } = require('../../db/sequelize')
 const { fn, col, literal } = require('sequelize');
@@ -107,11 +107,11 @@ caisseCClub = (app) => {
 caisseAppart = (app) => {
     app.get('/caisseAppart', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try {
-            const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
-            const all_bs_casse = await AppartFondJournal.findAll({
+            const moisExpr = fn('TO_CHAR', col('date_debut'), 'YYYY-MM');
+            const all_bs_casse = await AppartJournal.findAll({
                 attributes: [
                     [moisExpr, "mois"],
-                    [fn('SUM', col('recette')), 'total_recette'],
+                    [fn('SUM', col('loyer')), 'total_recette'],
                 ],
                 group: [moisExpr],
                 raw: true

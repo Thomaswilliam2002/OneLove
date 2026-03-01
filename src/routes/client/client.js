@@ -60,7 +60,7 @@ addClient = (app) => {
                     date_debut:date,
                     date_fin: d,
                     loyer: loyer,
-                    nuiter:nuiter,
+                    nuiter:nuiter || 0,
                     id_appart:id_appart,
                     id_client:cli.id_client
                 })

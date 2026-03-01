@@ -12,7 +12,7 @@ allJournal = (app) => {
                 res.status(200).render('appartJournal', {journals: journals, msg: req.query.msg, indice: req.query.indice})
             })
             .catch(_ => {
-                //console.log('erreure de selection all', _)
+                console.log('erreure de selection all', _)
                 res.redirect('/notFound');
             })
     })
@@ -26,7 +26,7 @@ appartFondJournal = (app) => {
         if(hfond){
             res.status(200).render('appartJournal', {hfonds: hfond, msg: req.query.msg, indice: req.query.indice})
         }else{
-            // console.log('erreure de selection all', _)
+            console.log('erreure de selection all', _)
             res.redirect('/notFound');
         }
     })
