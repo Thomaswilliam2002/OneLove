@@ -95,7 +95,7 @@ app.use(session({
 
 
 // TRÈS IMPORTANT : Créer la table dans MariaDB si elle n'existe pas
-// mySessionStore.sync();
+mySessionStore.sync();
 
 app.use(methodOverride('_method'));
 
