@@ -1,24 +1,24 @@
 const {CategorieDepense, Depense} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
-const {fn, col, literal} = require('sequelize');
-formAddDepense = (app) => {
-    app.get('/formAddDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
-        try{
-            const categories = await CategorieDepense.findAll()
-            if(categories){
-                res.status(200).render('add-depense', {categories: categories});
-            }else{
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            }
-        }catch(_){
-            console.error(_);
-            res.redirect('/notFound');
-            return; // On stoppe tout ici !
-        }
-    })
-}
+// const {fn, col, literal} = require('sequelize');
+// formAddDepense = (app) => {
+//     app.get('/formAddDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+//         try{
+//             const categories = await CategorieDepense.findAll()
+//             if(categories){
+//                 res.status(200).render('add-depense', {categories: categories});
+//             }else{
+//                 console.error(_);
+//                 res.redirect('/notFound');
+//                 return; // On stoppe tout ici !
+//             }
+//         }catch(_){
+//             console.error(_);
+//             res.redirect('/notFound');
+//             return; // On stoppe tout ici !
+//         }
+//     })
+// }
 
 allDepense = (app) => {
     app.get('/allDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
