@@ -196,7 +196,7 @@ formEditCaisse = (app) => {
     app.get('/formEditCaisse/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         Caisse.findByPk(req.params.id).then(caisse => {
             Occupe.findAll({
-                include: [{ model: Personnel }, { model: Poste, where: { nom_poste: 'Comptable' } }]
+                include: [{ model: Personnel }, { model: Poste, where: { nom_poste: 'caissier' } }]
             }).then(personnels => {
                 res.status(200).render('edit-caisse', { caisse, personnels })
             }).catch(err => { console.error(err); res.redirect('/notFound'); })
