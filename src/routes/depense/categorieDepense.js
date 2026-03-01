@@ -15,6 +15,7 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 allCategorieDepense = (app) => {
     app.get('/allCategorieDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
+            console.log("allCategorieDepense")
             const categories = await CategorieDepense.findAll()
             if(categories){
                 res.status(200).render('categorieDepense', {categories: categories, msg: req.query.msg , text_color: req.query.tc});
