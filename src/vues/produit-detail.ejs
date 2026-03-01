@@ -471,25 +471,32 @@
           const recette_s = Array(12).fill(0);
           let hasData = false;
 
-          // 2. On remplit les données d'entrée pour cette année
+          // 2. Traitement des ENTRÉES
           recettee.forEach(item => {
-              const itemAnnee = item.mois.split('-')[0];
+              const [itemAnnee, itemMois] = item.mois.split('-'); 
               if (itemAnnee === anneeCourante) {
-                  const moisIndex = all_month.indexOf(traduct(item.mois));
+                  const moisNom = traduct(item.mois);
+                  const moisIndex = all_month.indexOf(moisNom);
+                  
                   if (moisIndex !== -1) {
-                      recette_e[moisIndex] = item.recette;
+                      // On additionne et on s'assure que c'est un nombre avec parseFloat
+                      const valeur = parseFloat(item.recette);
+                      recette_e[moisIndex] += isNaN(valeur) ? 0 : valeur;
                       hasData = true;
                   }
               }
           });
 
-          // 3. On remplit les données de sortie pour cette année
+          // 3. Traitement des SORTIES
           recettes.forEach(item => {
-              const itemAnnee = item.mois.split('-')[0];
+              const [itemAnnee, itemMois] = item.mois.split('-');
               if (itemAnnee === anneeCourante) {
-                  const moisIndex = all_month.indexOf(traduct(item.mois));
+                  const moisNom = traduct(item.mois);
+                  const moisIndex = all_month.indexOf(moisNom);
+
                   if (moisIndex !== -1) {
-                      recette_s[moisIndex] = item.recette;
+                      const valeur = parseFloat(item.recette);
+                      recette_s[moisIndex] += isNaN(valeur) ? 0 : valeur;
                       hasData = true;
                   }
               }
@@ -525,6 +532,13 @@
                       { name: "Sortie/Vente", data: recette_s }
                   ],
                   xaxis: { categories: all_month },
+                  yaxis: {
+                    labels: {
+                      formatter: function (value) {
+                        return value.toLocaleString(); // Formate les milliers proprement
+                      }
+                    }
+                  },
                   colors: ["#207a5a", "#116aef"],
                   // ... (le reste de vos options de style)
               };

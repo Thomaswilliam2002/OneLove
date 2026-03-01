@@ -98,7 +98,7 @@
                           </tr>
                         </thead>
                         <tbody class="text-center">
-                          <% personnels.forEach(personnel => { if(personnel.type_personnel === 'staff') {%>
+                          <% personnels.forEach(personnel => { if(!['comptable', 'admin'].includes(personnel.type_personnel)) {%>
                             <tr>
                                 <td><%= personnel.nom %> <%= personnel.prenom %></td>
                                 <td>
