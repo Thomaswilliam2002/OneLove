@@ -57,8 +57,9 @@ onePoste = (app) => {
 addPoste = (app) => {
     app.post('/addPoste', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         const {nom, salaire, desc} = req.body
+        const np = nom?.trim().toLowerCase() || "";
         Poste.create({
-            nom_poste: nom,
+            nom_poste: np,
             salaire: salaire,
             description: desc 
         })
@@ -78,8 +79,9 @@ addPoste = (app) => {
 updatePoste = (app) => {
     app.put('/updatePoste/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         const {nom, salaire, desc} = req.body;
+        const np = nom?.trim().toLowerCase() || "";
         Poste.update({
-            nom_poste: nom,
+            nom_poste: np,
             salaire: salaire,
             description: desc 
         },{

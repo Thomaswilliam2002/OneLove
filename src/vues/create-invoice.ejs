@@ -152,13 +152,11 @@
                               </div>
                               <!-- Form group end -->
                             </div>
-                            <div class="col-sm-6 col-12">
-                              <!-- Form group start -->
+                            <!-- <div class="col-sm-6 col-12">
                               <div class="mt-4">
                                 <label for="invNumber" class="form-label"><strong>Lieu d'EDITION:</strong></label>
                               </div>
-                              <!-- Form group end -->
-                            </div>
+                            </div> -->
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
                               <div class="mt-4">
@@ -171,7 +169,7 @@
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
                               <div class="mb-3">
-                                <input type="text" id="customerName" class="form-control nomove"
+                                <input type="text" id="presNom" class="form-control nomove"
                                   placeholder="Entrer le nom" style="margin-left: -10px;">
                               </div>
                               <!-- Form group end -->
@@ -179,7 +177,7 @@
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
                               <div class="mb-3">
-                                <input type="text" id="invNumber" class="form-control nomove"
+                                <input type="text" id="presPrenom" class="form-control nomove"
                                   placeholder="Entrer le prenom" style="margin-left: -10px;">
                               </div>
                               <!-- Form group end -->
@@ -187,7 +185,7 @@
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
                               <div class="mb-2">
-                                <input type="text" id="invNumber" class="form-control nomove"
+                                <input type="text" class="form-control nomove"
                                   placeholder="Entrer le numero CNSS" style="margin-left: -10px;">
                               </div>
                               <!-- Form group end -->
@@ -253,36 +251,31 @@
                               <!-- Form group end -->
                             </div>
                             <div class="col-sm-6 col-12">
-                              <!-- Form group start -->
-                              <div class="mb-3">
-                                <div class="mb-3">
-                                  <div class="input-group">
-                                    <input type="text" class="form-control datepicker-opens-left  nomove" id=""
-                                      placeholder="DD/MM/YYYY" style="margin-left: -10px;">
-                                  </div>
+                              <div class="">
+                                <div class="input-group nomove">
+                                  <span class="input-group-text bg-transparent border-end-0 nomove">du</span>
+                                  <input type="text" class="form-control datepicker-opens-left nomove border-start-0" 
+                                         placeholder="DD/MM/YYYY" style="margin-left: 0px;">
                                 </div>
                               </div>
-                              <!-- Form group end -->
                             </div>
+                            
                             <div class="col-sm-6 col-12">
-                              <!-- Form group start -->
-                              <div class="mb-3">
-                                <div class="input-group">
-                                  <input type="text" class="form-control datepicker-opens-left  nomove" id="dueDate"
-                                    placeholder="DD/MM/YYYY" style="margin-left: -10px;">
+                              <div class="mt-2">
+                                <div class="input-group nomove">
+                                  <span class="input-group-text bg-transparent border-end-0 nomove">au</span>
+                                  <input type="text" class="form-control datepicker-opens-left nomove border-start-0" 
+                                         id="dueDate" placeholder="DD/MM/YYYY" style="margin-left: 0px;">
                                 </div>
                               </div>
-                              <!-- Form group end -->
                             </div>
-                            <div class="col-sm-6 col-12">
-                              <!-- Form group start -->
+                            <!-- <div class="col-sm-6 col-12">
                               <div class="mt-1">
                                 <span style="display: none; background-color: tomato;" id="h2"></span>
                                 <input type="text" id="lieu" class="form-control nomove" maxlength="50"
                                   placeholder="Lieu de l'édition de la fiche" style="margin-left: -10px;">
                               </div>
-                              <!-- Form group end -->
-                            </div>
+                            </div> -->
                             <div class="col-sm-6 col-12">
                               <!-- Form group start -->
                               <div class="mt-4">
@@ -527,6 +520,23 @@
                             </tbody>
                           </table>
                         </div>
+                        <div class="d-flex flex-row justify-content-around align-items-center mt-5">
+                          <div class="d-flex flex-column justify-content-around align-items-center" style="height: 200px;">
+                            <div ><h6><u>Le Promoteur</u></h6></div>
+                            <div style="height: 50%;"></div>
+                            <div><span>ANGEO Alexandro</span></div>
+                          </div>
+                          <div class="d-flex flex-column justify-content-around align-items-center" style="height: 200px;">
+                            <div><h6><u>Le Comptable</u></h6></div>
+                            <div style="height: 50%;"></div>
+                            <div><span><%= user.Personnel.type_personnel !== 'admin' ?  `${user.Personnel.nom} ${user.Personnel.prenom} `  : ''%></span></div>
+                          </div>
+                          <div class="d-flex flex-column justify-content-around align-items-center" style="height: 200px;">
+                            <div><h6><u>Le Prestataire</u></h6></div>
+                            <div style="height: 50%;"></div>
+                            <div><span id="prestataire"></span></div>
+                          </div>
+                        </div>
                       </div>
                       <div class="col-12">
                         <div class="d-flex justify-content-end gap-2 mt-2">
@@ -576,6 +586,29 @@
             window.location.reload();
         }
       });
+
+    // Sélection des éléments
+    const prestataire = document.getElementById('prestataire');
+    const presPrenom = document.getElementById('presPrenom'); // L'input Prénom
+    const presNom = document.getElementById('presNom');       // L'input Nom
+
+    // Fonction pour mettre à jour l'affichage en temps réel
+    const updateDisplay = () => {
+        const nom = presNom.value.trim().toUpperCase(); // Souvent le Nom est en majuscules
+        const prenom = presPrenom.value.trim();
+        
+        if (nom === "" && prenom === "") {
+            prestataire.innerText = ""; // Valeur par défaut
+        } else {
+            prestataire.innerText = `${nom} ${prenom}`.trim();
+        }
+    };
+
+    // Vérification que les éléments existent avant d'ajouter les écouteurs
+    if (presNom && presPrenom && prestataire) {
+        presNom.addEventListener('input', updateDisplay);
+        presPrenom.addEventListener('input', updateDisplay);
+    }
     function calculerPaie() {
       // 🔹 TOTAL BRUT
       let totalBrut = 0;
@@ -625,66 +658,126 @@
 
     document.getElementById('flexCheckChecked').addEventListener('change', calculerPaie);
     // ------------------------------------------------------------------------------------------------------
-    document.getElementById('btnExportPDF').addEventListener('click', () => {
-      const h2 = document.getElementById("h2")
-      const lieu = document.getElementById("lieu")
+    
 
-      const style = document.createElement("style");
-      style.innerHTML = `
-        input, .aussi {
+    document.getElementById('btnExportPDF').addEventListener('click', function() {
+        const h2 = document.getElementById("h2");
+        const lieu = document.getElementById("lieu");
+        const containerCheck = document.getElementById("container_check");
+        const invoice = document.querySelector('.create-invoice-wrapper');
+
+        // 1. STYLE TEMPORAIRE POUR LE PDF
+        const style = document.createElement("style");
+        style.id = "pdf-temp-style";
+        style.innerHTML = `
+        /* On cible l'input, le conteneur du groupe, et les spans/icônes à l'intérieur */
+        input, 
+        select, 
+        .form-control, 
+        .input-group, 
+        .input-group-text, 
+        .aussi {
           border: none !important;
           outline: none !important;
           box-shadow: none !important;
+          background: transparent !important;
+          appearance: none !important;
+          -webkit-appearance: none !important;
+        }
+
+        /* On force la suppression des bordures séparatrices à l'intérieur du groupe */
+        .input-group-text {
+          border-color: transparent !important;
         }
 
         input::placeholder {
-          color: transparent; /* masque tous les placeholders */
+          color: transparent !important;
         }
       `;
-      document.getElementById("container_check").style.display = "none";
+        document.head.appendChild(style);
 
-      document.head.appendChild(style);
+        document.getElementById("container_check").style.display = "none";
 
-      document.querySelectorAll("input").forEach(input => {
-        input.placeholder = "";
-      });
+        document.head.appendChild(style);
 
-      // 👉 Affichage pour le PDF
-      h2.innerText = lieu.value;
-      h2.style.display = "block";
-      lieu.style.display = "none";
+        document.querySelectorAll("input").forEach(input => {
+          input.placeholder = "";
+        });
 
       document.querySelectorAll('.hide-in-pdf').forEach(el => {
         el.style.display = 'none';
       });
 
-      // document.querySelectorAll('.center').forEach(el => {
-      //   el.style.textAlign = 'center';
-      // });
-
-      const invoice = document.querySelector('.create-invoice-wrapper'); // zone facture
-      html2canvas(invoice).then(canvas => {
-
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jspdf.jsPDF('p', 'mm', 'a4'); // portrait A4
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save('facture.pdf');
-        // 🔥 On restaure l'affichage APRÈS le PDF
+        // 2. PRÉPARATION DU CONTENU
+        if (containerCheck) containerCheck.style.visibility = "hidden";
+        
+        // Masquer les boutons et éléments inutiles
         document.querySelectorAll('.hide-in-pdf').forEach(el => {
-          el.style.display = 'block';
+            el.style.display = 'none';
         });
 
-        // 🔥 Rechargement APRÈS que tout soit fini
+        // Gestion du Lieu (Passage de l'input au texte h2)
+        if (lieu && h2) {
+            h2.innerText = lieu.value;
+            h2.style.display = "block";
+            lieu.style.display = "none";
+        }
+
+        // On remonte en haut pour éviter les bugs de capture html2canvas
+        window.scrollTo(0, 0);
+
+        // 3. GÉNÉRATION DU PDF
         setTimeout(() => {
-          location.reload();
-        }, 300); // petite pause pour être 100% sûr
-      });
-      // document.querySelectorAll('.hide-in-pdf').forEach(el => {
-      //    el.style.display = 'block';
-      // });
-      // location.reload();
+            html2canvas(invoice, {
+                scale: 2, // Qualité supérieure
+                useCORS: true,
+                logging: false,
+                scrollY: -window.scrollY, // Capture depuis le haut
+                windowHeight: invoice.scrollHeight // Prend TOUTE la hauteur réelle
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                
+                // Initialisation de jsPDF (Format A4 Portrait)
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const pdfWidth = pdf.internal.pageSize.getWidth();  // 210mm
+                const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+
+                // Calcul des dimensions de l'image pour le PDF
+                let imgWidth = pdfWidth;
+                let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                // --- AJUSTEMENT POUR QUE TOUT TIENNE SUR UNE PAGE ---
+                let finalWidth = imgWidth;
+                let finalHeight = imgHeight;
+                let xOffset = 0;
+
+                if (imgHeight > pdfHeight) {
+                    // Si l'image est plus haute que le A4, on réduit l'échelle
+                    const ratio = pdfHeight / imgHeight;
+                    finalHeight = pdfHeight;
+                    finalWidth = imgWidth * ratio;
+                    // On centre l'image horizontalement si elle a rétréci
+                    xOffset = (pdfWidth - finalWidth) / 2;
+                }
+
+                pdf.addImage(imgData, 'PNG', xOffset, 0, finalWidth, finalHeight);
+                pdf.save('facture.pdf');
+
+                // 4. RESTAURATION DU DOM (Avant le reload pour la propreté)
+                document.querySelectorAll('.hide-in-pdf').forEach(el => {
+                    el.style.display = 'block';
+                });
+                const tempStyle = document.getElementById("pdf-temp-style");
+                if (tempStyle) tempStyle.remove();
+
+                // 5. RECHARGEMENT
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            });
+        }, 200);
     });
     
     </script>

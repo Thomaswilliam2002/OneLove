@@ -32,6 +32,9 @@ const Occupent_m = require('../models/occupent')
 const AppartFondJournal_m = require('../models/appartFondJournal');
 const HistCaisse_m = require('../models/histCaise');
 const occupe = require('../models/occupe');
+const Depense_m = require('../models/depense');
+const CategorieDepense_m = require('../models/categorieDepense');
+
 const { on } = require('nodemailer/lib/xoauth2');
 
 // On utilise l'URL de Render (DATABASE_URL)
@@ -74,6 +77,8 @@ const Presence = Presence_m(sequelize, DataTypes);
 const Occupent = Occupent_m(sequelize, DataTypes);
 const AppartFondJournal = AppartFondJournal_m(sequelize, DataTypes);
 const HistCaisse = HistCaisse_m(sequelize, DataTypes);
+const Depense = Depense_m(sequelize, DataTypes);
+const CategorieDepense = CategorieDepense_m(sequelize,DataTypes);
 
 sequelize.authenticate()
     .then(_ => console.log("Connexion reussi avec la bd"))
@@ -271,6 +276,15 @@ Sanction.belongsTo(Occupe, {
     foreignKey: 'id_occupe'
 });
 
+// liaison entre categorieDepense et depense
+CategorieDepense.hasMany(Depense, {
+    foreignKey: 'id_categ',
+    onDelete: 'CASCADE'
+});
+Depense.belongsTo(CategorieDepense, {
+    foreignKey: 'id_categ'
+});
+
 // liaison entre Categorie et Produit
 // Categorie.hasMany(Produit, {
 //     foreignKey: 'id_categ'
@@ -420,5 +434,7 @@ module.exports = {
     Presence,
     Occupent,
     AppartFondJournal,
-    HistCaisse
+    HistCaisse,
+    CategorieDepense,
+    Depense,
 }

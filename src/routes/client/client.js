@@ -3,7 +3,7 @@ const {AppartJournal} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 formAddClient = (app) =>{
-    app.get('/formAddClient', protrctionRoot, authorise('admin', 'gerant'), async (req, res) => {
+    app.get('/formAddClient', protrctionRoot, authorise('admin', 'gerant', 'comptable', 'caissier'), async (req, res) => {
         const appartements = await Appartement.findAll()
         if(appartements){
             res.status(200).render('add-client', {appartements: appartements})
@@ -16,7 +16,7 @@ formAddClient = (app) =>{
 }
  
 allClient = (app) => {
-    app.get('/allClient', protrctionRoot, authorise('admin', 'comptable', 'gerant'), (req, res) => {
+    app.get('/allClient', protrctionRoot, authorise('admin', 'comptable', 'gerant', 'caissier', 'caissier central'), (req, res) => {
         Client.findAll({
             order:[['id_client', 'DESC']]
         })
@@ -44,7 +44,7 @@ allClient = (app) => {
 }
 
 addClient = (app) => {
-    app.post('/addClient', protrctionRoot, authorise('admin', 'comptable', 'gerant'), async (req, res) => {
+    app.post('/addClient', protrctionRoot, authorise('admin', 'comptable', 'gerant', 'caissier'), async (req, res) => {
         const {nom, prenom, numero, loyer, nuiter, id_appart, commentaire, date} = req.body;
         const cli = await Client.findOne({
             where:{nom_client: nom,
@@ -103,7 +103,7 @@ addClient = (app) => {
 }
 
 deleteClient = (app) => {
-    app.delete('/deleteClient/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.delete('/deleteClient/:id', protrctionRoot, authorise('admin', 'comptable', 'gerant', 'caissier'), (req, res) => {
         Client.findByPk(req.params.id)
             .then(client => {
                 const appartDel = client;

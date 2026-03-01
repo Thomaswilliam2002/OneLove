@@ -3,7 +3,7 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 const {fn, col, literal} = require('sequelize');
 
 allAppart = (app) => {
-    app.get('/allAppart', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.get('/allAppart', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant', 'caissier central'), (req, res) => {
         Appartement.findAll({
             order:[['id_appart', 'DESC']]
         })
@@ -28,7 +28,7 @@ ell = (app) =>{
 }
 
 oneAppart = (app) => {
-    app.get('/oneAppart/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+    app.get('/oneAppart/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant', 'caissier central'), async (req, res) => {
         try {
             const appartement = await Appartement.findByPk(req.params.id);
             

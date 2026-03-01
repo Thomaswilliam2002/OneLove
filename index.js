@@ -5,7 +5,7 @@ const {sequelize, Occupe, Personnel, Poste, BarSimpleJournal, BarVipJournal, App
     Categorie,
     Produit,
     Emballage,
-    Caisse,
+    Caisse,Depense,
     CaisseJournal,} = require('./src/db/sequelize');
 
 const {stockJob} = require('./src/mail/email')
@@ -48,6 +48,8 @@ const pointage = require('./src/routes/presence/presence')
 const occupent = require('./src/routes/occupent/occupent')
 const caisseProduit = require('./src/routes/produit/produitCaisse')
 const forgot = require('./src/mail/forgotMail')
+const depense = require('./src/routes/depense/depense')
+const categorieDepense = require('./src/routes/depense/categorieDepense')
 
 const {MaisonColse, Chambre, Cuisine} = require('./src/db/sequelize')
 const {BarSimple} = require('./src/db/sequelize')
@@ -167,7 +169,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
     try {
         // On lance TOUTES les requêtes en parallèle pour gagner en performance
         const [
-            nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
+            sum_depense,nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
             sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai
         ] = await Promise.all([
@@ -177,6 +179,8 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             BarVip.count(),
             CrazyClub.count(),
             // Sommes avec gestion de la période (Gte = Supérieur ou égal, Lt = Strictement inférieur)
+             // -----------------------------------------------------------
+            Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } }),
             BarSimpleJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             BarVipJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             CrazyClubJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
@@ -214,7 +218,8 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             "recetteCuisine": sum_cui || 0,
             "recetteAppart": sum_ap || 0,
             "recetteChambre": sum_ch || 0,
-            "sum_caisse_recette": sum_caisse_recette || 0
+            "sum_caisse_recette": sum_caisse_recette || 0,
+            "sum_depense": sum_depense || 0
         };
 
         res.render('index', { data: data });
@@ -716,6 +721,18 @@ occupent.deleteOccupent(app);
 
 forgot.forgotPassword(app);
 forgot.resetPassword(app);
+
+depense.addDepense(app);
+depense.allDepense(app);
+depense.formAddDepense(app);
+depense.updateDepense(app);
+depense.deleteDepense(app);
+
+categorieDepense.addCategorieDepense(app);
+categorieDepense.allCategorieDepense(app);
+categorieDepense.formAddCategorieDepense(app);
+categorieDepense.updateCategorieDepense(app);
+categorieDepense.deleteCategorieDepense(app);
 
 // app.listen(port, () => console.log('serveur en cour sur http://localhost:' + port));
 
