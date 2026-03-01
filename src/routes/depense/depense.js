@@ -136,7 +136,7 @@ deleteDepense = (app) => {
 }
 
 module.exports = {
-    formAddDepense,
+    // formAddDepense,
     allDepense,
     updateDepense,
     deleteDepense,

@@ -724,13 +724,13 @@ forgot.resetPassword(app);
 
 depense.addDepense(app);
 depense.allDepense(app);
-depense.formAddDepense(app);
+// depense.formAddDepense(app);
 depense.updateDepense(app);
 depense.deleteDepense(app);
 
 categorieDepense.addCategorieDepense(app);
 categorieDepense.allCategorieDepense(app);
-categorieDepense.formAddCategorieDepense(app);
+// categorieDepense.formAddCategorieDepense(app);
 categorieDepense.updateCategorieDepense(app);
 categorieDepense.deleteCategorieDepense(app);
 

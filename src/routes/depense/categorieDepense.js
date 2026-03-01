@@ -106,7 +106,7 @@ deleteCategorieDepense = (app) => {
 }
 
 module.exports = {
-    formAddCategorieDepense,
+    // formAddCategorieDepense,
     allCategorieDepense,
     updateCategorieDepense,
     deleteCategorieDepense,
