@@ -30,14 +30,24 @@ allDepense = (app) => {
             })
             const categories = await CategorieDepense.findAll()
             const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
+            // const sum_depenses = await Depense.findAll({
+            //     attributes:[ 
+            //         [moisExpr, "mois"], 
+            //         [fn('SUM', col('montant')),'total_recette'],
+            //     ],
+            //         group: [moisExpr, col('montant')],
+            //         order: [[moisExpr, 'DESC']],
+            //         raw:true
+            // });
+
+            // Utilise literal pour garantir que PostgreSQL comprenne l'expression de groupe
             const sum_depenses = await Depense.findAll({
-                attributes:[ 
-                    [moisExpr, "mois"], 
-                    [fn('SUM', col('montant')),'total_recette'],
+                attributes: [
+                    [fn('TO_CHAR', col('date'), 'YYYY-MM'), 'mois'],
+                    [fn('SUM', col('montant')), 'total_montant']
                 ],
-                    group: [moisExpr, col('montant')],
-                    order: [[moisExpr, 'DESC']],
-                    raw:true
+                group: [fn('TO_CHAR', col('date'), 'YYYY-MM')], 
+                raw: true
             });
 
             if(depenses && categories && sum_depenses){
