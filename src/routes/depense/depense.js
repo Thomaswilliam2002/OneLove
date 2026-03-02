@@ -43,9 +43,6 @@ const allDepense = (app) => {
                 ]
             })
             const categories = await CategorieDepense.findAll()
-            console.log("allDepense",depenses);
-            console.log("allDepense",categories);
-            res.redirect('/index');
             // const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
 
             // const sum_depenses = await Depense.findAll({
@@ -59,14 +56,19 @@ const allDepense = (app) => {
             // });
 
             //Utilise literal pour garantir que PostgreSQL comprenne l'expression de groupe
-            // const sum_depenses = await Depense.findAll({
-            //     attributes: [
-            //         [fn('TO_CHAR', col('date'), 'YYYY-MM'), 'mois'],
-            //         [fn('SUM', col('montant')), 'total_montant']
-            //     ],
-            //     group: [fn('TO_CHAR', col('date'), 'YYYY-MM')], 
-            //     raw: true
-            // });
+            const sum_depenses = await Depense.findAll({
+                attributes: [
+                    [fn('TO_CHAR', col('date'), 'YYYY-MM'), 'mois'],
+                    [fn('SUM', col('montant')), 'total_montant']
+                ],
+                group: [fn('TO_CHAR', col('date'), 'YYYY-MM')], 
+                raw: true
+            });
+
+            
+            console.log("allDepense",depenses);
+            console.log("allDepense",categories);
+            res.redirect('/index');
 
             // if(depenses && categories && sum_depenses){
             //     //res.json({"ok": "ok"})
