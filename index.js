@@ -173,6 +173,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
             sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai
         ] = await Promise.all([
+            Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } }),
             Personnel.count(),
             Appartement.count(),
             BarSimple.count(),
@@ -180,7 +181,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             CrazyClub.count(),
             // Sommes avec gestion de la période (Gte = Supérieur ou égal, Lt = Strictement inférieur)
              // -----------------------------------------------------------
-            Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } }),
+            
             BarSimpleJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             BarVipJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             CrazyClubJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
