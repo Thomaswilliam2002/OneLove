@@ -65,13 +65,7 @@ const allDepense = (app) => {
                 raw: true
             });
 
-            
-            console.log("allDepense",depenses);
-            console.log("allDepense",categories);
-            // res.redirect('/index');
-
             if(depenses && categories){
-                //res.json({"ok": "ok"})
                 res.status(200).render('depense', {depenses: depenses, msg: req.query.msg, categories: categories, text_color: req.query.tc, sum_depenses: sum_depenses});
             }else{
                 console.error(_);

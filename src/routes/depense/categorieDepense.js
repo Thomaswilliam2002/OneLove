@@ -26,7 +26,6 @@ allCategorieDepense = (app) => {
                 res.redirect('/notFound');
                 return; // On stoppe tout ici !
             }
-            // res.json({"ok": "ok"})
         }catch(_){
             console.error(_);
             res.redirect('/notFound');
