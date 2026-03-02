@@ -727,6 +727,7 @@ depense.allDepense(app);
 // depense.formAddDepense(app);
 depense.updateDepense(app);
 depense.deleteDepense(app);
+depense.depenceTest(app);
 
 categorieDepense.addCategorieDepense(app);
 categorieDepense.allCategorieDepense(app);

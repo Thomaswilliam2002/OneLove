@@ -20,6 +20,18 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 //     })
 // }
 
+depenceTest = (app) => {
+    app.get('/depenceTest', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try{
+            res.json({"ok": "ok"});
+        }catch(_){
+            console.error(_);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
+        }
+    })
+}
+
 allDepense = (app) => {
     app.get('/allDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
@@ -30,7 +42,7 @@ allDepense = (app) => {
             // })
             // const categories = await CategorieDepense.findAll()
             // const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
-            
+
             // const sum_depenses = await Depense.findAll({
             //     attributes:[ 
             //         [moisExpr, "mois"], 
@@ -152,5 +164,6 @@ module.exports = {
     allDepense,
     updateDepense,
     deleteDepense,
-    addDepense
+    addDepense,
+    depenceTest
 }
