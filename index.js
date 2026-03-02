@@ -160,8 +160,6 @@ const getDay = () => {
 // ------------------------------------------------------------------------------------------
 
 //route recapitulatif des caisses et recette
-const { Op } = require('sequelize');
-
 app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, res) => {
 
     const todayStart = new Date();
