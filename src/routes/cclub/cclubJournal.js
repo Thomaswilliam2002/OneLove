@@ -1,4 +1,4 @@
-const {CrazyClubJournal, CrazyClub, Caisse} = require('../../db/sequelize')
+const {CrazyClubJournal, CrazyClub, Caisse, CC} = require('../../db/sequelize')
 
 allCCJournal = (app) => {
     app.get('/allCCJournal', (req, res) => {
@@ -9,6 +9,7 @@ allCCJournal = (app) => {
             order:[['id_journal', 'DESC']]
         })
             .then(ccJournals => {
+                console.log("ccJournals",ccJournals)
                 // const msg = "Liste recuperer avec succes"
                 // res.json({msg, data: barVipJournals})
                 res.status(200).render('allJournal', {Journals: ccJournals, type: 'cc', msg: req.query.msg, indice: req.query.indice})
