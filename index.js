@@ -160,34 +160,54 @@ const getDay = () => {
 // ------------------------------------------------------------------------------------------
 
 //route recapitulatif des caisses et recette
+const { Op } = require('sequelize');
+
 app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, res) => {
-    const nvdate = new Date();
-    // Début et fin du mois en cours pour le filtrage
-    const firstDay = todayStart.setHours(0, 0, 0, 0);
-    const lastDay = nvdate.setHours(23, 59, 59, 999);
+
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
 
     try {
-        // On lance TOUTES les requêtes en parallèle pour gagner en performance
+
         const [
             nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
-            sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai,sum_depense
+            sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai, sum_depense
         ] = await Promise.all([
+
             Personnel.count(),
             Appartement.count(),
             BarSimple.count(),
             BarVip.count(),
             CrazyClub.count(),
-            // Sommes avec gestion de la période (Gte = Supérieur ou égal, Lt = Strictement inférieur)
-             // -----------------------------------------------------------
-            
-            BarSimpleJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            BarVipJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            CrazyClubJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            CuisineJournal.sum("montant_verser", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            AppartJournal.sum("loyer", { where: { date_debut: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            ChambreJournal.sum("loyer", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            // Totaux globaux
+
+            BarSimpleJournal.sum("recette", {
+                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+            }),
+
+            BarVipJournal.sum("recette", {
+                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+            }),
+
+            CrazyClubJournal.sum("recette", {
+                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+            }),
+
+            CuisineJournal.sum("montant_verser", {
+                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+            }),
+
+            AppartJournal.sum("loyer", {
+                where: { date_debut: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+            }),
+
+            ChambreJournal.sum("loyer", {
+                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+            }),
+
             Caisse.sum("recette"),
             MaisonColse.count(),
             Chambre.count(),
@@ -196,40 +216,43 @@ app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, re
             Produit.count(),
             Emballage.count(),
             Caisse.count(),
-            Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } })
+
+            Depense.sum("montant", {
+                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+            })
         ]);
 
         const data = {
-            "personnel": nb_personnel || 0,
-            "nbAppart": nb_appart || 0,
-            "nbBarSimple": nb_barSimple || 0,
-            "nbBarVip": nb_barVip || 0,
-            "nbCrazyClub": nb_crazyClub || 0,
-            "nbMaisonClose": nb_mc || 0,
-            "nbChambre": nb_ch || 0,
-            "nbCuisine": nb_cu || 0,
-            "nbProduit": nb_prod || 0,
-            "nbCaisse": nb_cai || 0,
-            "nbEmballage": nb_emb || 0,
-            "nbCategorieArticle": nb_cat || 0,
-            "nbTotalBarClub": (nb_barSimple || 0) + (nb_barVip || 0) + (nb_crazyClub || 0),
-            "recetteBarSimple": sum_bs || 0,
-            "recetteBarVip": sum_bv || 0,
-            "recetteCrazyClub": sum_cc || 0,
-            "recetteCuisine": sum_cui || 0,
-            "recetteAppart": sum_ap || 0,
-            "recetteChambre": sum_ch || 0,
-            "sum_caisse_recette": sum_caisse_recette || 0,
-            "sum_depense": sum_depense || 0
+            personnel: nb_personnel || 0,
+            nbAppart: nb_appart || 0,
+            nbBarSimple: nb_barSimple || 0,
+            nbBarVip: nb_barVip || 0,
+            nbCrazyClub: nb_crazyClub || 0,
+            nbMaisonClose: nb_mc || 0,
+            nbChambre: nb_ch || 0,
+            nbCuisine: nb_cu || 0,
+            nbProduit: nb_prod || 0,
+            nbCaisse: nb_cai || 0,
+            nbEmballage: nb_emb || 0,
+            nbCategorieArticle: nb_cat || 0,
+            nbTotalBarClub: (nb_barSimple || 0) + (nb_barVip || 0) + (nb_crazyClub || 0),
+            recetteBarSimple: sum_bs || 0,
+            recetteBarVip: sum_bv || 0,
+            recetteCrazyClub: sum_cc || 0,
+            recetteCuisine: sum_cui || 0,
+            recetteAppart: sum_ap || 0,
+            recetteChambre: sum_ch || 0,
+            sum_caisse_recette: sum_caisse_recette || 0,
+            sum_depense: sum_depense || 0
         };
 
-        res.render('index', { data: data });
+        res.render('index', { data });
 
     } catch (e) {
         console.error("Erreur Dashboard Index:", e);
         res.redirect('/notFound');
     }
-})
+});
 
 //route dashboard
 app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
