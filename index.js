@@ -172,7 +172,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
             sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai,sum_depense
-        ] = await Promise.all([,
+        ] = await Promise.all([
             Personnel.count(),
             Appartement.count(),
             BarSimple.count(),
@@ -199,7 +199,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } })
         ]);
 
-        console.log("nb_personnel",Personnel.count())
+        console.log("nb_personnel", nb_personnel)
 
         const data = {
             "personnel": nb_personnel || 0,
