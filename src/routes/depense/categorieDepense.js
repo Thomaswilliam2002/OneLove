@@ -3,7 +3,9 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 formAddCategorieDepense = (app) => {
     app.get('/formAddCategorieDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
-            res.status(200).render('/index');
+            // res.status(200).render('/index');
+            console.log("formAddCategorieDepense");
+            res.redirect('/index');
         }catch(_){
             console.error(_);
             res.redirect('/notFound');

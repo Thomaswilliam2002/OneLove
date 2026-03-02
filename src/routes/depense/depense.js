@@ -6,7 +6,9 @@ const formAddDepense = (app) => {
         try{
             const categories = await CategorieDepense.findAll()
             if(categories){
-                res.status(200).render('add-depense', {categories: categories});
+                // res.status(200).render('add-depense', {categories: categories});
+                console.log("formAddDepense",categories);
+                res.redirect('/index');
             }else{
                 console.error(_);
                 res.redirect('/index');
