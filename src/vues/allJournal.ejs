@@ -202,7 +202,7 @@
                             <% } else if(type === 'cc') {%>
                               <% Journals.forEach(Journal => { %>
                                 <tr>
-                                    <td><%= Journal.CrazyClub ? Journal.CrazyClub.nom : '-'</td>
+                                    <td><%= Journal.CrazyClub ? Journal.CrazyClub.nom : '-' %></td>
                                     <td class="calcule"><%= Journal.recette %></td>
                                     <td><%= new Date(Journal.date).getDate() < 10 ? `0${new Date(Journal.date).getDate()}` : new Date(Journal.date).getDate()  %>-<%= new Date(Journal.date).getMonth() + 1 < 10 ? `0${new Date(Journal.date).getMonth() + 1}` : new Date(Journal.date).getMonth() + 1 %>-<%= new Date(Journal.date).getFullYear() %></td>
                                     <td>
