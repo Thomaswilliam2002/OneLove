@@ -160,7 +160,7 @@ const getDay = () => {
 // ------------------------------------------------------------------------------------------
 
 //route recapitulatif des caisses et recette
-app.get('/recap', protrctionRoot, authorise('comptable'), async (req, res) => {
+app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, res) => {
     const nvdate = new Date();
     // Début et fin du mois en cours pour le filtrage
     const firstDay = todayStart.setHours(0, 0, 0, 0);
