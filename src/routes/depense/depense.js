@@ -23,13 +23,14 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 allDepense = (app) => {
     app.get('/allDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
-            const depenses = await Depense.findAll({
-                include:[
-                    {model:CategorieDepense}
-                ]
-            })
-            const categories = await CategorieDepense.findAll()
-            const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
+            // const depenses = await Depense.findAll({
+            //     include:[
+            //         {model:CategorieDepense}
+            //     ]
+            // })
+            // const categories = await CategorieDepense.findAll()
+            // const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
+            
             // const sum_depenses = await Depense.findAll({
             //     attributes:[ 
             //         [moisExpr, "mois"], 
@@ -41,17 +42,18 @@ allDepense = (app) => {
             // });
 
             // Utilise literal pour garantir que PostgreSQL comprenne l'expression de groupe
-            const sum_depenses = await Depense.findAll({
-                attributes: [
-                    [fn('TO_CHAR', col('date'), 'YYYY-MM'), 'mois'],
-                    [fn('SUM', col('montant')), 'total_montant']
-                ],
-                group: [fn('TO_CHAR', col('date'), 'YYYY-MM')], 
-                raw: true
-            });
+            // const sum_depenses = await Depense.findAll({
+            //     attributes: [
+            //         [fn('TO_CHAR', col('date'), 'YYYY-MM'), 'mois'],
+            //         [fn('SUM', col('montant')), 'total_montant']
+            //     ],
+            //     group: [fn('TO_CHAR', col('date'), 'YYYY-MM')], 
+            //     raw: true
+            // });
 
             if(depenses && categories && sum_depenses){
-                res.status(200).render('depense', {depenses: depenses, msg: req.query.msg, categories: categories, text_color: req.query.tc, sum_depenses: sum_depenses});
+                res.json({"ok": "ok"})
+                // res.status(200).render('depense', {depenses: depenses, msg: req.query.msg, categories: categories, text_color: req.query.tc, sum_depenses: sum_depenses});
             }else{
                 console.error(_);
                 res.redirect('/notFound');
