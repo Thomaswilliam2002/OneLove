@@ -1,7 +1,7 @@
 const {CategorieDepense, Depense} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
-const {fn, col, literal} = require('sequelize');
-formAddDepense = (app) => {
+const {fn, col} = require('sequelize');
+const formAddDepense = (app) => {
     app.get('/formAddDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
             const categories = await CategorieDepense.findAll()
@@ -20,7 +20,7 @@ formAddDepense = (app) => {
     })
 }
 
-depenceTest = (app) => {
+const depenceTest = (app) => {
     app.get('/depenceTest', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
             res.json({"ok": "ok"});
@@ -32,7 +32,7 @@ depenceTest = (app) => {
     })
 }
 
-allDepense = (app) => {
+const allDepense = (app) => {
     app.get('/allDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
             // const depenses = await Depense.findAll({
@@ -79,7 +79,7 @@ allDepense = (app) => {
     })
 }
 
-addDepense = (app) => {
+const addDepense = (app) => {
     app.post('/addDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
             const {nom, montant, desc, date, categ} = req.body;
@@ -107,7 +107,7 @@ addDepense = (app) => {
     })
 }
 
-updateDepense = (app) => {
+const updateDepense = (app) => {
     app.put('/updateDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
             const {nom, montant, desc, date, categ} = req.body;
@@ -137,7 +137,7 @@ updateDepense = (app) => {
     })
 }
 
-deleteDepense = (app) => {
+const deleteDepense = (app) => {
     app.delete('/deleteDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
             const depense = await Depense.destroy({
