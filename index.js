@@ -48,7 +48,7 @@ const pointage = require('./src/routes/presence/presence')
 const occupent = require('./src/routes/occupent/occupent')
 const caisseProduit = require('./src/routes/produit/produitCaisse')
 const forgot = require('./src/mail/forgotMail')
-const depense = require('./src/routes/depense/depense')
+const depenseRoutes = require('./src/routes/depense/depense')
 const categorieDepense = require('./src/routes/depense/categorieDepense')
 
 const {MaisonColse, Chambre, Cuisine} = require('./src/db/sequelize')
@@ -722,12 +722,12 @@ occupent.deleteOccupent(app);
 forgot.forgotPassword(app);
 forgot.resetPassword(app);
 
-depense.addDepense(app);
-depense.allDepense(app);
-depense.formAddDepense(app);
-depense.updateDepense(app);
-depense.deleteDepense(app);
-depense.depenceTest(app);
+depenseRoutes.addDepense(app);
+depenseRoutes.allDepense(app);
+depenseRoutes.formAddDepense(app);
+depenseRoutes.updateDepense(app);
+depenseRoutes.deleteDepense(app);
+depenseRoutes.depenceTest(app);
 
 categorieDepense.addCategorieDepense(app);
 categorieDepense.allCategorieDepense(app);
