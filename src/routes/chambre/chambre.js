@@ -28,7 +28,10 @@ oneChambre = (app) => {
                 Chambre.findByPk(req.params.id)
                     .then(chambre => {
                         Occupent.findAll({
-                            where: {id_chambre: chambre.id_chambre, id_mclose: maisonColse.id_mclose}
+                            where: {
+                                id_chambre: String(chambre.id_chambre),
+                                id_mclose: String(maisonColse.id_mclose)
+                            }
                         })
                             .then(occupent => {
                                 ChambreJournal.findAll({where:{
