@@ -169,11 +169,10 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
     try {
         // On lance TOUTES les requêtes en parallèle pour gagner en performance
         const [
-            sum_depense,nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
+            nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
-            sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai
-        ] = await Promise.all([
-            Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } }),
+            sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai,sum_depense
+        ] = await Promise.all([,
             Personnel.count(),
             Appartement.count(),
             BarSimple.count(),
@@ -196,7 +195,8 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             Categorie.count(),
             Produit.count(),
             Emballage.count(),
-            Caisse.count()
+            Caisse.count(),
+            Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } })
         ]);
 
         const data = {
