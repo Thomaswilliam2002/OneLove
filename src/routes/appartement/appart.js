@@ -1,4 +1,4 @@
-const {Appartement, AppartFondJournal} = require('../../db/sequelize')
+const {Appartement, AppartFondJournal, AppartJournal} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 const {fn, col, literal} = require('sequelize');
 
@@ -37,13 +37,13 @@ oneAppart = (app) => {
             }
 
             // Définition de l'expression de mois pour réutilisation dans attributes et group
-            const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
+            const moisExpr = fn('TO_CHAR', col('date_debut'), 'YYYY-MM');
 
-            const all_appart_font = await AppartFondJournal.findAll({
+            const all_appart_font = await AppartJournal.findAll({
                 attributes: [ 
                     [moisExpr, "mois"], 
-                    [fn('SUM', col('recette')), 'total_recette'],
-                    [col("Appartement.nom_appart"), "NomAppart"]
+                    [fn('SUM', col('loyer')), 'total_recette'],
+                    // [col("Appartement.nom_appart"), "NomAppart"]
                 ],
                 where: { id_appart: req.params.id },
                 include: [{
@@ -51,20 +51,20 @@ oneAppart = (app) => {
                     attributes: [],
                 }],
                 // Sous Postgres, on doit grouper par l'expression exacte et la colonne d'inclusion
-                group: [moisExpr, col("Appartement.nom_appart")],
+                group: [moisExpr],
                 order: [[moisExpr, 'ASC']],
                 raw: true // Correction : 'raw' au lieu de 'row'
             });
 
-            const history = await AppartFondJournal.findAll({
-                where: { id_appart: req.params.id },
-                order: [['date', 'DESC']] // Optionnel : trier l'historique
-            });
+            // const history = await AppartFondJournal.findAll({
+            //     where: { id_appart: req.params.id },
+            //     order: [['date', 'DESC']] // Optionnel : trier l'historique
+            // });
 
             res.status(200).render('appart-detail', {
                 appartement: appartement, 
                 courbe_info: all_appart_font, 
-                historys: history
+                // historys: history
             });
 
         } catch (e) {

@@ -83,11 +83,13 @@
                     <% }%>
                     <!-- Table starts -->
                     <div class="table-responsive">
-                      <table id="basicExample" class="customButtone table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                      <table class="customButtone table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
                         <thead class="text-center">
                           <tr>
                             <th>ID</th>
+                            <th>Appartement</th>
                             <th>Montant</th>
+                            <th>Nuitée</th>
                             <th>Date</th>
                             <th>Actions</th>
                           </tr>
@@ -96,8 +98,10 @@
                             <% i = 1;hfonds.forEach(Journal => { %>
                                 <tr>
                                     <td><%= i %></td>
-                                    <td class="calcule"><%= Journal.recette %></td>
-                                    <td><%= new Date(Journal.date).getDate() < 10 ? `0${new Date(Journal.date).getDate()}` : new Date(Journal.date).getDate()  %>-<%= new Date(Journal.date).getMonth() + 1 < 10 ? `0${new Date(Journal.date).getMonth() + 1}` : new Date(Journal.date).getMonth() + 1 %>-<%= new Date(Journal.date).getFullYear()%></td>
+                                    <td><%= Journal.Appartement.nom_appart %></td>
+                                    <td class="calcule"><%= Journal.loyer %></td>
+                                    <td><%= Journal.nuiter %></td>
+                                    <td><%= new Date(Journal.date_debut).getDate() < 10 ? `0${new Date(Journal.date_debut).getDate()}` : new Date(Journal.date_debut).getDate()  %>-<%= new Date(Journal.date_debut).getMonth() + 1 < 10 ? `0${new Date(Journal.date_debut).getMonth() + 1}` : new Date(Journal.date_debut).getMonth() + 1 %>-<%= new Date(Journal.date_debut).getFullYear()%></td>
                                     <td>
                                         <div class="d-inline-flex gap-1">
                                             <!-- ----------------------------------------------------------------------------------- -->
@@ -126,7 +130,7 @@
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                             annuler
                                                         </button>
-                                                        <form action="/deleteFondJournal/<%= Journal.id_journal %>?_method=DELETE" method="post">
+                                                        <form action="/deleteJournal/<%= Journal.id_journal %>?_method=DELETE" method="post">
                                                             <div class="col-sm-12">
                                                             <div class="d-flex gap-2 justify-content-end">
                                                                 <button type="submit" class="btn btn-danger">Supprimer</button>

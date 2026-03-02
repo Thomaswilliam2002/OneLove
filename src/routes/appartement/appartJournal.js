@@ -20,7 +20,10 @@ allJournal = (app) => {
 
 appartFondJournal = (app) => {
     app.get('/appartFondJournal', async (req, res) =>{
-        const hfond = await AppartFondJournal.findAll({
+        const hfond = await AppartJournal.findAll({
+            include:[
+                {model: Appartement}
+            ],
             order:[['id_journal', 'DESC']]
         })
         if(hfond){
