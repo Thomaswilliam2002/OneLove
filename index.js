@@ -199,7 +199,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } })
         ]);
 
-        console.log("nb_personnel",nb_personnel)
+        console.log("nb_personnel",Personnel.count())
 
         const data = {
             "personnel": nb_personnel || 0,
