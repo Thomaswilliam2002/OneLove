@@ -9,7 +9,7 @@ const formAddDepense = (app) => {
                 res.status(200).render('add-depense', {categories: categories});
             }else{
                 console.error(_);
-                res.redirect('/notFound');
+                res.redirect('/index');
                 return; // On stoppe tout ici !
             }
         }catch(_){
@@ -35,12 +35,12 @@ const depenceTest = (app) => {
 const allDepense = (app) => {
     app.get('/allDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
-            // const depenses = await Depense.findAll({
-            //     include:[
-            //         {model:CategorieDepense}
-            //     ]
-            // })
-            // const categories = await CategorieDepense.findAll()
+            const depenses = await Depense.findAll({
+                include:[
+                    {model:CategorieDepense}
+                ]
+            })
+            const categories = await CategorieDepense.findAll()
             // const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
 
             // const sum_depenses = await Depense.findAll({
