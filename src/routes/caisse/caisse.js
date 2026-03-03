@@ -11,9 +11,7 @@ allCaisse = (app) => {
         Caisse.findAll({ order: [['id_caisse', 'DESC']] })
             .then(caisses => {
                 Personnel.findAll().then(personnels => {
-                    HistCaisse.findAll().then(histcaise => {
-                        res.status(200).render('caisse-list', { caisses, personnels, histcaises: histcaise, msg: req.query.msg })
-                    }).catch(err => { console.error(err); res.redirect('/notFound'); })
+                    res.status(200).render('caisse-list', { caisses, personnels, msg: req.query.msg })
                 }).catch(err => { console.error(err); res.redirect('/notFound'); })
             }).catch(err => { console.error(err); res.redirect('/notFound'); })
     })

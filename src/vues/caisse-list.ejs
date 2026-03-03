@@ -95,9 +95,7 @@
                           <tr>
                             <th>Nom de la Caisse</th>
                             <th>Nom et Prenom du comptable</th>
-                            <th>Solde</th>
                             <th>Recette</th>
-                            <th>Depence</th>
                             <th>Actions</th>
                           </tr>
                         </thead>
@@ -112,9 +110,7 @@
                                       <%= personnel.nom %> <%= personnel.prenom %>
                                     
                                   </td>
-                                  <td><%= caisse.solde %></td>
                                   <td><%= caisse.recette %></td>
-                                  <td><%= caisse.depense %></td>
                                   <td>
                                     <div class="d-inline-flex gap-3">
                                       <!-- ----------------------------------------------------------------------------------- -->
@@ -161,10 +157,10 @@
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
                                         <i class="ri-edit-box-line"></i>
                                       </a>
-                                      <!-- <a href="/oneCaisse/<%= caisse.id_caisse %>" class="btn btn-outline-info btn-sm"
+                                      <a href="/allProduitCaisse/<%= caisse.id_employer %>" class="btn btn-outline-info btn-sm"
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir les Details">
                                         <i class="ri-eye-line"></i>
-                                      </a> -->
+                                      </a>
                                     </div>
                                   </td>
                                 </tr>

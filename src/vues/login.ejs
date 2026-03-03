@@ -74,7 +74,7 @@
               <div class="input-group">
                 <input type="password" id="pwd" name="pwd" class="form-control" placeholder="Entrer votre mot de pass" required>
                 <button class="btn btn-outline-secondary" type="button">
-                  <i class="ri-eye-line text-primary"></i>
+                  <i id="view" class="ri-eye-line text-primary"></i>
                 </button>
               </div>
             </div>
@@ -102,7 +102,17 @@
       <!-- App footer ends -->
     </div>
     <!-- Container ends -->
+    <script>
+      const inputPwd = document.getElementById('pwd');
+      const show = document.getElementById('view');
 
+      show.addEventListener('click', () => {
+        const type = inputPwd.getAttribute('type') === "password" ? 'text' : "password";
+        inputPwd.setAttribute('type', type);
+        show.classList.toggle('ri-eye-off-line')
+        show.classList.toggle('ri-eye-line')
+      })
+    </script>
   </body>
 
 

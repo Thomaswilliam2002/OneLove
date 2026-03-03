@@ -135,7 +135,7 @@ oneEmballage = (app) => {
 
 addEmballage = (app) => {
     app.post('/addEmballage', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, categ, qt, seuil, desc} = req.body;
+        const {nom, categ, qt, seuil, desc, prix} = req.body;
         Emballage.create({
             nom: nom,
             quantiter: qt,
@@ -144,9 +144,21 @@ addEmballage = (app) => {
             id_categ: categ
         })
             .then(emballage => {
-                //const msg = "categorie cree avec succes"
-                //res.json({msg, data: categorie})
-                res.redirect('/allEmballage?type=article&msg=ajout')
+                HistEntrer.create({
+                    quantiter: qt,
+                    prix_unit: prix,
+                    type: 'emballage',
+                    id_probal: emballage.id_emballage,
+                    donneur: 'One Love'
+                })
+                    .then(hist => {
+                        res.redirect('/allEmballage?type=article&msg=ajout')
+                    })
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
             .catch(_ => {
                 console.error(_);

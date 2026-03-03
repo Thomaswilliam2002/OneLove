@@ -203,7 +203,7 @@ oneProduit = (app) => {
 }
 addProduit = (app) => {
     app.post('/addProduit', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, categ, qt, seuil, desc} = req.body;
+        const {nom, categ, qt, seuil, desc, prix} = req.body;
         Produit.create({
             nom: nom,
             quantiter: qt,
@@ -212,9 +212,21 @@ addProduit = (app) => {
             id_categ: categ
         })
             .then(produit => {
-                //const msg = "categorie cree avec succes"
-                //res.json({msg, data: categorie})
-                res.redirect('/allProduit?type=article&msg=ajout')
+                HistEntrer.create({
+                    quantiter: qt,
+                    prix_unit: prix,
+                    type: 'produit',
+                    id_probal: produit.id_produit,
+                    donneur: 'One Love'
+                })
+                    .then(hist => {
+                        res.redirect('/allProduit?type=article&msg=ajout')
+                    })
+                    .catch(_ => {
+                        console.error(_);
+                        res.redirect('/notFound');
+                        return; // On stoppe tout ici !
+                    })
             })
             .catch(_ => {
                 console.error(_);

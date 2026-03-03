@@ -104,31 +104,51 @@ addHSortie = (app) => {
     })
 }
 
-deleteHSortie = (app) => {
-    app.delete('/deleteHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        HistSortie.findByPk(req.params.id)
-            .then(hvente => {
-                const appartDel = hvente;
-                HistSortie.destroy({where: {id_hist: appartDel.id_hist}})
-                    .then(_ => {
-                        if(appartDel.type === 'produit'){
-                            res.redirect('/oneProduit/' + req.query.id + '?msg=sup&type=achat')
-                        }else if(appartDel.type === 'emballage'){
-                            res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=achat')
-                        }
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            }).catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
-    })
-}
+const deleteHSortie = (app) => {
+    app.delete('/deleteHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try {
+            // 1. Trouver l'historique
+            const hvente = await HistSortie.findByPk(req.params.id);
+            
+            if (!hvente) {
+                return res.redirect('/notFound');
+            }
+
+            // 2. Mise à jour du stock selon le type
+            if (hvente.type === 'produit') {
+                const produit = await Produit.findByPk(hvente.id_probal);
+                if (produit) {
+                    await Produit.update(
+                        { quantiter: produit.quantiter + hvente.quantiter },
+                        { where: { id_produit: produit.id_produit } }
+                    );
+                }
+            } else if (hvente.type === 'emballage') {
+                const emballage = await Emballage.findByPk(hvente.id_probal);
+                if (emballage) {
+                    await Emballage.update(
+                        { quantiter: emballage.quantiter + hvente.quantiter },
+                        { where: { id_emballage: emballage.id_emballage } }
+                    );
+                }
+            }
+
+            // 3. Supprimer l'historique après la mise à jour du stock
+            await HistSortie.destroy({ where: { id_hist: hvente.id_hist } });
+
+            // 4. Redirection finale
+            if (hvente.type === 'produit') {
+                return res.redirect(`/oneProduit/${req.query.id}?msg=sup&type=vente`);
+            } else {
+                return res.redirect(`/oneEmballage/${req.query.id}?msg=sup&type=vente`);
+            }
+
+        } catch (error) {
+            console.error("Erreur deleteHSortie:", error);
+            return res.redirect('/notFound');
+        }
+    });
+};
 
 module.exports = {
     allHSortie,

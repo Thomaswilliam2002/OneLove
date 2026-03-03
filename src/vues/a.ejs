@@ -1393,3 +1393,62 @@ allProduitCaisse = (app) => {
         res.redirect('/notFound');
     }
 })
+
+deleteHSortie = (app) => {
+  app.delete('/deleteHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      HistSortie.findByPk(req.params.id)
+          .then(hvente => {
+              const appartDel = hvente;
+              if(appartDel.type === 'produit'){
+                  const prodq = appartDel.quantiter
+                  const produit = Produit.findByPk(appartDel.id_probal) 
+                  Produit.update({
+                      quantiter: produit.quantiter + prodq
+                  },{
+                      where: {id_produit: produit.id_produit}
+                  })
+                  .then(hist => {
+                      continue
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+              }else if(appartDel.type === 'emballage'){
+                  const embalq = appartDel.quantiter
+                  const emballage = Emballage.findByPk(appartDel.id_probal) 
+                  Emballage.update({
+                      quantiter: emballage.quantiter + embalq
+                  },{
+                      where: {id_emballage: emballage.id_emballage}
+                  })
+                      .then(hist => {
+                          continue
+                      })
+                      .catch(_ => {
+                          console.error(_);
+                          res.redirect('/notFound');
+                          return; // On stoppe tout ici !
+                      })
+              }
+              HistSortie.destroy({where: {id_hist: appartDel.id_hist}})
+                  .then(_ => {
+                      if(appartDel.type === 'produit'){
+                          res.redirect('/oneProduit/' + req.query.id + '?msg=sup&type=vente')
+                      }else if(appartDel.type === 'emballage'){
+                          res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=vente')
+                      }
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          }).catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
