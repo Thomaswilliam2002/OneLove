@@ -4,7 +4,7 @@ const {sequelize, Occupe, Personnel, Poste, BarSimpleJournal, BarVipJournal, App
     Appartement,
     Categorie,AppartJournal,
     Produit,
-    Emballage,
+    Emballage,Presence,
     Caisse,Depense,
     CaisseJournal,} = require('./src/db/sequelize');
 

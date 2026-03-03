@@ -4,7 +4,7 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 addArrivee = (app) => {
     // 1. POINTER L'ARRIVÉE (Nouvelle ligne)
-    app.post('/addArrivee', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+    app.post('/addArrivee', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'caissier central'), async (req, res) => {
         const { id_personnel, heure_arriver, pointeur, date_debut } = req.body;
         try {
             const presence = await Presence.findOne({
@@ -32,7 +32,7 @@ addArrivee = (app) => {
 
 updateDepart = (app) => {
     // 2. POINTER LE DÉPART (Mise à jour de la ligne existante)
-    app.post('/updateDepart', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+    app.post('/updateDepart', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'caissier central'), async (req, res) => {
         const { id_personnel, heure_deppart, date_fin } = req.body;
 
         try {
@@ -61,7 +61,7 @@ updateDepart = (app) => {
 
 addAbsenceDebut = (app) => {
     // 3. DÉBUT ABSENCE (Nouvelle ligne)
-    app.post('/addAbsenceDebut', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+    app.post('/addAbsenceDebut', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'caissier central'), async (req, res) => {
         const { id_personnel, date_debut, justification, pointeur, heure_debut } = req.body;
         try {
             const absence = await Presence.findOne({
@@ -91,7 +91,7 @@ addAbsenceDebut = (app) => {
 
 updateAbsenceFin = (app) => {
     // 4. FIN ABSENCE (Mise à jour)
-    app.post('/updateAbsenceFin', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+    app.post('/updateAbsenceFin', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'caissier central'), async (req, res) => {
         const { id_personnel, date_fin, heure_fin } = req.body;
         try {
             const absence = await Presence.findOne({
