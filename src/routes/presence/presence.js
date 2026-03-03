@@ -1,4 +1,3 @@
-const e = require('express');
 const {Presence, Personnel} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
