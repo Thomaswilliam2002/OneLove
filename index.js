@@ -329,9 +329,12 @@ stockJob.start();
 
 //route presence
 app.get('/presence', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
-    const personnels = await Personnel.findAll() 
-    if(personnels){
-        res.render('presence', {personnels: personnels, msg: req.query.msg, type: req.query.type});
+    const presences = await Presence.findAll({
+        include:[{model: Personnel}]
+    })
+    const personnels = await Personnel.findAll();
+    if(presences){
+        res.render('presence', {presences: presences,personnels: personnels, msg: req.query.msg, tc: req.query.text_color});
     }else{
         res.redirect('/notFound');
     }

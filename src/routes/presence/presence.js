@@ -2,6 +2,121 @@ const e = require('express');
 const {Presence, Personnel} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
+addArrivee = (app) => {
+    // 1. POINTER L'ARRIVÉE (Nouvelle ligne)
+    app.post('/addArrivee', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        const { id_personnel, heure_arriver, pointeur, date_debut } = req.body;
+        try {
+            const presence = await Presence.findOne({
+                where: {
+                    id_personnel: id_personnel,
+                    heure_deppart: null,
+                    etat_presence: 'Present'
+                }
+            });if (presence) {
+                return res.redirect('/presence?msg=Erreur: L\'employé est deja present depuis ' + presence.date_debut + ' a ' + presence.heure_arriver + '. Veuillez pointer son départ pour pouvoir en marquer une nouvelle.&tc=text-danger');
+            }
+            await Presence.create({
+                date_debut: date_debut,
+                heure_arriver: heure_arriver,
+                etat_presence: 'Present',
+                id_personnel: id_personnel,
+                pointeur: pointeur // On récupère l'id de l'admin connecté
+            });res.redirect('/presence?msg=Arrivée enregistrée&tc=text-success');
+        } catch (error) {
+            console.error(error);
+            res.redirect('/notFound');
+        }
+    });
+}
+
+updateDepart = (app) => {
+    // 2. POINTER LE DÉPART (Mise à jour de la ligne existante)
+    app.post('/updateDepart', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        const { id_personnel, heure_deppart, date_fin } = req.body;
+
+        try {
+            const presence = await Presence.findOne({
+                where: {
+                    id_personnel: id_personnel,
+                    heure_deppart: null,
+                    etat_presence: 'Present'
+                }
+            });if (!presence) {
+                return res.redirect('/presence?msg=Erreur: Aucun début de présence trouvé pour cet employé aujourd\'hui&tc=text-danger');
+            }
+
+            if (presence.date_debut > date_fin) {
+                return res.redirect('/presence?msg=Erreur: La date de fin de presence ne peut pas etre inferieur à la date de debut de presence&tc=text-danger');
+            }
+
+            await presence.update({ heure_deppart: heure_deppart, date_fin: date_fin });
+            res.redirect('/presence?msg=Départ enregistré&tc=text-warning');
+        } catch (error) {
+            console.error(error);
+            res.redirect('/notFound');
+        }
+    });
+}
+
+addAbsenceDebut = (app) => {
+    // 3. DÉBUT ABSENCE (Nouvelle ligne)
+    app.post('/addAbsenceDebut', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        const { id_personnel, date_debut, justification, pointeur, heure_debut } = req.body;
+        try {
+            const absence = await Presence.findOne({
+                where: {
+                    id_personnel: id_personnel,
+                    etat_presence: 'Absent',
+                    heure_deppart: null
+                },
+                order: [['date_debut', 'DESC']]
+            });if (absence) {
+                return res.redirect('/presence?msg=Erreur: Absence en cours trouvée(' + absence.date_debut + ' ' + absence.heure_arriver + ') pour cet employé. Veuillez terminer l\'absence en cours pour pouvoir en marquer une nouvelle.&tc=text-danger');
+            }
+            const a = await Presence.create({
+                date_debut: date_debut,
+                heure_arriver: heure_debut,
+                etat_presence: 'Absent',
+                justification_absence: justification,
+                id_personnel: id_personnel,
+                pointeur: pointeur
+            });res.redirect('/presence?msg=Début d\'absence marqué&tc=text-danger');
+        } catch (error) {
+            console.error(error);
+            res.redirect('/notFound');
+        }
+    });
+}
+
+updateAbsenceFin = (app) => {
+    // 4. FIN ABSENCE (Mise à jour)
+    app.post('/updateAbsenceFin', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        const { id_personnel, date_fin, heure_fin } = req.body;
+        try {
+            const absence = await Presence.findOne({
+                where: {
+                    id_personnel: id_personnel,
+                    etat_presence: 'Absent',
+                    heure_deppart: null
+                },
+                order: [['date_debut', 'DESC']]
+            });if (!absence) {
+                return res.redirect('/presence?msg=Erreur: Aucune absence en cours trouvée&tc=text-danger');
+            }
+
+            if (absence.date_debut > date_fin) {
+                return res.redirect('/presence?msg=Erreur: La date de fin d\'absence ne peut pas etre inferieur à la date de debut d\'absence&tc=text-danger');
+            }
+
+            await absence.update({ date_fin: date_fin, heure_deppart: heure_fin });
+            res.redirect('/presence?msg=Retour d\'absence enregistré&tc=text-info');
+        } catch (error) {
+            console.log(error);
+            res.redirect('/notFound');
+        }
+    });
+}
 addPresence = (app) => {
     app.post('/addPresence/:id/:idUser', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
         const {date, hd, hf, da} = req.body;
