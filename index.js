@@ -812,6 +812,10 @@ pointage.addAbsence(app);
 pointage.allPresence(app);
 pointage.allAbsence(app);
 pointage.deletePresence(app);
+pointage.addArrivee(app);
+pointage.updateDepart(app);
+pointage.addAbsenceDebut(app);
+pointage.updateAbsenceFin(app);
 
 occupent.AddOccupent(app);
 occupent.deleteOccupent(app);

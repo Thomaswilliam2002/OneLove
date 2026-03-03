@@ -244,11 +244,7 @@ deletePresence = (app) => {
                 const appartDel = presence;
                 Presence.destroy({where: {id_presence: appartDel.id_presence}})
                     .then(_ => {
-                        if(req.query.etat === 'present'){
-                            res.redirect('/allPresence?indice=pas_admin')
-                        }else{
-                            res.redirect('/allAbsence?indice=pas_admin')
-                        }
+                        res.redirect('/presence')
                     })
                     .catch(_ => {
                         console.error(_);
@@ -264,5 +260,9 @@ module.exports = {
     addAbsence,
     allPresence,
     allAbsence,
-    deletePresence
+    deletePresence,
+    addArrivee,
+    updateDepart,
+    addAbsenceDebut,
+    updateAbsenceFin
 }
