@@ -311,7 +311,7 @@ Depense.belongsTo(CategorieDepense, {
 
 (async () =>{
     try{
-        await sequelize.sync({alter: true}); //{alter: false}
+        await sequelize.sync(); //{alter: false}
         console.log('Base synchronisee')
 
         const count = await Poste.count({
