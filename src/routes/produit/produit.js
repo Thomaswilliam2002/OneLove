@@ -3,6 +3,7 @@ const {Categorie} = require('../../db/sequelize');
 const {HistEntrer} = require('../../db/sequelize');
 const {HistSortie} = require('../../db/sequelize');
 const {fn, col, literal, Op} = require('sequelize');
+const { sequelize } = require('../../db/sequelize'); 
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 allProduit = (app) => {
@@ -13,30 +14,6 @@ allProduit = (app) => {
             .then(produits => {
                 Categorie.findAll()
                     .then(categories => {
-                        //const msg = "Liste recuperer avec succes"
-                        //console.log(produits)
-                        // HistEntrer.findAll({
-                        //     attributes:[ 
-                        //         // 1. Correction du format date pour Postgres (YYYY-MM)
-                        //         [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), "mois"], 
-                        //         'id_probal', 
-                        //         'type',
-                        //         [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'total_recette'],
-                        //         // 2. Correction du SELECT interne : Majuscule à Produits + S à la fin
-                        //         [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom'],
-                        //         // [literal("TO_CHAR(created, '%Y-%m')"), "mois"], 'id_probal', 'type', 
-                        //         // [literal("SUM(quantiter * prix_unit)"),'total_recette'],
-                        //         // [literal("(SELECT nom FROM produits where produits.id_produit = histEntrers.id_probal)"),'nom'],
-                        //     ],
-                        //         where: {
-                        //             type:{
-                        //                 [Op.in]: ["produits"]
-                        //             }
-                        //         },
-                        //         group: ["id_probal", "mois"],
-                        //         order: [["type"],['mois','ASC']],
-                        //         row:true
-                        // })
                         HistEntrer.findAll({
                             attributes: [
                                 // Utilisation de YYYY-MM pour Postgres
@@ -261,23 +238,47 @@ updateProduit = (app) => {
 }
 
 deleteProduit = (app) => {
-    app.delete('/deleteProduit/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Produit.findByPk(req.params.id)
-            .then(produit => {
-                const appartDel = produit;
-                Produit.destroy({where: {id_produit: appartDel.id_produit}})
-                    .then(_ => {
-                        res.redirect('/allProduit?type=article&msg=sup')
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
-    })
-}
+    app.delete('/deleteProduit/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        // Import de sequelize pour la transaction si non global
+        const t = await sequelize.transaction();
+        
+        try {
+            const produitId = req.params.id;
+            const produit = await Produit.findByPk(produitId, { transaction: t });
 
+            if (!produit) {
+                await t.rollback();
+                return res.redirect('/notFound');
+            }
+
+            // 1. Supprimer l'historique des mouvements de stock (Entrées/Sorties)
+            await HistSortie.destroy({ where: { id_probal: produitId, type: 'produit' }, transaction: t });
+            // Note: Vérifiez si votre table s'appelle HistEntrer ou HistEntree
+            if (typeof HistEntrer !== 'undefined') {
+                await HistEntrer.destroy({ where: { id_produit: produitId }, transaction: t });
+            }
+
+            // 2. IMPORTANT : Gérer l'historique des ventes en caisse
+            // On supprime les traces de vente pour ce produit spécifique
+            await HistCaisse.destroy({ 
+                where: { id_probal: produitId, type: 'produit' }, 
+                transaction: t 
+            });
+
+            // 3. Supprimer le produit lui-même
+            await Produit.destroy({ where: { id_produit: produitId }, transaction: t });
+
+            await t.commit();
+            res.redirect('/allProduit?type=article&msg=sup');
+
+        } catch (err) {
+            // Annulation impérative de la transaction en cas d'échec
+            if (t) await t.rollback();
+            console.error("Erreur lors de la suppression du produit:", err);
+            res.redirect('/notFound');
+        }
+    });
+};
 module.exports = {
     allProduit,
     formAddProduit,

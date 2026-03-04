@@ -49,6 +49,12 @@ updateDepart = (app) => {
                 return res.redirect('/presence?msg=Erreur: La date de fin de presence ne peut pas etre inferieur à la date de debut de presence&tc=text-danger');
             }
 
+            if(presence.date_debut == date_fin){
+                if(presence.heure_arriver > heure_deppart){
+                    return res.redirect("/presence?msg=Erreur: L'heure de depart ne peut pas être inferieur à l'heure d'arriver&tc=text-danger");    
+                }
+            }
+
             await presence.update({ heure_deppart: heure_deppart, date_fin: date_fin });
             res.redirect('/presence?msg=Départ enregistré&tc=text-warning');
         } catch (error) {
@@ -106,6 +112,12 @@ updateAbsenceFin = (app) => {
 
             if (absence.date_debut > date_fin) {
                 return res.redirect('/presence?msg=Erreur: La date de fin d\'absence ne peut pas etre inferieur à la date de debut d\'absence&tc=text-danger');
+            }
+
+            if(absence.date_debut == date_fin){
+                if(absence.heure_arriver > heure_fin){
+                    return res.redirect("/presence?msg=Erreur: L'heure de depart ne peut pas etre inferieur à l'heure d'arriver&tc=text-danger");    
+                }
             }
 
             await absence.update({ date_fin: date_fin, heure_deppart: heure_fin });

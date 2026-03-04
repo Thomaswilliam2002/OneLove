@@ -1,9 +1,10 @@
-const { Caisse, BarSimpleJournal, BarVipJournal, AppartFondJournal, ChambreJournal, BarSimple, BarVip } = require('../../db/sequelize')
+const { Caisse, BarSimpleJournal, BarVipJournal, AppartFondJournal, ChambreJournal, BarSimple, BarVip, Emballage } = require('../../db/sequelize')
 const { Poste, Appartement, MaisonColse, CrazyClub, CrazyClubJournal, HistCaisse, CuisineJournal, AppartJournal } = require('../../db/sequelize')
-const { Personnel } = require('../../db/sequelize')
+const { Personnel, Produit } = require('../../db/sequelize')
 const { Occupe } = require('../../db/sequelize')
 const { fn, col, literal } = require('sequelize');
 const { protrctionRoot, authorise } = require('../../middleware/protectRoot');
+const { sequelize } = require('../../db/sequelize'); 
 
 // --- Liste des caisses ---
 allCaisse = (app) => {
@@ -229,12 +230,57 @@ updateCaisse = (app) => {
 }
 
 deleteCaisse = (app) => {
-    app.delete('/deleteCaisse/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Caisse.destroy({ where: { id_caisse: req.params.id } })
-            .then(() => res.redirect('/allCaisse?msg=sup'))
-            .catch(err => { console.error(err); res.redirect('/notFound'); });
-    })
-}
+    app.delete('/deleteCaisse/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        // On récupère l'instance de sequelize pour la transaction
+        const t = await sequelize.transaction();
+
+        try {
+            const caisseId = req.params.id;
+            const caisse = await Caisse.findByPk(caisseId, { transaction: t });
+            
+            if (!caisse) {
+                await t.rollback();
+                return res.redirect('/notFound');
+            }
+
+            // 1. Récupérer l'historique de la caisse pour restaurer les stocks
+            // const allHist = await HistCaisse.findAll({ where: { id_caisse: caisseId }, transaction: t });
+
+            // if (allHist.length > 0) {
+            //     for (const hist of allHist) {
+            //         const qte = hist.quantiter;
+            //         if (hist.type === 'emballage') {
+            //             await Emballage.update(
+            //                 { quantiter: literal(`quantiter + ${qte}`) },
+            //                 { where: { id_emballage: hist.id_probal }, transaction: t }
+            //             );
+            //         } else if (hist.type === 'produit') {
+            //             await Produit.update(
+            //                 { quantiter: literal(`quantiter + ${qte}`) },
+            //                 { where: { id_produit: hist.id_probal }, transaction: t }
+            //             );
+            //         }
+            //     }
+            // }
+
+            // 2. Supprimer l'historique lié (pour éviter les données orphelines)
+            await HistCaisse.destroy({ where: { id_caisse: caisseId }, transaction: t });
+
+            // 3. Supprimer la caisse
+            await caisse.destroy({ transaction: t });
+
+            // On valide tous les changements
+            await t.commit();
+            res.redirect('/allCaisse?msg=sup');
+
+        } catch (e) {
+            // En cas d'erreur, on annule tout ce qui a été fait
+            if (t) await t.rollback();
+            console.error("Erreur lors de la suppression de la caisse:", e);
+            res.redirect('/notFound');
+        }
+    });
+};
 
 // Ajoute la fonction si elle manque
 oneCaisse = (app) => {

@@ -1393,7 +1393,7 @@ allProduitCaisse = (app) => {
         res.redirect('/notFound');
     }
 })
-
+<!-- =============================================================================================== -->
 deleteHSortie = (app) => {
   app.delete('/deleteHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
       HistSortie.findByPk(req.params.id)
@@ -1439,6 +1439,89 @@ deleteHSortie = (app) => {
                       }else if(appartDel.type === 'emballage'){
                           res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=vente')
                       }
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          }).catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deleteCaisse = (app) => {
+  app.delete('/deleteCaisse/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      try{
+          const caisse = await Caisse.findByPk(req.params.id);
+          if(!caisse) return res.redirect('/notFound');
+          const allHistCaisse = await HistCaisse.findAll({ where: { id_caisse: req.params.id } });
+          if(allHistCaisse.length > 0){
+              for(hist of allHistCaisse){
+                  if(hist.type === 'emballage'){
+                      const qte = hist.quantiter;
+                      const mj = Emballage.update({
+                          quantiter: Sequelize.literal(`quantiter + ${qte}`),
+                      }, { where: { id_emballage: hist.id_probal } });
+                  }else if(hist.type === 'produit'){
+                      const qte = hist.quantiter;
+                      const mj = Produit.update({
+                          quantiter: Sequelize.literal(`quantiter + ${qte}`),
+                      }, { where: { id_produit: hist.id_probal } });
+                  }
+              }
+          }
+          caisse.destroy({ where: { id_caisse: req.params.id } });
+          res.redirect('/allCaisse?msg=sup');
+      }
+      catch(e){
+          console.error(e);
+          res.redirect('/notFound');
+      }
+  })
+}
+<!-- =============================================================================================== -->
+deleteProduit = (app) => {
+  app.delete('/deleteProduit/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      const t = await sequelize.transaction();
+      try {
+          const produitId = req.params.id;
+          const produit = await Produit.findByPk(produitId, { transaction: t });
+          if (!produit) {
+              await t.rollback();
+              return res.redirect('/notFound');
+          }
+
+          // supprimer l'historique de sortie et d'entrer du produit
+          await HistSortie.destroy({ where: { id_produit: produitId }, transaction: t });
+          await HistEntrer.destroy({ where: { id_produit: produitId }, transaction: t });
+
+          // supprimer le produit
+          await Produit.destroy({ where: { id_produit: produitId }, transaction: t });
+
+          await t.commit();
+          res.redirect('/allProduit?type=article&msg=sup');
+      }
+      catch (err) {
+          console.error(err);
+          res.redirect('/notFound');
+          return; // On stoppe tout ici !
+      }
+  })
+}
+
+<!-- =============================================================================================== -->
+deleteEmballage = (app) => {
+  app.delete('/deleteEmballage/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Emballage.findByPk(req.params.id)
+          .then(emballage => {
+              const appartDel = emballage;
+              Emballage.destroy({where: {id_emballage: appartDel.id_emballage}})
+                  .then(_ => {
+                      res.redirect('/allEmballage?type=article&msg=sup')
                   })
                   .catch(_ => {
                       console.error(_);

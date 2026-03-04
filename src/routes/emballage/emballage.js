@@ -4,6 +4,7 @@ const {HistEntrer} = require('../../db/sequelize');
 const {HistSortie} = require('../../db/sequelize');
 const {fn, col, literal, Op} = require('sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
+const { sequelize } = require('../../db/sequelize'); 
 
 allEmballage = (app) => {
     app.get('/allEmballage', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
@@ -193,26 +194,64 @@ updateEmballage = (app) => {
 }
 
 deleteEmballage = (app) => {
-    app.delete('/deleteEmballage/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Emballage.findByPk(req.params.id)
-            .then(emballage => {
-                const appartDel = emballage;
-                Emballage.destroy({where: {id_emballage: appartDel.id_emballage}})
-                    .then(_ => {
-                        res.redirect('/allEmballage?type=article&msg=sup')
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            }).catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
-    })
-}
+    app.delete('/deleteEmballage/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        // Import de sequelize pour gérer la transaction
+        const t = await sequelize.transaction();
+        
+        try {
+            const emballageId = req.params.id;
+            
+            // 1. Vérifier si l'emballage existe
+            const emballage = await Emballage.findByPk(emballageId, { transaction: t });
+
+            if (!emballage) {
+                await t.rollback();
+                return res.redirect('/notFound');
+            }
+
+            // 2. Nettoyer l'historique des mouvements de stock (Entrées/Sorties)
+            // On précise le type 'emballage' pour être précis dans HistSortie
+            await HistSortie.destroy({ 
+                where: { id_probal: emballageId, type: 'emballage' }, 
+                transaction: t 
+            });
+
+            // Si vous avez une table d'historique des entrées spécifique aux emballages
+            // Adaptez le nom de la table si nécessaire (ex: HistEntrerEmballage)
+            if (typeof HistEntrer !== 'undefined') {
+                await HistEntrer.destroy({ 
+                    where: { id_produit: emballageId }, // Vérifiez si le champ est id_produit ou id_emballage
+                    transaction: t 
+                });
+            }
+
+            // 3. IMPORTANT : Supprimer les traces de ventes en caisse
+            // Dans HistCaisse, les emballages sont identifiés par id_probal + type 'emballage'
+            await HistCaisse.destroy({ 
+                where: { id_probal: emballageId, type: 'emballage' }, 
+                transaction: t 
+            });
+
+            // 4. Supprimer l'emballage lui-même
+            await Emballage.destroy({ 
+                where: { id_emballage: emballageId }, 
+                transaction: t 
+            });
+
+            // Validation de toutes les opérations
+            await t.commit();
+            
+            // Redirection avec message de succès (type=emballage pour filtrer la vue)
+            res.redirect('/allEmballage?type=article&msg=sup');
+
+        } catch (err) {
+            // Annulation de tous les changements en cas d'erreur
+            if (t) await t.rollback();
+            console.error("Erreur lors de la suppression de l'emballage:", err);
+            res.redirect('/notFound');
+        }
+    });
+};
 
 module.exports = {
     allEmballage,
