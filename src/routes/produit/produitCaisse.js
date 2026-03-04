@@ -90,9 +90,10 @@ allProduitCaisse = (app) => {
                             const vendus =
                                 (await HistCaisse.sum('quantiter', {
                                     where: {
-                                        id_caisse: caisse.id_caisse,
-                                        id_probal: idInt,
-                                        type: 'produit'
+                                        // id_caisse: caisse.id_caisse,
+                                        // id_probal: idInt,
+                                        // type: 'produit'
+                                        caisse_of: caisse.caisse_of
                                     }
                                 })) || 0;
 
