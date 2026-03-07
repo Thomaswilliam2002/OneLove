@@ -131,6 +131,28 @@ formEditAdmin = (app) =>{
     })
 }
 
+formEditPersonnel = (app) =>{
+    app.get('/formEditPersonnel/:id', (req, res) => {
+        Personnel.findByPk(req.params.id)
+            .then(personnel => {
+                Poste.findAll()
+                .then(postes => {
+                    res.status(200).render('edit-staff', {personnel: personnel, postes: postes})
+                })
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
+            })
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
+            })
+    })
+}
+
 addPersonnel = (app) => {
     app.post(['/addPersonnel', '/addAdmin'], async (req, res) => {
         try {
