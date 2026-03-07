@@ -9,21 +9,22 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-        depense: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
         origine_fond: {
             type: DataTypes.TEXT,
             allowNull: true
         }, 
         date: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: false
         },
         commentaire: {
             type: DataTypes.TEXT,
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

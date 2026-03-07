@@ -9,25 +9,22 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        solde: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        recette: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        depense: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        id_employer: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        caisse_of: {
+        nom_lieu: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false
+        },
+        type_lieu: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        id_lieu: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

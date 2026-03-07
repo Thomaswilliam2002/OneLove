@@ -13,13 +13,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        // nb_employer: {
-        //     type: DataTypes.INTEGER,
-        //     allowNull: false
-        // },
         nb_chambre: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

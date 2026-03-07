@@ -1,59 +1,41 @@
-const {Emballage, BarSimple, BarVip, CrazyClub} = require('../../db/sequelize');
+const {Emballage, Caisse} = require('../../db/sequelize');
 const {Categorie} = require('../../db/sequelize');
 const {HistEntrer} = require('../../db/sequelize');
 const {HistSortie} = require('../../db/sequelize');
-const {fn, col, literal, Op} = require('sequelize');
+const {fn, col, literal, Op, where} = require('sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 const { sequelize } = require('../../db/sequelize'); 
+const caisse = require('../../models/caisse');
 
 allEmballage = (app) => {
-    app.get('/allEmballage', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Emballage.findAll({
-            order:[['id_emballage', 'DESC']]
-        })
-            .then(emballages => {
-                Categorie.findAll()
-                    .then(categories => {
-                        BarSimple.findAll()
-                            .then(bs => {
-                                BarVip.findAll()
-                                    .then(bv => {
-                                        CrazyClub.findAll()
-                                            .then(cc => {
-                                                res.status(200).render('emballage', {emballages: emballages, categories: categories, barSimples: bs, barVips: bv, crazycs: cc, msg: req.query.msg, type: req.query.type});
-                                            }).catch(_ => {
-                                                console.error(_);
-                                                res.redirect('/notFound');
-                                                return; // On stoppe tout ici !
-                                            })
-                                    }).catch(_ => {
-                                        console.error(_);
-                                        res.redirect('/notFound');
-                                        return; // On stoppe tout ici !
-                                    })
-                            }).catch(_ => {
-                                console.error(_);
-                                res.redirect('/notFound');
-                                return; // On stoppe tout ici !
-                            })
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
-            .catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
-    })
+    app.get('/allEmballage', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try {
+            // On lance toutes les requêtes en parallèle
+            const [emballages, categories, caisses] = await Promise.all([
+                Emballage.findAll({ where: { is_active: true }, order: [['id_emballage', 'DESC']] }),
+                Categorie.findAll({ where: { is_active: true } }),
+                Caisse.findAll({ where: { is_active: true } }),
+            ]);
+
+            // On renvoie la vue avec toutes les données
+            res.status(200).render('emballage', {
+                emballages: emballages,
+                categories: categories,
+                caisses,
+                msg: req.query.msg,
+                type: req.query.type
+            });
+
+        } catch (err) {
+            console.error(err);
+            res.redirect('/notFound');
+        }
+    });
 }
 
 formAddEmballage = (app) => {
     app.get('/formAddEmballage', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Categorie.findAll()
+        Categorie.findAll({ where: { is_active: true } })
             .then(categories => {
                 //const msg = "Liste recuperer avec succes"
                 res.status(200).render('add-emballage', {categories: categories});
@@ -79,14 +61,14 @@ oneEmballage = (app) => {
                         'id_probal',
                         [fn('SUM', literal('quantiter * prix_unit')), 'recette']
                     ],
-                    where: { id_probal: emballage.id_emballage, type: 'emballage' },
+                    where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true },
                     group: [
                         fn('TO_CHAR', col('created'), 'YYYY-MM'), 
                         'id_probal', 
                         'id_hist' // Clé primaire obligatoire dans le group by sur Postgres
                     ],
                     order: [[fn('TO_CHAR', col('created'), 'YYYY-MM'), 'ASC']],
-                    raw: true
+                    raw: true,
                 });
 
                 // 2. Historique groupé des sorties (Postgres compatible)
@@ -96,7 +78,7 @@ oneEmballage = (app) => {
                         'id_probal',
                         [fn('SUM', literal('quantiter * prix_unit')), 'recette']
                     ],
-                    where: { id_probal: emballage.id_emballage, type: 'emballage' },
+                    where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true },
                     group: [
                         fn('TO_CHAR', col('created'), 'YYYY-MM'), 
                         'id_probal', 
@@ -107,8 +89,8 @@ oneEmballage = (app) => {
                 });
 
                 // 3. Historiques détaillés (pour hachats et hventes si nécessaire)
-                const pEntreeDetail = HistEntrer.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage' } });
-                const pSortieDetail = HistSortie.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage' } });
+                const pEntreeDetail = HistEntrer.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true } });
+                const pSortieDetail = HistSortie.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true } });
 
                 Promise.all([pEntreeGrouped, pSortieGrouped, pEntreeDetail, pSortieDetail])
                     .then(([hr, hs, hachats, hventes]) => {
@@ -153,7 +135,7 @@ addEmballage = (app) => {
                     donneur: 'One Love'
                 })
                     .then(hist => {
-                        res.redirect('/allEmballage?type=article&msg=ajout')
+                        res.redirect('/allEmballage?type=article&msg=Ajout de l\'emballage avec succes&tc=alert-success')
                     })
                     .catch(_ => {
                         console.error(_);
@@ -183,7 +165,7 @@ updateEmballage = (app) => {
             .then(_ => {
                 // const msg = "Modification du bar avec succes"
                 // res.json({msg})
-                res.redirect('/allEmballage?type=article&msg=modif')
+                res.redirect('/allEmballage?type=article&msg=Modification de l\'emballage avec succes&tc=alert-success')
             })
             .catch(_ => {
                 console.error(_);
@@ -211,7 +193,9 @@ deleteEmballage = (app) => {
 
             // 2. Nettoyer l'historique des mouvements de stock (Entrées/Sorties)
             // On précise le type 'emballage' pour être précis dans HistSortie
-            await HistSortie.destroy({ 
+            await HistSortie.update({ 
+                is_active: false 
+            }, { 
                 where: { id_probal: emballageId, type: 'emballage' }, 
                 transaction: t 
             });
@@ -219,7 +203,9 @@ deleteEmballage = (app) => {
             // Si vous avez une table d'historique des entrées spécifique aux emballages
             // Adaptez le nom de la table si nécessaire (ex: HistEntrerEmballage)
             if (typeof HistEntrer !== 'undefined') {
-                await HistEntrer.destroy({ 
+                await HistEntrer.update({ 
+                    is_active: false 
+                }, { 
                     where: { id_produit: emballageId }, // Vérifiez si le champ est id_produit ou id_emballage
                     transaction: t 
                 });
@@ -227,13 +213,13 @@ deleteEmballage = (app) => {
 
             // 3. IMPORTANT : Supprimer les traces de ventes en caisse
             // Dans HistCaisse, les emballages sont identifiés par id_probal + type 'emballage'
-            await HistCaisse.destroy({ 
+            await HistCaisse.update({ is_active: false }, { 
                 where: { id_probal: emballageId, type: 'emballage' }, 
                 transaction: t 
             });
 
             // 4. Supprimer l'emballage lui-même
-            await Emballage.destroy({ 
+            await Emballage.update({ is_active: false }, { 
                 where: { id_emballage: emballageId }, 
                 transaction: t 
             });
@@ -242,7 +228,7 @@ deleteEmballage = (app) => {
             await t.commit();
             
             // Redirection avec message de succès (type=emballage pour filtrer la vue)
-            res.redirect('/allEmballage?type=article&msg=sup');
+            res.redirect('/allEmballage?type=article&msg=Suppression de l\'emballage avec succes&tc=alert-success');
 
         } catch (err) {
             // Annulation de tous les changements en cas d'erreur

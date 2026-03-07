@@ -7,7 +7,7 @@ Occupe.create({
     id_poste: poste
 })
     .then(occupe =>{
-        res.redirect('/allPersonnel?allType=pas_admin&msg=ajout&type=staff');
+        res.redirect('/allPersonnel?allType=pas_admin&msg=Personnel ajouter au post avec succes&type=staff');
     })
     .catch(_ => {
         console.error(_);

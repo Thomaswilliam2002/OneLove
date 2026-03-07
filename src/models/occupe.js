@@ -8,6 +8,11 @@ module.exports = (sequelize, DataTypes) => {
         salaire: {
             type: DataTypes.FLOAT,
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

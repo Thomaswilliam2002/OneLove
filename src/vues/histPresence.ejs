@@ -64,7 +64,7 @@
                             <td><%= i %></td>
                             <td><%= histp.Personnel.nom %> <%= histp.Personnel.prenom %></td>
                             <td><%= histp.etat_presence %></td>
-                            <td><%= new Date(histp.date).getDate() %>-<%= new Date(histp.date).getMonth() + 1 < 10 ? `0${new Date(histp.date).getMonth() + 1}` : new Date(histp.date).getMonth() + 1 %>-<%= new Date(histp.date).getFullYear()%></td>
+                            <td><%= histp.date %></td>
                             <td><%= histp.heure_arriver %></td>
                             <td><%= histp.heure_deppart %></td>
                             <td><%= histp.Personnel.nom %> <%= histp.Personnel.prenom %></td>

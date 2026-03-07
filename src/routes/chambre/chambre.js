@@ -1,12 +1,11 @@
 const { where } = require('sequelize')
-const {Chambre, MaisonColse, Occupent, ChambreJournal} = require('../../db/sequelize')
-const occupent = require('../../models/occupent')
+const {Chambre, MaisonColse, Occupent, ChambreJournal, sequelize} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
-const chambreJournal = require('../../models/chambreJournal');
 
 allChambre = (app) => {
     app.get('/allChambre', (req, res) => {
         Chambre.findAll({
+            where: {is_active: true},
             order:[['id_chambre', 'DESC']]
         })
             .then(chambres => {
@@ -22,49 +21,50 @@ allChambre = (app) => {
 }
 
 oneChambre = (app) => {
-    app.get('/oneChambre/:id/:id_mc', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        MaisonColse.findByPk(req.params.id_mc)
-            .then(maisonColse => {
-                Chambre.findByPk(req.params.id)
-                    .then(chambre => {
-                        Occupent.findAll({
-                            where: {
-                                id_chambre: String(chambre.id_chambre),
-                                id_mclose: String(maisonColse.id_mclose)
-                            }
-                        })
-                            .then(occupent => {
-                                ChambreJournal.findAll({where:{
-                                    id_mclose : req.params.id_mc, id_chambre : req.params.id
-                                }})
-                                    .then(cj => {
-                                        res.status(200).render('chambre-detail', {chambre: chambre, maisonColse: maisonColse, occupent: occupent, chambreJournals: cj})
-                                    })
-                                    .catch(_ => {
-                                        console.error(_);
-                                        res.redirect('/notFound');
-                                        return; // On stoppe tout ici !
-                                    })
-                            })
-                            .catch(_ => {
-                                console.error(_);
-                                res.redirect('/notFound');
-                                return; // On stoppe tout ici !
-                            })
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
-            .catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
-        
-    })
+    app.get('/oneChambre/:id/:id_mc', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try {
+
+            const { id, id_mc } = req.params;
+
+            const [maisonColse, chambre, occupent, chambreJournals] = await Promise.all([
+
+                MaisonColse.findByPk(id_mc),
+
+                Chambre.findByPk(id),
+
+                Occupent.findAll({
+                    where: {
+                        id_chambre: id,
+                        id_mclose: id_mc,
+                        is_active: true
+                    }
+                }),
+
+                ChambreJournal.findAll({
+                    where: {
+                        id_mclose: id_mc,
+                        id_chambre: id,
+                        is_active: true
+                    }
+                })
+
+            ]);
+
+            res.status(200).render('chambre-detail', {
+                chambre,
+                maisonColse,
+                occupent,
+                chambreJournals,
+                msg: req.query.msg,
+                tc: req.query.tc
+            });
+
+        } catch (e) {
+            console.error(e);
+            res.redirect('/notFound');
+            return;
+        }
+    });
 }
 
 addChambre = (app) => {
@@ -104,7 +104,7 @@ updateChambre = (app) => {
             .then(_ => {
                 // const msg = "Modification de la chambre avec succes"
                 // res.json({msg})
-                res.redirect('/allMClose')
+                res.redirect('/allMClose?msg=Modification de la chambre avec succes&tc=alert-success')
             })
             .catch(_ => {
                 console.error(_);
@@ -115,23 +115,21 @@ updateChambre = (app) => {
 }
 
 deleteChambre = (app) => {
-    app.delete('/deleteChambre/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Chambre.findByPk(req.params.id)
-            .then(chambre => {
-                const appartDel = chambre;
-                Chambre.destroy({where: {id_chambre: appartDel.id_chambre}})
-                    .then(_ => {
-                        // const msg = "Suppression de la chambre avec succes"
-                        // res.json({msg})
-                        //console.log('fais')
-                        res.redirect('/allMClose')
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
+    app.delete('/deleteChambre/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try{
+            const t = await sequelize.transaction();
+            await Chambre.update({is_active: false}, {where: {id_chambre: req.params.id}, transaction: t});
+            await ChambreJournal.update({is_active: false}, {where: {id_chambre: req.params.id, is_active: true}, transaction: t});
+            await Occupent.update({is_active: false}, {where: {id_chambre: req.params.id, is_active: true}, transaction: t});
+            await t.commit();
+            res.redirect('/allMClose?msg=Suppression de la chambre avec succes&tc=alert-success');
+        }
+        catch(_){
+            console.error(_);
+            await t.rollback();
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
+        }
     })
 }
 

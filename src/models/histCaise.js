@@ -25,17 +25,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        nomBarClub: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        nom: {
-            type: DataTypes.STRING,
-            allowNull: true //false
-        },
         id_caissier: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

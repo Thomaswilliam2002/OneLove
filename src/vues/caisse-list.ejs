@@ -4,7 +4,12 @@
   
 <!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:08 GMT -->
 <%- include('head')%>
-
+  <style>
+    p{
+      white-space: normal;
+      word-break: break-word
+    }
+  </style>
   <body>
 
     <!-- Page wrapper starts -->
@@ -58,24 +63,10 @@
           
           <div class="app-body">
             <% if(msg) {%>
-              <% if(msg === 'ajout') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                  <b>Caisse </b> ajouter avec succes !
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
-              <% if(msg === 'modif') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                  <b>Caisse </b> modifier avec succes !
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
-              <% if(msg === 'sup') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                  <b>Caisse </b> supprimer avec succes !
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
+              <div class="alert bg-white border alert-dismissible fade show <%= tc %>"  role="alert">
+                <b><%= msg %></b>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
             <% }%>
 
             <!-- Row starts -->
@@ -94,23 +85,25 @@
                         <thead class="text-center">
                           <tr>
                             <th>Nom de la Caisse</th>
-                            <th>Nom et Prenom du comptable</th>
-                            <th>Recette</th>
+                            <th>Nom et Prenom des comptables</th>
+                            <th>Deppartement</th>
+                            <th>Sous departement(lieu)</th>
                             <th>Actions</th>
                           </tr>
                         </thead>
                         <tbody class="text-center">
                           <% caisses.forEach(caisse => { %>
-                            <% personnels.forEach(personnel => { %>
-                              <% if(personnel.id_personnel === caisse.id_employer){ %>
                                 <tr>
                                   <td><%= caisse.nom %></td>
                                   <td>
-                                    
-                                      <%= personnel.nom %> <%= personnel.prenom %>
-                                    
+                                    <ul class="list-unstyled">
+                                      <% caisse.Personnels.forEach(personnel => { %>
+                                        <li><%= personnel.nom %> <%= personnel.prenom %></li>
+                                      <% }) %>
+                                    </ul>
                                   </td>
-                                  <td><%= caisse.recette %></td>
+                                  <td><%= caisse.type_lieu %></td>
+                                  <td><%= caisse.nom_lieu %></td>
                                   <td>
                                     <div class="d-inline-flex gap-3">
                                       <!-- ----------------------------------------------------------------------------------- -->
@@ -133,7 +126,8 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                   </div>
                                                   <div class="modal-body">
-                                                    <p>Voulez-vous vraiment supprimer la Caisse <%= caisse.nom %> ?</p>
+                                                    <p>Voulez-vous vraiment supprimer la Caisse: <%= caisse.nom %> ?</p>
+                                                    <p>La suppression est irriversible et entraînera la suppression de tous les comptes et les opérations(Historique de vente) liés à cette caisse.</p>
                                                   </div>
                                                   <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -157,15 +151,13 @@
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
                                         <i class="ri-edit-box-line"></i>
                                       </a>
-                                      <a href="/allProduitCaisse/<%= caisse.id_employer %>" class="btn btn-outline-info btn-sm"
+                                      <a href="/allCaisseArticle/<%= caisse.id_caisse %>" class="btn btn-outline-info btn-sm"
                                         data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir les Details">
                                         <i class="ri-eye-line"></i>
                                       </a>
                                     </div>
                                   </td>
                                 </tr>
-                              <% } %>
-                            <% }) %>
                           <% }) %>
                         </tbody>
                       </table>
@@ -213,6 +205,9 @@
             window.location.reload();
         }
       });
+
+      // const data = JSON.parse(`<%- JSON.stringify(caisses) %>`);
+      // console.log(data);
     </script>
   </body>
 

@@ -70,7 +70,7 @@
                             <td><%= i %></td>
                             <td><%= hista.Personnel.nom %> <%= hista.Personnel.prenom %></td>
                             <td><%= hista.etat_presence %></td>
-                            <td><%= new Date(hista.date).getDate() < 10 ? `0${new Date(hista.date).getDate()}` : new Date(hista.date).getDate()  %>-<%= new Date(hista.date).getMonth() + 1 < 10 ? `0${new Date(hista.date).getMonth() + 1}` : new Date(hista.date).getMonth() + 1 %>-<%= new Date(hista.date).getFullYear()%></td>
+                            <td><%= hista.data %></td>
                             <td><%= hista.heure_arriver %></td>
                             <td><%= hista.heure_deppart %></td> 
                             <td><%= hista.description %></td> 

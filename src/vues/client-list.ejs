@@ -96,7 +96,9 @@
                             <th>Prenome</th>
                             <th>Numero</th>
                             <th>Comentaire</th>
-                            <th>Actions</th>
+                            <%if(['comptable', 'admin'].includes(user.Poste.nom_poste.toLowerCase())){%>
+                              <th>Actions</th>
+                            <%}%>
                           </tr>
                         </thead>
                         <tbody class="text-center">
@@ -107,57 +109,97 @@
                             <td><%= client.prenom_client %></td>
                             <td><%= client.numero_client %></td>
                             <td><%= client.comentaire_client %></td>
-                            <td>
-                                <div class="d-inline-flex gap-1">
-                                  <!-- ----------------------------------------------------------------------------------- -->
-                                  
-                                    <!-- Card starts -->
-                                        <!-- Button trigger modal -->
-                                        <button type="button" data-bs-toggle="modal"
-                                          data-bs-target="#<%= client.id_client %>ModalCenter" class="btn btn-outline-danger btn-sm">
-                                          <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                          data-bs-target="#exampleModalXl" data-info='<%= client.id_client %>' data-bs-title="<%= client.nom_client %> <%= client.prenom_client %>">
-                                          <i class="ri-eye-line"></i>
-                                        </button>
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="<%= client.id_client %>ModalCenter" tabindex="-1"
-                                          aria-labelledby="<%= client.id_client %>ModalCenterTitle" aria-hidden="true">
-                                          <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                              <div class="modal-header">
-                                                <h5 class="modal-title" id="<%= client.id_client %>ModalCenterTitle">
-                                                  Supprimer
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                              </div>
-                                              <div class="modal-body">
-                                                <p>Voulez-vous vraiment supprimer le Client <%= client.nom_client %> ?</p>
-                                              </div>
-                                              <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                  annuler
-                                                </button>
-                                                <form action="/deleteClient/<%= client.id_client %>?_method=DELETE" method="post">
-                                                  <div class="col-sm-12">
-                                                    <div class="d-flex gap-2 justify-content-end">
-                                                      <button type="submit" class="btn btn-danger">Supprimer</button>
+                            <%if(['comptable', 'admin'].includes(user.Poste.nom_poste.toLowerCase())){%>
+                              <td>
+                                  <div class="d-inline-flex gap-1">
+                                    <!-- ----------------------------------------------------------------------------------- -->
+                                    
+                                      <!-- Card starts -->
+                                          <!-- Button trigger modal -->
+                                          <button type="button" data-bs-toggle="modal"
+                                            data-bs-target="#<%= client.id_client %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                            <i class="ri-delete-bin-line"></i>
+                                          </button>
+                                          <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#exampleModalXl" data-info='<%= client.id_client %>' data-bs-title="<%= client.nom_client %> <%= client.prenom_client %>">
+                                            <i class="ri-eye-line"></i>
+                                          </button>
+                                          <!-- Modal -->
+                                          <div class="modal fade" id="<%= client.id_client %>ModalCenter" tabindex="-1"
+                                            aria-labelledby="<%= client.id_client %>ModalCenterTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <h5 class="modal-title" id="<%= client.id_client %>ModalCenterTitle">
+                                                    Supprimer
+                                                  </h5>
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p>Voulez-vous vraiment supprimer le Client <%= client.nom_client %> ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    annuler
+                                                  </button>
+                                                  <form action="/deleteClient/<%= client.id_client %>?_method=DELETE" method="post">
+                                                    <div class="col-sm-12">
+                                                      <div class="d-flex gap-2 justify-content-end">
+                                                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                      </div>
                                                     </div>
-                                                  </div>
-                                              </form>
+                                                </form>
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
-                                        </div>
-                                    <!-- Card ends -->
-                                  
-                                  <!-- ----------------------------------------------------------------------------------------- -->
+                                      <!-- Card ends -->
                                     
-                                </div>
-                            </td>
+                                    <!-- ----------------------------------------------------------------------------------------- -->
+                                      
+                                  </div>
+                              </td>
+                            <%}%>
                           </tr>
                         <% i++}) %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Table ends -->
+
+                  </div>
+                </div>
+                <br>
+                <div class="card">
+                  <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title">Journals des Appartements</h5>
+                  </div>
+                  <div class="card-body">
+
+                    <!-- Table starts -->
+                    <div class="table-responsive">
+                      <table id="" class="table m-0 align-middle customButtone">
+                        <thead class="text-center">
+                          <tr>
+                            <th>ID</th>
+                            <th>Appart attribué</th>
+                            <th>Date de début</th>
+                            <th>Date de fin</th>
+                            <th>Montant</th>
+                            <th>Nuitée</th>
+                          </tr>
+                        </thead>
+                        <tbody class="text-center">
+                          <% japparts.forEach((journal, index) => { %>
+                            <tr>
+                              <td><%= index + 1 %></td>
+                              <td><%= journal.Appartement.nom_appart %></td>
+                              <td><%= journal.date_debut%></td>
+                              <td><%= journal.date_fin%></td>
+                              <td><%= journal.loyer %></td>
+                              <td><%= journal.nuiter %></td>
+                            </tr>
+                          <% }) %>
                         </tbody>
                       </table>
                     </div>
@@ -259,8 +301,8 @@
                   modolBody.insertAdjacentHTML('beforeend',`
                       <tr>
                         <td>${index + 1}</td>
-                        <td>${journal.date_debut.split('T')[0]}</td>
-                        <td>${journal.date_fin.split('T')[0]}</td>
+                        <td>${journal.date_debut}</td>
+                        <td>${journal.date_fin}</td>
                         <td>${journal.loyer}</td>
                         <td>${journal.nuiter}</td>
                         <td>${journal.Appartement.nom_appart}</td>

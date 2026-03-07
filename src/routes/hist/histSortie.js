@@ -42,7 +42,7 @@ addHSortie = (app) => {
                                 where: {id_produit:produit.id_produit}
                             })
                                 .then(art => {
-                                    res.redirect('/allProduit?type=vente&msg=ajout')
+                                    res.redirect('/allProduit?type=Produit envoyé avec succes&tc=alert-success&msg=ajout')
                                 })
                                 .catch(_ => {
                                     console.error(_);
@@ -81,7 +81,7 @@ addHSortie = (app) => {
                                 where: {id_emballage:emballage.id_emballage}
                             })
                                 .then(art => {
-                                    res.redirect('/allEmballage?type=vente&msg=ajout')
+                                    res.redirect('/allEmballage?type=emballage envoyé avec succes&tc=alert-success&msg=ajout')
                                 })
                                 .catch(_ => {
                                     console.error(_);
@@ -134,13 +134,13 @@ const deleteHSortie = (app) => {
             }
 
             // 3. Supprimer l'historique après la mise à jour du stock
-            await HistSortie.destroy({ where: { id_hist: hvente.id_hist } });
+            await HistSortie.update({ is_active: false }, { where: { id_hist: hvente.id_hist } });
 
             // 4. Redirection finale
             if (hvente.type === 'produit') {
-                return res.redirect(`/oneProduit/${req.query.id}?msg=sup&type=vente`);
+                return res.redirect(`/oneProduit/${req.query.id}?msg=Historique supprimer avec succes&tc=alert-success&type=vente`);
             } else {
-                return res.redirect(`/oneEmballage/${req.query.id}?msg=sup&type=vente`);
+                return res.redirect(`/oneEmballage/${req.query.id}?msg=Historique supprimer avec succes&tc=alert-success&type=vente`);
             }
 
         } catch (error) {

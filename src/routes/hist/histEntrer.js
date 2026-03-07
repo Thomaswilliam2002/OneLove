@@ -41,7 +41,7 @@ addHEntrer = (app) => {
                                 where: {id_produit: produit.id_produit}
                             })
                                 .then(prod => {
-                                    res.redirect('/allProduit?type=achat&msg=ajout')
+                                    res.redirect('/allProduit?type=achat&msg=Produit ajouter avec succes&tc=alert-success')
                                 })
                                 .catch(_ => {
                                     console.error(_);
@@ -81,7 +81,7 @@ addHEntrer = (app) => {
                                 where: {id_emballage: emballage.id_emballage}
                             })
                                 .then(prod => {
-                                    res.redirect('/allEmballage?type=achat&msg=ajout')
+                                    res.redirect('/allEmballage?type=achat&msg=Emballage ajouter avec succes&tc=alert-success')
                                 })
                                 .catch(_ => {
                                     console.error(_);
@@ -106,24 +106,50 @@ addHEntrer = (app) => {
 }
 
 deleteHEntrer = (app) => {
-    app.delete('/deleteHEntrer/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-            HistEntrer.findByPk(req.params.id)
-            .then(hentrer => {
-                const appartDel = hentrer;
-                HistEntrer.destroy({where: {id_hist: appartDel.id_hist}})
-                    .then(_ => {
-                        if(appartDel.type === 'produit'){
-                            res.redirect('/oneProduit/' + req.query.id + '?msg=sup&type=achat')
-                        }else if(appartDel.type === 'emballage'){
-                            res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=achat')
-                        }
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
+    app.delete('/deleteHEntrer/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+
+        try{
+            // 1. Trouver l'historique
+            const hapro = await HistEntrer.findByPk(req.params.id);
+                
+            if (!hapro) {
+                return res.redirect('/notFound');
+            }
+
+            // 2. Mise à jour du stock selon le type
+            if (hapro.type === 'produit') {
+                const produit = await Produit.findByPk(hapro.id_probal);
+                if (produit) {
+                    await Produit.update(
+                        { quantiter: produit.quantiter - hapro.quantiter },
+                        { where: { id_produit: produit.id_produit } }
+                    );
+                }
+            } else if (hapro.type === 'emballage') {
+                const emballage = await Emballage.findByPk(hapro.id_probal);
+                if (emballage) {
+                    await Emballage.update(
+                        { quantiter: emballage.quantiter - hapro.quantiter },
+                        { where: { id_emballage: emballage.id_emballage } }
+                    );
+                }
+            }
+
+            // 3. Supprimer l'historique après la mise à jour du stock
+            await HistEntrer.update({ is_active: false }, { where: { id_hist: hapro.id_hist } });
+
+            // 4. Redirection finale
+            if (hapro.type === 'produit') {
+                return res.redirect(`/oneProduit/${req.query.id}?msg=Historique supprimer avec succes&tc=alert-success&type=vente`);
+            } else {
+                return res.redirect(`/oneEmballage/${req.query.id}?msg=Historique supprimer avec succes&tc=alert-success&type=vente`);
+            }
+        }
+        catch(_){
+            console.error(_);
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
+        }
         
     })
 }

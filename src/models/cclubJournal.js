@@ -9,13 +9,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-        depense: {
-            type: DataTypes.FLOAT,
+        date: {
+            type: DataTypes.DATEONLY,
             allowNull: false
         },
-        date: {
-            type: DataTypes.DATE,
-            allowNull: false
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

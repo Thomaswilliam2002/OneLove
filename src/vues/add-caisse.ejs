@@ -57,138 +57,153 @@
           <!-- App body starts -->
           <div class="app-body">
 
-            <!-- Row starts -->
-            <div class="row gx-3">
-              <div class="col-sm-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h5 class="card-title">Ajouter une Caisse</h5>
-                  </div>
-                  <div class="card-body">
-                    <form action="/addCaisse" method="post">
-                    <!-- Row starts -->
-                    <div class="row gx-3">
-                      <div class="col-sm-12">
-                        <div class="bg-light rounded-2 px-3 py-2 mb-3">
-                          <h6 class="m-0">Details de la Caisse</h6>
+            <% if(msg) { %>
+              <div class="alert <%= tc || 'alert-info' %> alert-dismissible fade show" role="alert">
+                <%= msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <% } %>
+            
+            <div class="container mt-5">
+              <!-- carte pour ajouter un caissier a une caisse existante -->
+              <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
+                <div class="card-header bg-success text-white text-center p-4">
+                    <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i> Affecter un Caissier Supplémentaire</h3>
+                </div>
+                <div class="card-body p-5 bg-light">
+                    <div class="alert alert-success border-0 shadow-sm d-flex align-items-center mb-4">
+                        <i class="fas fa-link me-3 fa-2x"></i>
+                        <div>
+                            <h5 class="mb-0 text-success">Lier un Personnel à une Caisse</h5>
+                            <small>Utilisez cette section pour permettre à un autre employé d'accéder à une caisse déjà créée.</small>
                         </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-6">
-                        <div class="mb-3">
-                          <label class="form-label" for="a1">Nom <span class="text-danger">*</span></label>
-                          <input type="text" class="form-control" name="nom" id="a1" required>
-                        </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-6">
-                        <div class="mb-3">
-                          <label class="form-label" for="a2">Solde initial <span class="text-danger">*</span></label>
-                          <input type="number" min="0" step="0.01" class="form-control" name="solde_init" id="a2" required>
-                        </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-6">
-                        <div class="mb-3">
-                          <label class="form-label" for="a2">Recette initial <span class="text-danger">*</span></label>
-                          <input type="number" min="0" step="0.01" class="form-control" name="recette_init" id="a2" required>
-                        </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-6">
-                        <div class="mb-3">
-                          <label class="form-label" for="a2">Depence initial <span class="text-danger">*</span></label>
-                          <input type="number" min="0" step="0.01" class="form-control" name="depence_init" id="a2" required>
-                        </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-6">
-                        <div class="mb-3">
-                          <label class="form-label" for="a2">Choisire le Comptable/caissier/gerant <span class="text-danger">*</span></label>
-                          <select class="form-select" id="compt" name="comptable" required>
-                            <% if(personnels){ personnels.forEach(personnel => {%>
-                                <option value="<%= personnel.Personnel.id_personnel %>"><%= personnel.Personnel.nom %> <%= personnel.Personnel.prenom %> </option>
-                            <% })}else{ %>
-                              <option value="null">Aucun Comptable disponinble</option>
-                            <% } %>
-                          </select> 
-                        </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-12">
-                        <div class="mb-3">
-                          <label class="form-label" for="a8">Caisse de :<span class="text-danger">*</span></label>
-                          <select class="form-select" id="barClub" name="bc_id" required>
-                            <% if(barSimples){ barSimples.forEach(barSimple => { %>
-                              <option 
-                                value="<%= barSimple.id_barSimple %>#<%= barSimple.nom %>#bs">
-                                <%= barSimple.nom %>
-                              </option>
-                            <% }) } %>
-                          
-                            <% if(barVips){ barVips.forEach(barVip => { %>
-                              <option 
-                                value="<%= barVip.id_barVip %>#<%= barVip.nom %>#bv">
-                                <%= barVip.nom %>
-                              </option>
-                            <% }) } %>
-                          
-                            <% if(crazycs){ crazycs.forEach(crazyc => { %>
-                              <option 
-                                value="<%= crazyc.id_cclub %>#<%= crazyc.nom %>#cc">
-                                <%= crazyc.nom %>
-                              </option>
-                            <% }) } %>
-                          
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-sm-12">
-                        <div class="d-flex gap-2 justify-content-end">
-                          <button type="submit" class="btn btn-primary">Ajouter</button>
-                      </div>
                     </div>
-                    <!-- Row ends -->
-                  </form>
-                  </div>
+        
+                    <form action="/assignCaisse" method="POST">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Sélectionner la Caisse</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white text-success border-success"><i class="fas fa-cash-register"></i></span>
+                                    <select name="id_caisse" class="form-select border-success shadow-sm" required>
+                                        <option value="" disabled selected>Choisir la caisse cible...</option>
+                                        <% caisse.forEach(c => { %>
+                                            <option value="<%= c.id_caisse %>"><%= c.nom %> (<%= c.type_lieu %>)</option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+        
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Choisir le Caissier</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white text-success border-success"><i class="fas fa-user-tie"></i></span>
+                                    <select name="id_personnel" class="form-select border-success shadow-sm" required>
+                                        <option value="" disabled selected>Choisir le personnel...</option>
+                                        <% personnels.forEach(p => { %>
+                                            <option value="<%= p.Personnel.id_personnel %>"><%= p.Personnel.nom %> <%= p.Personnel.prenom %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+        
+                            <div class="col-12 d-grid mt-4">
+                                <button type="submit" class="btn btn-success btn-lg shadow-sm fw-bold">
+                                    <i class="fas fa-check-circle me-2"></i> VALIDER L'AFFECTATION
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
               </div>
+              <br>
+              <br>
+              <!-- carde pour ajouter une caisse -->
+                <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
+                    <div class="card-header bg-primary text-white text-center p-4">
+                        <h3 class="mb-0"><i class="fas fa-cash-register me-2"></i> Configuration de la Caisse</h3>
+                    </div>
+                    <div class="card-body p-5">
+                        <div class="mb-5 text-center">
+                            <label class="form-label fw-bold d-block mb-4 text-uppercase">1. Choisissez le Département</label>
+                            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                                <button type="button" class="btn btn-outline-info p-3 shadow-sm btn-dept" onclick="updateLieuList('BarSimple', this)">
+                                    <i class="fas fa-glass-cheers fa-2x mb-2"></i><br><b>BARS</b>
+                                </button>
+                                <button type="button" class="btn btn-outline-warning p-3 shadow-sm btn-dept" onclick="updateLieuList('BarVip', this)">
+                                    <i class="fas fa-crown fa-2x mb-2"></i><br><b>VIP</b>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger p-3 shadow-sm btn-dept" onclick="updateLieuList('CrazyClub', this)">
+                                    <i class="fas fa-music fa-2x mb-2"></i><br><b>CLUBS</b>
+                                </button>
+                                <button type="button" class="btn btn-outline-success p-3 shadow-sm btn-dept" onclick="updateLieuList('Cuisine', this)">
+                                    <i class="fas fa-utensils fa-2x mb-2"></i><br><b>CUISINE</b>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary p-3 shadow-sm btn-dept" onclick="updateLieuList('Appartement', this)">
+                                    <i class="fas fa-bed fa-2x mb-2"></i><br><b>APPART</b>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary p-3 shadow-sm btn-dept" onclick="updateLieuList('MaisonClose', this)">
+                                    <i class="fas fa-door-closed fa-2x mb-2"></i><br><b>MAISONS</b>
+                                </button>
+                            </div>
+                        </div>
+        
+                        <form action="/addCaisse" method="POST" id="caisseForm">
+                            <div id="formContent" class="d-none animate__animated animate__fadeIn">
+                                <div class="row g-4 mb-4">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center">
+                                            <i class="fas fa-info-circle me-3 fa-2x"></i>
+                                            <div>
+                                                <h5 class="mb-0" id="lieuDisplayTitle">Département sélectionné</h5>
+                                                <small>Veuillez préciser l'emplacement exact ci-dessous.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Précisez le Lieu (sous departement) </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                            <select name="lieu_composite" id="lieuSelect" class="form-select border-primary" required>
+                                                </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Nom de la Caisse</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                            <input type="text" name="nom" class="form-control border-primary" placeholder="Ex: Caisse Comptoir 1" required>
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold">Affecter à un Caissier</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
+                                            <select name="id_personnel" class="form-select border-primary" required>
+                                                <option value="" disabled selected>Choisir un personnel...</option>
+                                                <% personnels.forEach(p => { %>
+                                                    <option value="<%= p.Personnel.id_personnel %>"><%= p.Personnel.nom %> <%= p.Personnel.prenom %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg shadow">
+                                        <i class="fas fa-save me-2"></i> ENREGISTRER LA CAISSE
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
+        </div>
             <!-- Row ends -->
-            <div class="col-sm-4" style="position: relative; left: -1000px;top: -1000px;">
-              <!-- Card starts -->
-              <div class="card mb-3">
-                <div class="card-body">
-                  <!-- Button trigger modal -->
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                    data-bs-target="#exampleModalCenter" id="btnpost">
-                    Vertically centered modal
-                  </button>
-                  <!-- Modal -->
-                  <div class="modal fade" id="exampleModalCenter" tabindex="-1"
-                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title text-danger" id="exampleModalCenterTitle">
-                            <b>Attention</b>
-                          </h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <p>Attention,vous essayer d'ajouter une caisse qui n'est géré par aucun comptable ou caissier. Ce message peux survenir si aucun n'employer n'occupe l'un des postes comptable,
-                            caissier ou gerant et donc qu'aucun nom n'apparait dans la liste déroulante du champs correspondant dans le formulaire. </p>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Fermer
-                          </button>
-                          <a href="/formAddPersonnel?indice=admin" class="btn btn-warning"
-                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
-                            Ajouder un employer qualifier
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- Card ends -->
-            </div>
+            
           </div>
           <!-- App body ends -->
 
@@ -223,27 +238,68 @@
         }
     });
     
-      const compt = document.getElementById('compt')
-      const info = document.getElementById('btnpost');
-      const f = document.querySelector('form');
-      f.addEventListener('submit', (e) => {
-        if(!compt.value || compt.value === ''){
-          e.preventDefault()
-          info.click();
-        }
-      })
     </script>
     <script>
-      const nom= document.getElementById("nom");
-      const bc_id = document.getElementById("bc_id");
-      nom.addEventListener("input", () => {
-        const selectOption = Array.from(nom.list.options).find(option => option.value === nom.value);
-        if(selectOption){
-          bc_id.value = selectOption.getAttribute("data-id")
-        }
-      })
-
-    </script>
+      // Chargement des données EJS de manière sécurisée
+      // On utilise JSON.parse pour s'assurer que l'objet est bien formé
+      const databaseLieux = {
+        BarSimple: JSON.parse(`<%- JSON.stringify(bars) %>`),
+        BarVip: JSON.parse(`<%- JSON.stringify(vips) %>`),
+        CrazyClub: JSON.parse(`<%- JSON.stringify(clubs) %>`),
+        Cuisine: JSON.parse(`<%- JSON.stringify(cuisines) %>`),
+        Appartement: JSON.parse(`<%- JSON.stringify(appartements) %>`),
+        MaisonClose: JSON.parse(`<%- JSON.stringify(maisons) %>`),
+      };
+  
+      function updateLieuList(type, btnElement) {
+          // Sélection des éléments du DOM
+          const select = document.getElementById('lieuSelect');
+          const formContent = document.getElementById('formContent'); // Vérifiez que cet ID existe sur votre div formulaire
+          const displayTitle = document.getElementById('lieuDisplayTitle');
+          const buttons = document.querySelectorAll('.btn-dept');
+          const nomLieu = document.getElementById('nomLieu');
+  
+          // 1. Gestion visuelle des boutons (Couleurs et état actif)
+          buttons.forEach(btn => {
+              btn.classList.remove('active', 'btn-primary', 'text-white');
+          });
+          btnElement.classList.add('active', 'btn-primary', 'text-white');
+  
+          // 2. Récupération des données selon le type
+          const lieux = databaseLieux[type];
+          if (lieux && lieux.length > 0) {
+              // Vider le select et ajouter l'option par défaut
+              select.innerHTML = '<option value="" disabled selected>-- Choisir l\'emplacement --</option>';
+  
+              // Remplir le select dynamiquement
+              lieux.forEach(l => {
+                  const opt = document.createElement('option');
+                  
+                  // On détecte dynamiquement quel ID est présent (selon vos modèles)
+                  const id = l.id_barSimple || l.id_barVip || l.id_cclub || l.id_cuisine || l.id_appart || l.id_mclose;
+                  const nom = l.nom || l.nom_appart || l.nom_cuisine
+                  
+                  opt.value = `${type}\\${id}\\${nom}` ; // Format : "BarSimple-5"
+                  opt.textContent = nom;
+                  select.appendChild(opt);
+              });
+  
+              // 3. Mise à jour du titre et affichage du formulaire
+              if (displayTitle) displayTitle.innerHTML = '<i class="fas fa-check-circle me-2"></i> Département : ' + type;
+              
+              // On affiche le reste du formulaire
+              if (formContent) {
+                  formContent.classList.remove('d-none');
+              }
+          } else {
+              alert("Aucun lieu trouvé pour la catégorie : " + type);
+              // On cache le formulaire si aucun lieu n'existe
+              if (formContent) {
+                  formContent.classList.add('d-none');
+              }
+          }
+      }
+  </script>
   </body>
 
 <!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->

@@ -4,154 +4,131 @@
   
 <!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
 <%- include('head')%>
+<body style="background-color: rgb(56, 100, 158);">
+  <div class="page-wrapper">
+    <% if(user.Personnel.type_personnel === 'admin'){%>
+      <%- include('header')%>
+    <% }else{%>
+      <%- include('header-staff')%>
+    <% }%>
 
-  <body style="background-color: rgb(56, 100, 158);">
-
-    <!-- Page wrapper starts -->
-    <div class="page-wrapper">
-
-      <!-- App header starts -->
+    <div class="main-container">
       <% if(user.Personnel.type_personnel === 'admin'){%>
-        <%- include('header')%>
+        <%- include('menu')%>
       <% }else{%>
-        <%- include('header-staff')%>
+        <%- include('menu-staff')%>
       <% }%>
-      <!-- App header ends -->
 
-      <!-- Main container starts -->
-      <div class="main-container">
-
-        <!-- Sidebar wrapper starts -->
-        <% if(user.Personnel.type_personnel === 'admin'){%>
-          <%- include('menu')%>
-        <% }else{%>
-          <%- include('menu-staff')%>
-        <% }%>
-        <!-- Sidebar wrapper ends -->
-
-        <!-- App container starts -->
-        <div class="app-container">
-
-          <!-- App Hero header ends -->
-
-          <!-- App body starts -->
-          <div class="app-body">
-            
-            <!-- Row starts -->
-            <div class="app-body">
-              <% if(caisses.length === 0) { %>
-                <div class="alert bg-white border text-info text-center">
-                  <h4>Aucune caisse n'est associée à votre compte pour le moment.</h4>
-                </div>
-              <% } else { %>
-                
-                <% caisses.forEach(caisse => { %>
-                  <div class="card mb-5 shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center" style="background: #2b3a4a; color: white;">
-                      <h4 class="m-0">Caisse : <%= caisse.nom_caisse %></h4>
-                      <span class="badge bg-info text-dark">Lieu : <%= caisse.lieu %></span>
-                    </div>
-                    
-                    <div class="card-body">
-                      <div class="row">
-                        
-                        <% caisse.produits.forEach(p => { %>
-                          <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                            <div class="card border-primary mb-3">
-                              <div class="card-body text-center">
-                                <% if(p.image) { %>
-                                  <img src="/uploads/<%= p.image %>" alt="<%= p.nom %>" style="height: 100px; object-fit: contain;">
-                                <% } %>
-                                <h5 class="card-title mt-2"><%= p.nom %></h5>
-                                <p class="card-text mb-1">
-                                  <strong>Prix :</strong> <%= p.prix_unit %> FCFA<br>
-                                  <strong>Disponible :</strong> 
-                                  <span class="badge <%= p.qte_dispo > 5 ? 'bg-success' : 'bg-danger' %>">
-                                    <%= p.qte_dispo %>
-                                  </span>
-                                </p>
-                                
-                                <% if(p.qte_dispo > 0) { %>
-                                  <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#vendreProd<%= p.id %><%= caisse.id_caisse %>">
-                                    Mise a jour<!-- Vendre -->
-                                  </button>
-                                <% } else { %>
-                                  <button class="btn btn-secondary w-100" disabled>Rupture</button>
-                                <% } %>
-                              </div>
-                            </div>
-                          </div>
-            
-                          <%- include('partials/modalVente', {item: p, type: 'produit', id_caisse: caisse.id_caisse, id_caissier: id_caissier, lieu: caisse.lieu}) %>
-                        <% }) %>
-          
-                        <% caisse.emballages.forEach(e => { %>
-                          <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-                            <div class="card border-warning mb-3">
-                              <div class="card-body text-center bg-light">
-                                <h5 class="card-title"><%= e.nom %></h5>  
-                                <p class="card-text mb-1">
-                                  <strong>Prix :</strong> <%= e.prix_unit %> FCFA<br>
-                                  <strong>Disponible :</strong>
-                                  <span class="badge <%= e.qte_dispo > 5 ? 'bg-success' : 'bg-danger' %>">
-                                    <%= e.qte_dispo %>
-                                  </span>
-                                </p>
-                                <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#vendreEmb<%= e.id %><%= caisse.id_caisse %>">
-                                  Mise a jour<!-- Vendre / Sortir (Emballage)  <%= e.qte_dispo %>-->
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-            
-                          <%- include('partials/modalVente', {item: e, type: 'emballage', id_caisse: caisse.id_caisse, id_caissier: id_caissier, lieu: caisse.lieu}) %>
-                        <% }) %>
-            
-                      </div>
-                    </div>
-                  </div>
-                <% }) %>
-            
-              <% } %>
+      <div class="app-container">
+        <div class="app-body">
+          <% if(msg) {%>
+            <div class="alert bg-white border alert-dismissible fade show <%= (typeof tc !== 'undefined' && tc) ? tc : 'alert-success' %>" role="alert">
+              <%= msg %>.
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <!-- Row ends -->
-          </div>
-          
-          <!-- App body ends -->
+          <% }%>
+          <% if(caisses.length === 0) { %>
+            <div class="alert bg-white border text-info text-center">
+              <h4>Aucune caisse n'est associée à votre compte pour le moment.</h4>
+            </div>
+          <% } else { %>
+            <% caisses.forEach(caisse => { %>
+              <div class="card mb-5 shadow-sm">
+                <div class="card-header d-flex justify-content-around align-items-center" style="background: #2b3a4a; color: white;">
+                  <h4 class="m-0">Caisse : <%= caisse.nom_caisse %></h4>
+                  <span class="badge bg-info text-dark">Département : <%= caisse.departement %></span>
+                  <span class="badge bg-info text-dark">Sous Département : <%= caisse.sous_departement %></span>
+                </div>
+                
+                <div class="card-body">
+                  <div class="row">
+                    <% caisse.inventaire.produits.forEach(p => { %>
+                      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <div class="card border-primary mb-3">
+                          <div class="card-body text-center">
+                            <h5 class="card-title mt-2"><%= p.nom %></h5>
+                            <p class="card-text mb-1">
+                              <strong>Prix :</strong> <%= p.prix_unitaire %> FCFA<br>
+                              <strong>Disponible :</strong> 
+                              <span class="badge <%= p.quantite_disponible > 5 ? 'bg-success' : 'bg-danger' %>">
+                                <%= p.quantite_disponible %>
+                              </span>
+                            </p>
+                            <% if(p.quantite_disponible > 0) { %>
+                              <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#vendreProd<%= p.id %><%= caisse.id_caisse %>">
+                                Mise a jour
+                              </button>
+                            <% } else { %>
+                              <button class="btn btn-secondary w-100" disabled>Rupture</button>
+                            <% } %>
+                          </div>
+                        </div>
+                      </div>
+                      <%
+                        const params = {
+                          item: p,
+                          type: 'produit',
+                          id_caisse: caisse?.id_caisse,
+                          lieu: caisse?.departement,
+                          id_caissier: personnel?.id_personnel || null
+                        };
+                      %>
 
-          <!-- App footer starts -->
-          <div class="app-footer bg-white">
-            <span>© OneLove admin 2026</span>
-          </div>
-          <!-- App footer ends -->
+                      <%- include('partials/modalVente', params) %>
+                    <% }) %>
 
+                    <% caisse.inventaire.emballages.forEach(e => { %>
+                      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                        <div class="card border-warning mb-3">
+                          <div class="card-body text-center bg-light">
+                            <h5 class="card-title"><%= e.nom %></h5>  
+                            <p class="card-text mb-1">
+                              <strong>Prix :</strong> <%= e.prix_unitaire %> FCFA<br>
+                              <strong>Disponible :</strong>
+                              <span class="badge <%= e.quantite_disponible > 5 ? 'bg-success' : 'bg-danger' %>">
+                                <%= e.quantite_disponible %>
+                              </span>
+                            </p>
+                            <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#vendreEmb<%= e.id %><%= caisse.id_caisse %>">
+                              Mise a jour
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <%
+                        const params = {
+                          item: e,
+                          type: 'emballage',
+                          id_caisse: caisse?.id_caisse,
+                          lieu: caisse?.departement,
+                          id_caissier: personnel?.id_personnel || null
+                        };
+                      %>
+                      <%- include('partials/modalVente', params) %>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
         </div>
-        <!-- App container ends -->
-
+        <div class="app-footer bg-white">
+          <span>© OneLove admin 2026</span>
+        </div>
       </div>
-      <!-- Main container ends -->
-
     </div>
-    <!-- Page wrapper ends -->
-
-    <!-- *************
-			************ JavaScript Files *************
-		************* -->
-    <!-- Required jQuery first, then Bootstrap Bundle JS -->
-    <%- include('script')%>
-    <script>
-      window.addEventListener("pageshow", function (event) {
-        var historyTraversal = event.persisted || 
-                               (typeof window.performance != "undefined" && 
-                                window.performance.navigation.type === 2);
-        if (historyTraversal) {
-            // Si l'utilisateur est revenu en arrière, on recharge la page proprement
-            window.location.reload();
-        }
-      });
-    </script>
-  </body>
-  
-<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+  </div>
+  <%- include('script')%>
+  <script>
+    window.addEventListener("pageshow", function (event) {
+      var historyTraversal = event.persisted || 
+                              (typeof window.performance != "undefined" && 
+                              window.performance.navigation.type === 2);
+      if (historyTraversal) {
+          // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+          window.location.reload();
+      }
+    });
+  </script>
+</body>
 </html>

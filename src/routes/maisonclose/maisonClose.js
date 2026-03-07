@@ -1,6 +1,6 @@
-const { where } = require('sequelize')
+const { where, Op } = require('sequelize')
 const {MaisonColse} = require('../../db/sequelize')
-const {Chambre, ChambreJournal} = require('../../db/sequelize')
+const {Chambre, ChambreJournal, sequelize, ChambreJournal, Occupent} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 // formAddAdmin = (app) =>{
@@ -12,19 +12,22 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 allMClose = (app) => {
     app.get('/allMClose', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         MaisonColse.findAll({
-            order:[['id_mclose', 'DESC']]
+            where:{is_active: true},
+            order:[['id_mclose', 'ASC']]
         })
             .then(maisonColses => {
                 Chambre.findAll({
                     include:[
-                        {model: ChambreJournal},
-                        {model:MaisonColse}
-                    ]
+                        {model: ChambreJournal, where: {is_active: true}},
+                        {model:MaisonColse, where: {is_active: true}}
+                    ],
+                    where:{is_active: true},
+                    order:[['id_chambre', 'ASC']]
                 })
                     .then(chambres => {
                         //res.json(maisonColses)
                         console.log(JSON.parse(JSON.stringify(chambres)))
-                        res.status(200).render('mclose',{maisonColses: maisonColses, chambres: chambres})
+                        res.status(200).render('mclose',{maisonColses: maisonColses, chambres: chambres, msg: req.query.msg, tc: req.query.tc})
                     })
                 //const msg = "Liste recuperer avec succes"
                 .catch(_ => {
@@ -46,7 +49,7 @@ oneMClose = (app) => {
         MaisonColse.findByPk(req.params.id)
             .then(maisonColse => {
                 Chambre.findOne({
-                    where: {id_mclose: maisonColse.id_mclose}
+                    where: {id_mclose: maisonColse.id_mclose, is_active: true}
                 })
                     .then(chambres => {
                         //res.json(maisonColses)
@@ -73,7 +76,7 @@ addMClose = (app) => {
             .then(maisonColse => {
                 // const msg = "la maisonColse " + req.body.nom + "a ete ajouter avec succes"
                 // res.json({msg, data: maisonColse})
-                res.redirect('/allMClose')
+                res.redirect('/allMClose?msg=Maison Colse ajouter avec succes&tc=alert-success')
             })
             .catch(_ => {
                 console.error(_);
@@ -108,44 +111,59 @@ updateMClose = (app) => {
 
 deleteMClose = (app) => {
     app.delete('/deleteMClose/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
-        const appartDel = await MaisonColse.findByPk(req.params.id)
-        ChambreJournal.destroy({
-            where:{
-                id_mclose: appartDel.id_mclose
+        let t;
+        try {
+            t = await sequelize.transaction();
+
+            const appartDel = await MaisonColse.findByPk(req.params.id, { transaction: t });
+
+            if (!appartDel) {
+                await t.rollback();
+                return res.redirect('/notFound');
             }
-        })
-            .then(_ => {
-                Chambre.destroy({
-                    where:{
-                        id_mclose: appartDel.id_mclose
-                    }
-                })
-                    .then(_ => {
-                        MaisonColse.findByPk()
-                            .then(maisonColse => {
-                                MaisonColse.destroy({where: {id_mclose: appartDel.id_mclose}})
-                                    .then(_ => {
-                                        res.redirect('/allMClose')
-                                    })
-                                    .catch(_ => {
-                                        console.error(_);
-                                        res.redirect('/notFound');
-                                        return; // On stoppe tout ici !
-                                    })
-                            })
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
-            .catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
-    })
+
+            // récupérer les IDs des chambres actives
+            const appartDelChambres = await Chambre.findAll({
+                where: { id_mclose: appartDel.id_mclose, is_active: true },
+                attributes: ['id_chambre'],
+                transaction: t
+            });
+            const appartDelChambresId = appartDelChambres.map(ch => ch.id_chambre);
+
+            // Supprimer d'abord les dépendances
+            await Promise.all([
+                ChambreJournal.update(
+                    { is_active: false },
+                    { where: { id_mclose: appartDel.id_mclose, is_active: true }, transaction: t }
+                ),
+                Chambre.update(
+                    { is_active: false },
+                    { where: { id_mclose: appartDel.id_mclose, is_active: true }, transaction: t }
+                ),
+            ]);
+
+            // Supprimer les occupants
+            if (appartDelChambresId.length > 0) {
+                await Occupent.update(
+                    { is_active: false },
+                    { where: { id_chambre: { [Op.in]: appartDelChambresId }, is_active: true }, transaction: t }
+                );
+            }
+
+            // Supprimer la maison
+            await MaisonColse.update(
+                { is_active: false },
+                { where: { id_mclose: appartDel.id_mclose }, transaction: t }
+            );
+
+            await t.commit();
+            res.redirect('/allMClose?msg=Suppression de la maisonColse avec succes&tc=alert-success');
+        } catch (err) {
+            console.error(err);
+            if (t) await t.rollback();
+            res.redirect('/notFound');
+        }
+    });
 }
 
 

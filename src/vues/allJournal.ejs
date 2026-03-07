@@ -66,24 +66,10 @@
                   </div>
                   <div class="card-body">
                     <% if(msg) {%>
-                      <% if(msg === 'ajout') {%>
-                        <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                          <b>Elément </b> supprimer avec succes !
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                      <% }%>
-                      <% if(msg === 'modif') {%>
-                        <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                          <b>Elément </b> modifier avec succes !
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                      <% }%>
-                      <% if(msg === 'sup') {%>
-                        <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                          <b>Elément </b> supprimer avec succes !
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                      <% }%>
+                      <div class="alert bg-white border alert-dismissible fade show <%= tc %>" role="alert">
+                        <%= msg %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
                     <% }%>
                     <!-- Table starts -->
                     <div class="table-responsive">
@@ -102,7 +88,7 @@
                                     <tr>
                                         <td><%= Journal.BarSimple.nom %></td>
                                         <td class="calcule"><%= Journal.recette %></td>
-                                        <td><%= new Date(Journal.date).getDate() < 10 ? `0${new Date(Journal.date).getDate()}` : new Date(Journal.date).getDate()  %>-<%= new Date(Journal.date).getMonth() + 1 < 10 ? `0${new Date(Journal.date).getMonth() + 1}` : new Date(Journal.date).getMonth() + 1 %>-<%= new Date(Journal.date).getFullYear()%></td>
+                                        <td><%= journal.date %></td>
                                         <td>
                                             <div class="d-inline-flex gap-1">
                                               <!-- ----------------------------------------------------------------------------------- -->
@@ -153,7 +139,7 @@
                                     <tr>
                                         <td><%= Journal.BarVip.nom %></td>
                                         <td class="calcule"><%= Journal.recette %></td>
-                                        <td><%= new Date(Journal.date).getDate() < 10 ? `0${new Date(Journal.date).getDate()}` : new Date(Journal.date).getDate()  %>-<%= new Date(Journal.date).getMonth() + 1 < 10 ? `0${new Date(Journal.date).getMonth() + 1}` : new Date(Journal.date).getMonth() + 1 %>-<%= new Date(Journal.date).getFullYear() %></td>
+                                        <td><%= journal.date %></td>
                                         <td>
                                             <div class="d-inline-flex gap-1">
                                               <!-- ----------------------------------------------------------------------------------- -->
@@ -204,7 +190,7 @@
                                 <tr>
                                     <td><%= Journal.CrazyClub ? Journal.CrazyClub.nom : '-' %></td>
                                     <td class="calcule"><%= Journal.recette %></td>
-                                    <td><%= new Date(Journal.date).getDate() < 10 ? `0${new Date(Journal.date).getDate()}` : new Date(Journal.date).getDate()  %>-<%= new Date(Journal.date).getMonth() + 1 < 10 ? `0${new Date(Journal.date).getMonth() + 1}` : new Date(Journal.date).getMonth() + 1 %>-<%= new Date(Journal.date).getFullYear() %></td>
+                                    <td><%= journal.date %></td>
                                     <td>
                                         <div class="d-inline-flex gap-1">
                                           <!-- ----------------------------------------------------------------------------------- -->

@@ -178,7 +178,7 @@
                                 </td>
                                 <td><%= journal.description %></td>
                                 <td>
-                                  <%= new Date(journal.date).getDate() < 10 ? `0${new Date(journal.date).getDate()}` : new Date(journal.date).getDate()  %>-<%= new Date(journal.date).getMonth() + 1 < 10 ? `0${new Date(journal.date).getMonth() + 1}` : new Date(journal.date).getMonth() + 1 %>-<%= new Date(journal.date).getFullYear()%>
+                                  <td><%= journal.date %></td>
                                 </td>
                                 <td>
                                   <div class="d-inline-flex gap-1">

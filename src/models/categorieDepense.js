@@ -6,12 +6,17 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         nom: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING,
             allowNull: false
         },
         description: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

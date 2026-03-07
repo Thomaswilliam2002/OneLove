@@ -1,4 +1,5 @@
-const {CategorieDepense} = require('../../db/sequelize');
+const { where } = require('sequelize');
+const {CategorieDepense, Depense, sequelize} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 formAddCategorieDepense = (app) => {
     app.get('/formAddCategorieDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
@@ -18,7 +19,7 @@ allCategorieDepense = (app) => {
     app.get('/allCategorieDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
             console.log("allCategorieDepense")
-            const categories = await CategorieDepense.findAll()
+            const categories = await CategorieDepense.findAll({where: {is_active: true},order:[['id_categ', 'DESC']]});
             if(categories){
                 res.status(200).render('categorieDepense', {categories: categories, msg: req.query.msg , text_color: req.query.tc});
             }else{
@@ -49,7 +50,7 @@ addCategorieDepense = (app) => {
             }else{
                 msg = "Une erreur s'est produite. La categorie n'a pas pu être ajouter. Veillez réessayer !"
             }
-            res.redirect(`/allCategorieDepense?msg=${msg}&tc=text-success`);
+            res.redirect(`/allCategorieDepense?msg=${msg}&tc=alert-success`);
             return
         }catch(_){
             console.error(_);
@@ -76,7 +77,7 @@ updateCategorieDepense = (app) => {
             }else{
                 msg = "Une erreur s'est produite. La Categorie n'a pas pu être mise a jour. Veillez réessayer !"
             }
-            res.redirect(`/allCategorieDepense?msg=${msg}&tc=text-warning`);
+            res.redirect(`/allCategorieDepense?msg=${msg}&tc=alert-warning`);
             return
         }catch(_){
             console.error(_);
@@ -86,27 +87,43 @@ updateCategorieDepense = (app) => {
     })
 }
 
-deleteCategorieDepense = (app) => {
-    app.delete('/deleteCategorieDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
-        try{
-            const categorie = await CategorieDepense.destroy({
-                where:{id_categ: req.params.id}
-            })
-            let msg = ""
-            if(categorie){
-                msg = "Categorie supprimer avec succès"
-            }else{
-                msg = "Une erreur s'est produite. La categorie n'a pas pu être supprimer. Veillez réessayer !"
-            }
-            res.redirect(`/allCategorieDepense?msg=${msg}&tc=text-danger`);
-            return
-        }catch(_){
-            console.error(_);
-            res.redirect('/notFound');
-            return; // On stoppe tout ici !
+app.delete('/deleteCategorieDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+
+    const t = await sequelize.transaction();
+
+    try{
+
+        await Depense.update(
+            {is_active: false},
+            {where: {id_categ: req.params.id}, transaction: t}
+        );
+
+        const categorie = await CategorieDepense.update(
+            {is_active: false},
+            {where: {id_categ: req.params.id}, transaction: t}
+        );
+
+        await t.commit();
+
+        let msg = "";
+
+        if(categorie[0] > 0){
+            msg = "Categorie supprimée avec succès";
+        }else{
+            msg = "La categorie n'existe pas ou est déjà supprimée.";
         }
-    })
-}
+
+        res.redirect(`/allCategorieDepense?msg=${msg}&tc=text-danger`);
+
+    }catch(err){
+
+        await t.rollback();
+        console.error(err);
+        res.redirect('/notFound');
+
+    }
+
+});
 
 module.exports = {
     formAddCategorieDepense,

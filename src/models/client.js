@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
         comentaire_client: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

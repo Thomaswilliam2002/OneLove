@@ -4,8 +4,12 @@ allBVJournal = (app) => {
     app.get('/allBVJournal', (req, res) => {
         BarVipJournal.findAll({
             include:[
-                {model: BarVip}
+                {
+                    model: BarVip,
+                    where: {is_active: true}
+                }
             ],
+            where: {is_active: true},
             order:[['id_journal', 'DESC']]
         })
             .then(barVipJournals => {
@@ -31,35 +35,22 @@ oneBVJournal = (app) => {
 addBVJournal = (app) => {
     app.post('/addBVJournal', async(req, res) => {
         try{
-            const {barClub, montant, date, caisse} = req.body;
-            if(caisse && caisse === 'null'){
-                const barVipJournal = await BarVipJournal.create({
-                    recette: montant,
-                    depense: 0,
-                    date: date,
-                    id_barVip: parseInt(barClub.split(' ')[0])
-                })
-            }else if(caisse && caisse !== 'null'){
-                const barVipJournal = await BarVipJournal.create({
-                    recette: montant,
-                    depense: 0,
-                    date: date,
-                    id_barVip: parseInt(barClub.split(' ')[0])
-                })
+            const {barClub, montant, date} = req.body;
+            const barVipJournal = await BarVipJournal.create({
+                recette: montant,
+                date: date,
+                id_barVip: parseInt(barClub.split(' ')[0])
+            })
 
-                const caisse_ = await Caisse.findByPk(caisse)
-                if(caisse_){
-                    let recette = caisse_.recette - montant < 0 ? 0 : caisse_.recette - montant
-                    const up = await Caisse.update({
-                        recette : recette,
-                    },{
-                        where: {id_caisse: caisse}
-                    })
-                }
+            if(barVipJournal){
+                return res.redirect('/formFondBarClub?msg=Fond ajouter avec succes&type=bc&tc=alert-success')
+            }else{
+                return res.res.redirect('/formFondBarClub?msg=Une erreur s\'est produite. Le fond n\'a pas pu etre ajouter. Veillez reessayer&type=bc&tc=alert-danger')
             }
-            res.redirect('/formFondBarClub?msg=ajout&type=bc' )
         }catch(e){
+            console.log(e)
             res.redirect('/notFound')
+            return
         }
     })
 }
@@ -78,16 +69,35 @@ updateBVJournal = (app) => {
 }
 
 deleteBVJournal = (app) => {
-    app.delete('/deleteBVJournal/:id', (req, res) => {
-        BarVipJournal.findByPk(req.params.id)
-            .then(barVipJournal => {
-                const appartDel = barVipJournal;
-                BarVipJournal.destroy({where: {id_barVip: appartDel.id_barVip}})
-                    .then(_ => {
-                        res.redirect('/allBVJournal?msg=sup')
-                    })
-                    .catch(_ => res.redirect('/notFound'))
-            })
+    app.delete('/deleteBVJournal/:id', async (req, res) => {
+        try{
+            // update retourne un tableau.
+            const [logicDel] = await BarVipJournal.update(
+                { is_active: false },
+                { where: { id_journal: req.params.id } }
+            )
+            
+            if (logicDel > 0) {
+                return res.redirect('/allBVJournal?msg=Journal supprimé avec succès&tc=alert-danger')
+            } else {
+                return res.redirect('/allBVJournal?msg=Une erreur s\'est produite. Le journal n\'a pas pu etre supprimé. Veuillez réessayer&tc=alert-danger')
+            }
+        }
+        catch(e){
+            console.error(e);
+            res.redirect('/notFound')
+            return
+        }
+
+    //     BarVipJournal.findByPk(req.params.id)
+    //         .then(barVipJournal => {
+    //             const appartDel = barVipJournal;
+    //             BarVipJournal.destroy({where: {id_barVip: appartDel.id_barVip}})
+    //                 .then(_ => {
+    //                     res.redirect('/allBVJournal?msg=sup')
+    //                 })
+    //                 .catch(_ => res.redirect('/notFound'))
+    //         })
     })
 }
 

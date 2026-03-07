@@ -66,47 +66,35 @@
                   </div>
                   <div class="card-body">
                     <% if(msg) {%>
-                      <% if(msg === 'ajout') {%>
-                        <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                          <b>Elément </b> supprimer avec succes !
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                      <% }%>
-                      <% if(msg === 'modif') {%>
-                        <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                          <b>Elément </b> modifier avec succes !
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                      <% }%>
-                      <% if(msg === 'sup') {%>
-                        <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                          <b>Elément </b> supprimer avec succes !
-                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                      <% }%>
+                      <div class="alert bg-white border alert-dismissible fade show <%= tc %>" role="alert">
+                        <%= msg %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
                     <% }%>
                     <!-- Table starts -->
                     <div class="table-responsive">
-                      <table class="customButtone table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                      <table id="basicExample" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
                         <thead class="text-center">
                           <tr>
                             <th>Nom</th>
                             <th>Quantiter</th>
                             <th>Prix unitaire</th>
                             <th>Type</th>
-                            <th>Nom Bar/Club/Appart</th>
+                            <th>Nom de la Caisse</th>
+                            <th>Non du caissier</th>
                             <th>Date</th>
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody class="text-center ">
+                        <tbody class="text-center">
                             <% hists.forEach(hist => { %>
                                 <tr>
-                                    <td><%= hist.nom %></td>
+                                    <td><%= hist.nom_article %></td>
                                     <td><%= hist.quantiter %></td>
                                     <td><%= hist.prix_unit %></td>
                                     <td><%= hist.type %></td>
-                                    <td><%= hist.nomBarClub %></td>
+                                    <td><%= hist.nom_caisse %></td>
+                                    <td><%= hist.nom_caissier %></td>
                                     <td><%= new Date(hist.created).getDate() < 10 ? `0${new Date(hist.created).getDate()}` : 
                                         new Date(hist.created).getDate()  %>-<%= new Date(hist.created).getMonth() + 1 < 10 ? 
                                         `0${new Date(hist.created).getMonth() + 1}` : new Date(hist.created).getMonth() + 1 %>-

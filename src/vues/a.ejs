@@ -1535,3 +1535,1635 @@ deleteEmballage = (app) => {
           })
   })
 }
+
+<td><%= new Date(Journal.date).getDate() < 10 ? `0${new Date(Journal.date).getDate()}` : new Date(Journal.date).getDate()  %>-<%= new Date(Journal.date).getMonth() + 1 < 10 ? `0${new Date(Journal.date).getMonth() + 1}` : new Date(Journal.date).getMonth() + 1 %>-<%= new Date(Journal.date).getFullYear() %></td>
+
+<td><%= new Date(Journal.date_debut).getDate() < 10 ? `0${new Date(Journal.date_debut).getDate()}` : new Date(Journal.date_debut).getDate()  %>-<%= new Date(Journal.date_debut).getMonth() + 1 < 10 ? `0${new Date(Journal.date_debut).getMonth() + 1}` : new Date(Journal.date_debut).getMonth() + 1 %>-<%= new Date(Journal.date_debut).getFullYear()%></td>
+
+
+<td><%= new Date(hista.date).getDate() < 10 ? `0${new Date(hista.date).getDate()}` : new Date(hista.date).getDate()  %>-<%= new Date(hista.date).getMonth() + 1 < 10 ? `0${new Date(hista.date).getMonth() + 1}` : new Date(hista.date).getMonth() + 1 %>-<%= new Date(hista.date).getFullYear()%></td>
+
+try{
+  const t = await sequelize.transaction();
+  // update retourne un tableau.
+  const [logicDel] = BarSimple.update(
+      { is_active: false },
+      { where: { id_barSimple: req.params.id } , transaction: t}
+  )
+
+  // desactiver toute l'historique du bare dans la table BarSimpleJournal
+  await BarSimpleJournal.update(
+      { is_active: false },
+      { where: { id_barSimple: req.params.id } , transaction: t}
+  )
+
+  const a = await t.commit();
+  
+  if (a) {
+      return res.redirect('/allBarClub?type=bars&msg=Bar supprimé avec succès&tc=alert-danger')
+  } else {
+      await t.rollback();
+      return res.redirect('/allBarClub?type=bars&msg=Une erreur s\'est produite. Le bar n\'a pas pu etre supprimé. Veuillez réessayer&tc=alert-danger')
+  }
+}
+catch(e){
+  console.error(e);
+  await t.rollback();
+  res.redirect('/notFound');
+  return; // On stoppe tout ici !
+}
+
+allCaisse = (app) => {
+  app.get('/allCaisse', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Caisse.findAll({ where: { is_active: true } ,order: [['id_caisse', 'DESC']] })
+          .then(caisses => {
+              Personnel.findAll().then(personnels => {
+                  res.status(200).render('caisse-list', { caisses, personnels, msg: req.query.msg })
+              }).catch(err => { console.error(err); res.redirect('/notFound'); })
+          }).catch(err => { console.error(err); res.redirect('/notFound'); })
+  })
+}
+
+// --- Formulaire Ajout (Optimisé avec Promise.all) ---
+formAddCaisse = (app) => {
+    app.get('/formAddCaisse', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+        const pPersonnels = Occupe.findAll({
+            include: [
+                { model: Personnel },
+                { model: Poste, where: { nom_poste: ['Comptable', 'Gerant', 'Caissier'] } }
+            ]
+        });
+        const pBarSimples = BarSimple.findAll();
+        const pBarVips = BarVip.findAll();
+        const pCrazyClub = CrazyClub.findAll();
+
+        Promise.all([pPersonnels, pBarSimples, pBarVips, pCrazyClub])
+            .then(([personnels, bs, bv, cc]) => {
+                res.status(200).render('add-caisse', { personnels, barSimples: bs, barVips: bv, crazycs: cc });
+            })
+            .catch(err => { console.error(err); res.redirect('/notFound'); });
+    })
+}
+
+
+formEditCaisse = (app) => {
+  app.get('/formEditCaisse/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Caisse.findByPk(req.params.id).then(caisse => {
+          Occupe.findAll({
+              include: [{ model: Personnel }, { model: Poste, where: { nom_poste: 'Caissier' } }]
+          }).then(personnels => {
+              res.status(200).render('edit-caisse', { caisse, personnels })
+          }).catch(err => { console.error(err); res.redirect('/notFound'); })
+      }).catch(err => { console.error(err); res.redirect('/notFound'); })
+  })
+}
+
+addCaisse = (app) => {
+  app.post('/addCaisse', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      const { nom, comptable, bc_id } = req.body;
+      Caisse.create({
+          nom: nom,
+          solde: solde_init,
+          recette: recette_init,
+          depense: depence_init,
+          id_employer: comptable,
+          caisse_of: bc_id
+      }).then(() => res.redirect('/allCaisse?msg=ajout'))
+        .catch(err => { console.error(err); res.redirect('/notFound'); });
+  })
+}
+
+updateCaisse = (app) => {
+  app.put('/updateCaisse/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      const { nom, solde_init, recette_init, depence_init, comptable } = req.body;
+      Caisse.update({
+          nom, solde: solde_init, recette: recette_init, depense: depence_init, id_employer: comptable
+      }, { where: { id_caisse: req.params.id } })
+      .then(() => res.redirect('/allCaisse?msg=modif'))
+      .catch(err => { console.error(err); res.redirect('/notFound'); });
+  })
+}
+
+//le code ci-dessous permet de supprimer une categorie. il fonctionne mais j'ai opter pour une supression logique
+// Categorie.findByPk(req.params.id)
+//     .then(categorie => {
+//         const appartDel = categorie;
+//         Categorie.destroy({where: {id_categ: appartDel.id_categ}})
+//             .then(_ => {
+//                 res.redirect('/allCateg?msg=sup')
+//             })
+//             .catch(_ => {
+//                 console.error(_);
+//                 res.redirect('/notFound');
+//                 return; // On stoppe tout ici !
+//             })
+//     }).catch(_ => {
+//         console.error(_);
+//         res.redirect('/notFound');
+//         return; // On stoppe tout ici !
+//     })
+
+deleteCClub = (app) => {
+  app.delete('/deleteCClub/:id', protrctionRoot, authorise('admin', 'comptable'), protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      CrazyClub.findByPk(req.params.id)
+          .then(cclub => {
+              const appartDel = cclub;
+              CrazyClub.destroy({where: {id_cclub: appartDel.id_cclub}})
+                  .then(_ => {
+                      res.redirect('/allBarClub?type=crazyc&msg=sup')
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          }).catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+oneChambre = (app) => {
+  app.get('/oneChambre/:id/:id_mc', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      MaisonColse.findByPk(req.params.id_mc)
+          .then(maisonColse => {
+              Chambre.findByPk(req.params.id)
+                  .then(chambre => {
+                      Occupent.findAll({
+                          where: {
+                              id_chambre:chambre.id_chambre,
+                              id_mclose: maisonColse.id_mclose
+                          }
+                      })
+                          .then(occupent => {
+                              ChambreJournal.findAll({where:{
+                                  id_mclose : req.params.id_mc, id_chambre : req.params.id
+                              }})
+                                  .then(cj => {
+                                      res.status(200).render('chambre-detail', {chambre: chambre, maisonColse: maisonColse, occupent: occupent, chambreJournals: cj})
+                                  })
+                                  .catch(_ => {
+                                      console.error(_);
+                                      res.redirect('/notFound');
+                                      return; // On stoppe tout ici !
+                                  })
+                          })
+                          .catch(_ => {
+                              console.error(_);
+                              res.redirect('/notFound');
+                              return; // On stoppe tout ici !
+                          })
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+      
+  })
+}
+
+deleteChambre = (app) => {
+  app.delete('/deleteChambre/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Chambre.findByPk(req.params.id)
+          .then(chambre => {
+              const appartDel = chambre;
+              Chambre.destroy({where: {id_chambre: appartDel.id_chambre}})
+                  .then(_ => {
+                      // const msg = "Suppression de la chambre avec succes"
+                      // res.json({msg})
+                      //console.log('fais')
+                      res.redirect('/allMClose')
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+  })
+}
+
+deleteChJournal = (app) => {
+  app.delete('/deleteChJournal/:id_j/:id_ch/:id_mc', (req, res) => {
+      ChambreJournal.findByPk(req.params.id_j)
+          .then(cj => {
+              const appartDel = cj;
+              ChambreJournal.destroy({where: {id_journal: appartDel.id_journal}})
+                  .then(_ => {
+                      // const msg = "Suppression du journal avec succes"
+                      // res.json({msg})
+                      if(req.query.sender === 'profil'){
+                          res.redirect('/oneChambre/' + req.params.id_ch + '/' + req.params.id_mc)
+                      }else if(req.query.sender === 'hist'){
+                          res.redirect('/allChJournal')
+                      }
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deleteClient = (app) => {
+  app.delete('/deleteClient/:id', protrctionRoot, authorise('admin', 'comptable', 'gerant', 'caissier'), (req, res) => {
+      Client.findByPk(req.params.id)
+          .then(client => {
+              const appartDel = client;
+              Client.destroy({where: {id_client: appartDel.id_client}})
+                  .then(_ => {
+                      res.redirect('/allClient?msg=sup');
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          }).catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deleteCuisine = (app) => {
+  app.delete('/deleteCuisine/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Cuisine.findByPk(req.params.id)
+          .then(cuisine => {
+              const appartDel = cuisine;
+              Cuisine.destroy({where: {id_cuisine: appartDel.id_cuisine}})
+                  .then(_ => {
+                      // const msg = "Suppression de la Cuisine avec succes"
+                      // res.json({msg})
+                      res.redirect('/allCuisine?msg=sup')
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          }).catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deleteCuJournal = (app) => {
+  app.delete('/deleteCuJournal/:id', (req, res) => {
+      CuisineJournal.findByPk(req.params.id)
+          .then(jcuisine => {
+              const appartDel = jcuisine;
+              CuisineJournal.destroy({where: {id_journal: appartDel.id_journal}})
+                  .then(_ => {
+                      res.redirect('/allCuJournal?msg=sup&indice' + req.query.indice)
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          }).catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deleteCategorieDepense = (app) => {
+  app.delete('/deleteCategorieDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      try{
+          const categorie = await CategorieDepense.destroy({
+              where:{id_categ: req.params.id}
+          })
+          let msg = ""
+          if(categorie){
+              msg = "Categorie supprimer avec succès"
+          }else{
+              msg = "Une erreur s'est produite. La categorie n'a pas pu être supprimer. Veillez réessayer !"
+          }
+          res.redirect(`/allCategorieDepense?msg=${msg}&tc=text-danger`);
+          return
+      }catch(_){
+          console.error(_);
+          res.redirect('/notFound');
+          return; // On stoppe tout ici !
+      }
+  })
+}
+
+const deleteDepense = (app) => {
+  app.delete('/deleteDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      try{
+          const depense = await Depense.destroy({
+              where:{id_depense: req.params.id}
+          })
+          let msg = ""
+          if(depense){
+              msg = "Dépense supprimer avec succès"
+          }else{
+              msg = "Une erreur s'est produite. La dépense n'a pas pu être supprimer. Veillez réessayer !"
+          }
+          res.redirect(`/allDepense?msg=${msg}&tc=text-danger`);
+          return
+      }catch(_){
+          console.error(_);
+          res.redirect('/notFound');
+          return; // On stoppe tout ici !
+      }
+  })
+}
+
+allEmballage = (app) => {
+  app.get('/allEmballage', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Emballage.findAll({
+          where:{is_active: true},
+          order:[['id_emballage', 'DESC']]
+      })
+          .then(emballages => {
+              Categorie.findAll()
+                  .then(categories => {
+                      BarSimple.findAll()
+                          .then(bs => {
+                              BarVip.findAll()
+                                  .then(bv => {
+                                      CrazyClub.findAll()
+                                          .then(cc => {
+                                              res.status(200).render('emballage', {emballages: emballages, categories: categories, barSimples: bs, barVips: bv, crazycs: cc, msg: req.query.msg, type: req.query.type});
+                                          }).catch(_ => {
+                                              console.error(_);
+                                              res.redirect('/notFound');
+                                              return; // On stoppe tout ici !
+                                          })
+                                  }).catch(_ => {
+                                      console.error(_);
+                                      res.redirect('/notFound');
+                                      return; // On stoppe tout ici !
+                                  })
+                          }).catch(_ => {
+                              console.error(_);
+                              res.redirect('/notFound');
+                              return; // On stoppe tout ici !
+                          })
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deleteMClose = (app) => {
+  app.delete('/deleteMClose/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      const appartDel = await MaisonColse.findByPk(req.params.id)
+      ChambreJournal.destroy({
+          where:{
+              id_mclose: appartDel.id_mclose
+          }
+      })
+          .then(_ => {
+              Chambre.destroy({
+                  where:{
+                      id_mclose: appartDel.id_mclose
+                  }
+              })
+                  .then(_ => {
+                      MaisonColse.findByPk()
+                          .then(maisonColse => {
+                              MaisonColse.destroy({where: {id_mclose: appartDel.id_mclose}})
+                                  .then(_ => {
+                                      res.redirect('/allMClose')
+                                  })
+                                  .catch(_ => {
+                                      console.error(_);
+                                      res.redirect('/notFound');
+                                      return; // On stoppe tout ici !
+                                  })
+                          })
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+
+deleteMClose = (app) => {
+  app.delete('/deleteMClose/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      try {
+          const t = await sequelize.transaction();
+
+          const appartDel = await MaisonColse.findByPk(req.params.id);
+
+          if (!appartDel) {
+              return res.redirect('/notFound');
+          }
+
+          // recuperer les chambres
+          const appartDelChambres = await Chambre.findAll({
+               where: { id_mclose: appartDel.id_mclose, is_active: true },
+               attributes: ['id_chambre'],
+               transaction: t
+           });
+
+          // liste des id des chambres
+          const appartDelChambresId = appartDelChambres.map(chambre => chambre.id_chambre);
+
+          // Supprimer d'abord les dépendances
+          await Promise.all([
+              ChambreJournal.update({ is_active: false }, { where: { id_mclose: appartDel.id_mclose, is_active: true }, transaction: t }),
+              Chambre.update({ is_active: false }, { where: { id_mclose: appartDel.id_mclose, is_active: true }, transaction: t }),
+          ]);
+
+          // Supprimer les occupants
+          await Occupent.update(
+              { is_active: false },
+              { 
+                  where: { 
+                      id_chambre: { [Op.in]: appartDelChambresId },
+                      is_active: true
+                  }, 
+                  transaction: t 
+              }
+          );
+
+          // Supprimer la maison
+          await MaisonColse.update({ is_active: false }, { where: { id_mclose: appartDel.id_mclose }, transaction: t });
+
+          await t.commit();
+
+          res.redirect('/allMClose?msg=Suppression de la maisonColse avec succes&tc=alert-success');
+      } catch (err) {
+          console.error(err);
+          await t.rollback();
+          res.redirect('/notFound');
+      }
+  });
+}
+
+formAddPersonnel = (app) =>{
+  app.get(['/formAddPersonnel', '/inscription'], (req, res) => {
+      Poste.findAll()
+          .then(postes => {
+              BarSimple.findAll()
+                  .then(bs => {
+                      BarVip.findAll()
+                          .then(bv => {
+                              CrazyClub.findAll()
+                                  .then(cc => {
+                                      res.status(200).render('add-staff', {postes: postes,barSimples: bs, barVips: bv, crazycs: cc, indice: req.query.indice, msg: req.query.msg})
+                                  }).catch(_ => {
+                                      console.error(_);
+                                      res.redirect('/notFound');
+                                      return; // On stoppe tout ici !
+                                  })
+                          }).catch(_ => {
+                              console.error(_);
+                              res.redirect('/notFound');
+                              return; // On stoppe tout ici !
+                          })
+                  }).catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+addPersonnel = (app) => {
+  app.post(['/addPersonnel', '/addAdmin'],async (req, res) => {
+      const {nom, prenom, email, mdp, numero, age, selectGenderOptions, poste, dep,  desc, adresse, periode} = req.body;
+      let verif = false
+      // On enlève les espaces avant de tester la valeur
+      const cleanAge = age?.trim();
+      const emailtrim = email?.trim();
+
+      if(["onelove@gmail.com", "one-love@gmail.com", "one_love@gmail.com"].includes(emailtrim.tolowerCase())){ 
+          res.redirect('/inscription?msg=Impossible de creer un compte avec cette adresse email. Choisisez de preferance un email qui ne contien pas le mot \'onelove\' peu importe la casse(l\'orthographie).')
+      }
+      // const emailReg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; 
+
+      const ageData = (cleanAge && !isNaN(cleanAge)) ? parseInt(cleanAge, 10) : 0;
+      if (emailtrim && emailtrim.includes('@')) {
+          verif = await Personnel.findOne({
+              where: { email: emailtrim }
+          });
+      }
+      
+      if(verif){
+          msg = "Cette email existe déjà! Choisisez un autre."
+          // if(req.path === '/addPersonnel' && req.query.sender === 'admin'){
+          //     res.redirect('/formAddPersonnel?indice=admin&msg=' + msg)
+          if(req.path === '/addPersonnel' && req.query.sender === 'staff'){
+              res.redirect('/inscription?msg=' + msg)
+          } else if(req.path === '/addAdmin'){
+              res.redirect('/formAddAdmin?msg=' + msg)
+          }
+          return;
+      }
+
+      let postte = poste
+      let hash_pass = ''
+      let type = 'staff'
+      const salt = await bcrypt.genSalt(10);
+      hash_pass = await bcrypt.hash(mdp, salt)
+      if(req.path === '/addAdmin'){
+          const adPoste = await Poste.findOne({
+              where:{nom_poste: 'Admin'}
+          })
+          if(adPoste){
+              // console.log(adPoste)
+              postte = adPoste.id_poste
+              type = 'admin'
+          }
+      }
+      if(req.path === '/addPersonnel'){
+          try{
+              const post = await Poste.findByPk(poste);
+              if(post.nom_poste === 'Comptable'){
+                  type = 'comptable'
+              }else if(post.nom_poste === 'Caissier Central'){
+                  type = 'caissier central'
+              }else if(post.nom_poste === 'Caissier'){
+                  type = 'caissier'
+              }else if(post.nom_poste === 'Gerant'){
+                  type = 'gerant'
+              }
+          }catch (e){
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          }
+      }
+
+      Personnel.create({
+          nom: nom, 
+          prenom: prenom,
+          adresse: adresse,
+          email: emailtrim,
+          mdp: hash_pass,
+          numero: numero,
+          age: ageData,
+          genre: selectGenderOptions,
+          type_personnel: type,
+          description: desc,
+          validation: 0,
+          periode: periode
+      })
+          .then(personnel => {
+              Poste.findOne({
+                  where:{id_poste: postte}
+              })
+                  .then(poste =>{
+                      Occupe.create({
+                          salaire:poste.salaire,
+                          id_personnel: personnel.id_personnel,
+                          id_poste: poste.id_poste
+                      })
+                          .then(occupe =>{
+                              if(req.path === '/addPersonnel' && req.query.sender === 'admin'){
+                                  res.redirect('/formAddPersonnel?indice=admin&msg=ajout')
+                              }else if(req.path === '/addPersonnel'){
+                                  res.redirect('/login')
+                              }else if(req.path === '/addAdmin' && req.query.sender === 'admin'){
+                                  res.redirect('/formAddAdmin?msg=ajout')
+                              }else{
+
+                              }
+                          })
+                          .catch(_ => {
+                              console.error(_);
+                              res.redirect('/notFound');
+                              return; // On stoppe tout ici !
+                          })
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deletePersonnel = (app) => {
+  app.delete('/deletePersonnel/:id', protrctionRoot, authorise('admin','comptable', 'caissier', 'caissier central'), (req, res) => {
+      Personnel.findByPk(req.params.id)
+          .then(personnel => {
+              const appartDel = personnel;
+                  Occupe.findOne({where: {id_personnel: appartDel.id_personnel}})
+                      .then(occcup => {
+                          const occuper = occcup
+                          Occupe.destroy({where: {id_personnel: occcup.id_personnel}})
+                              .then(occcup => {
+                                  Personnel.destroy({where: {id_personnel: appartDel.id_personnel}})
+                                      .then(_ => { 
+                                          if(appartDel.type_personnel === 'pas_admin'){
+                                              res.redirect('/allPersonnel?allType=pas_admin&msg=sup&type=staff');
+                                          }
+                                          else{
+                                              res.redirect('/allPersonnel?allType=admin&msg=sup&type=admin');
+                                          }
+                                      })
+                              })
+                              .catch(_ => {
+                                  console.error(_);
+                                  res.redirect('/notFound');
+                                  return; // On stoppe tout ici !
+                              })
+                      })
+                      .catch(_ => {
+                          console.error(_);
+                          res.redirect('/notFound');
+                          return; // On stoppe tout ici !
+                      })
+              
+              
+              //     Personnel.destroy({where: {id_personnel: appartDel.id_personnel}})
+              //         .then(_ => { 
+              //                 res.redirect('/allPersonnel?allType=admin&msg=sup&type=admin');
+              //         })
+              //         .catch(_ => console.log('erreure de suppression', _))
+              // }
+
+              // Personnel.destroy({where: {id_personnel: appartDel.id_personnel}})
+              //     .then(_ => { 
+              //         if(appartDel.type_personnel === 'pas_admin'){
+              //             res.redirect('/allPersonnel?allType=pas_admin&msg=sup&type=staff');
+              //         }
+              //         else if(appartDel.type_personnel === 'admin'){
+              //             res.redirect('/allPersonnel?allType=admin&msg=sup&type=admin');
+              //         }
+              //     })
+              //     .catch(_ => console.log('erreure de suppression', _))
+          }).catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+deletePoste = (app) => {
+  app.delete('/deletePoste/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Poste.findByPk(req.params.id)
+          .then(poste => {
+              const appartDel = poste;
+              Poste.destroy({where: {id_poste: appartDel.id_poste}})
+                  .then(_ => {
+                      res.redirect('/allPoste?msg=sup')
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+  })
+}
+
+deletePoste = (app) => {
+  app.delete('/deletePoste/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+      try {
+          const t = await sequelize.transaction();
+          await Occupe.update({is_active: false}, {where: {id_poste: req.params.id}, transaction: t});
+          //recuperer tout le personnel qui occupe ce poste
+          const occupe = await Occupe.findAll(
+              {
+                  include: [
+                      {model: Personnel, attributes: ['id_personnel'] , where: {is_active: true}}
+                  ],
+                  where: {id_poste: req.params.id}, transaction: t
+              }
+          );
+          //tableau de personnel qui occupe ce poste
+          const tabPersonnel = occupe.map(occupe => occupe.Personnel.id_personnel);
+          // supprimer tout le personnel qui occupe ce poste
+          await Personnel.update({is_active: false}, {
+              where: {[Op.in]: [tabPersonnel]}, transaction: t
+          });
+
+          await t.commit();
+
+          res.redirect('/allPoste?msg=Poste supprimer avec succes&tc=alert-success');
+      } catch (error) {
+          console.error(error);
+          await t.rollback();
+          res.redirect('/notFound');
+          return; // On stoppe tout ici !
+      }
+  })
+}
+
+allProduit = (app) => {
+  app.get('/allProduit', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Produit.findAll({
+          order:[['id_produit', 'DESC']]
+      })
+          .then(produits => {
+              Categorie.findAll()
+                  .then(categories => {
+                      HistEntrer.findAll({
+                          attributes: [
+                              // Utilisation de YYYY-MM pour Postgres
+                              [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), "mois"], 
+                              'id_probal', 
+                              'type',
+                              [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'total_recette'],
+                              // On force "Produits" avec majuscule et guillemets pour correspondre à ta DB
+                              [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom'],
+                          ],
+                          where: {
+                              type: {
+                                  [Op.in]: ["produit"] // Attention : "produit" au singulier comme dans ton where plus bas
+                              }
+                          },
+                          // Groupement complet requis par Postgres
+                          group: ["id_probal", "type", "HistEntrer.id_hist", literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')")],
+                          order: [["type"], [literal("mois"), 'ASC']],
+                          raw: true // Correction de 'row' en 'raw'
+                      })
+                          .then(sumhe => {
+                              BarSimple.findAll()
+                                  .then(bs => {
+                                      BarVip.findAll()
+                                          .then(bv => {
+                                              CrazyClub.findAll()
+                                                  .then(cc => {
+                                                      res.status(200).render('produit', {produits: produits,sumhes: sumhe, categories: categories, barSimples: bs, barVips: bv, crazycs: cc, msg: req.query.msg, type: req.query.type});
+                                                  }).catch(_ => {
+                                                      console.error(_);
+                                                      res.redirect('/notFound');
+                                                      return; // On stoppe tout ici !
+                                                  })
+                                          }).catch(_ =>{
+                                              console.error(_);
+                                              res.redirect('/notFound');
+                                              return; // On stoppe tout ici !
+                                          })
+                                  }).catch(_ => {
+                                      console.error(_);
+                                      res.redirect('/notFound');
+                                      return; // On stoppe tout ici !
+                                  })
+                          })
+                          .catch(_ => {
+                              console.error(_);
+                              res.redirect('/notFound');
+                              return; // On stoppe tout ici !
+                          })
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+oneProduit = (app) => {
+  app.get('/oneProduit/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+      Produit.findByPk(req.params.id)
+          .then(produit => {
+              HistEntrer.findAll({
+                  where: {id_probal: produit.id_produit, type: 'produit'}
+              })
+                  .then(hachats => {
+                      HistSortie.findAll({
+                          where: {id_probal: produit.id_produit, type: 'produit'}
+                      })
+                          .then(hventes => {
+                              HistEntrer.findAll({
+                                  attributes: [
+                                      // Correction de la date pour PostgreSQL
+                                      [literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')"), "mois"], 
+                                      'id_probal', 
+                                      'type',
+                                      [literal("SUM(\"quantiter\" * \"prix_unit\")"), 'total_recette'],
+                                      // Correction CRITIQUE : "Produits" avec majuscule et guillemets doubles
+                                      [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom'],
+                                  ],
+                                  where: {
+                                      type: { [Op.in]: ["produit"] }
+                                  },
+                                  // Ajout de la clé primaire correcte 'id_hist' au groupement
+                                  group: [
+                                      "id_probal", 
+                                      "type", 
+                                      "HistEntrer.id_hist", 
+                                      literal("TO_CHAR(\"HistEntrer\".\"created\", 'YYYY-MM')")
+                                  ],
+                                  order: [["type"], [literal("mois"), 'ASC']],
+                                  raw: true // Assurez-vous que c'est bien 'raw' et non 'row'
+                              })
+                                  .then(hr => {
+                                      HistSortie.findAll({
+                                          attributes: [
+                                              [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
+                                              'id_probal',
+                                              [fn('SUM', literal('quantiter * prix_unit')), 'recette']
+                                          ],
+                                          where: { id_probal: req.params.id },
+                                          group: [
+                                              fn('TO_CHAR', col('created'), 'YYYY-MM'), 
+                                              'id_probal', 
+                                              'id_hist'
+                                      ],
+                                          raw: true
+                                      })
+                                          .then(hs => {
+                                              //res.json(hr)
+                                              res.status(200).render('produit-detail', {histe: hr, hists: hs, produit: produit, hachats: hachats, hventes: hventes, msg: req.query.msg, type: req.query.type})
+                                          })
+                                          .catch(_ => {
+                                              console.error(_);
+                                              res.redirect('/notFound');
+                                              return; // On stoppe tout ici !
+                                          })
+                                  })
+                                  .catch(_ => {
+                                      console.error(_);
+                                      res.redirect('/notFound');
+                                      return; // On stoppe tout ici !
+                                  })
+                          })
+                          .catch(_ => {
+                              console.error(_);
+                              res.redirect('/notFound');
+                              return; // On stoppe tout ici !
+                          })
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  })
+}
+
+addHistCaisse = (app) => {
+  app.post('/addHistCaisse', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) =>{
+      const {qte, prix, type, idpro, caisse, barclub, caissier, nom} = req.body;
+      let pu = 0
+      try{
+          const ajoutHist = await HistCaisse.create({
+              quantiter: qte,
+              prix_unit: prix,
+              type: type,
+              id_probal: idpro,
+              id_caisse: caisse,
+              nomBarClub: barclub,
+              nom: nom,
+              id_caissier: caissier
+          })
+          if(ajoutHist){
+              
+              const caisse_ = await Caisse.findByPk(caisse)
+              if(caisse_){
+                  // let solde = caisse_.solde 
+                  let depense = caisse_.depense 
+                  let recette = caisse_.recette + (qte * prix)
+                  const up = await Caisse.update({
+                      solde: recette - depense,
+                      recette : recette,
+                  },{
+                      where: {id_caisse: caisse}
+                  })
+              }
+
+              res.redirect(`/allProduitCaisse/${caissier}?msg=ajout`)
+          }
+      }catch (e){
+          console.error(e);
+          res.redirect('/notFound');
+          return; // On stoppe tout ici !
+      }
+      
+  }
+)}
+
+allHistCaisse = (app) => {
+  app.get(['/allHistCaisse/:id', '/allHistCaisse'], protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant'), async (req, res) => {
+      try{
+          let hist = null;
+          if(req.params.id){
+              hist = await HistCaisse.findAll({
+                  where: {id_caissier: req.params.id}
+              })
+          }else{
+              hist = await HistCaisse.findAll()
+          }
+
+          res.status(200).render('allHistCaisse', {hists: hist,msg: req.query.msg})
+      }catch(e){
+          console.error(e);
+          res.redirect('/notFound');
+          return; // On stoppe tout ici !
+      }
+  }
+  
+)}
+
+deleteHistCaisse = (app) => {
+  app.delete('/deleteHistCaisse/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
+      HistCaisse.findByPk(req.params.id)
+          .then(hist => {
+              const histDel = hist;
+              HistCaisse.destroy({where: {id_hist: histDel.id_hist}})
+                  .then(_ => {
+                      Caisse.findByPk(histDel.id_caisse)
+                          .then(caisse => {
+                              let depense = caisse.depense 
+                              let recette = caisse.recette - (histDel.prix_unit * histDel.quantiter)
+                              Caisse.update({
+                                  solde: recette - depense,
+                                  recette : recette,
+                              },{
+                                  where: {id_caisse: histDel.id_caisse}
+                              })
+                                  .then(up => {
+                                      // console.log(histDel.prix_unit * histDel.quantiter, up, caisse.recette)
+                                      res.redirect(`/allHistCaisse/${histDel.id_caissier}?msg=sup`)
+                                  })
+                                  .catch(_ => {
+                                      console.error(_);
+                                      res.redirect('/notFound');
+                                      return; // On stoppe tout ici !
+                                  })
+                          })
+                          .catch(_ => {
+                              console.error(_);
+                              res.redirect('/notFound');
+                              return; // On stoppe tout ici !
+                          })
+                  })
+                  .catch(_ => {
+                      console.error(_);
+                      res.redirect('/notFound');
+                      return; // On stoppe tout ici !
+                  })
+          })
+          .catch(_ => {
+              console.error(_);
+              res.redirect('/notFound');
+              return; // On stoppe tout ici !
+          })
+  }
+)}
+
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+<%- include('head')%>
+
+  <body style="background-color: rgb(56, 100, 158);">
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+            
+            <!-- Row starts -->
+            <div class="app-body">
+              <% if(caisses.length === 0) { %>
+                <div class="alert bg-white border text-info text-center">
+                  <h4>Aucune caisse n'est associée à votre compte pour le moment.</h4>
+                </div>
+              <% } else { %>
+                
+                <% caisses.forEach(caisse => { %>
+                  <div class="card mb-5 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="background: #2b3a4a; color: white;">
+                      <h4 class="m-0">Caisse : <%= caisse.nom_caisse %></h4>
+                      <span class="badge bg-info text-dark">Lieu : <%= caisse.lieu %></span>
+                    </div>
+                    
+                    <div class="card-body">
+                      <div class="row">
+                        
+                        <% caisse.produits.forEach(p => { %>
+                          <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                            <div class="card border-primary mb-3">
+                              <div class="card-body text-center">
+                                <% if(p.image) { %>
+                                  <img src="/uploads/<%= p.image %>" alt="<%= p.nom %>" style="height: 100px; object-fit: contain;">
+                                <% } %>
+                                <h5 class="card-title mt-2"><%= p.nom %></h5>
+                                <p class="card-text mb-1">
+                                  <strong>Prix :</strong> <%= p.prix_unit %> FCFA<br>
+                                  <strong>Disponible :</strong> 
+                                  <span class="badge <%= p.qte_dispo > 5 ? 'bg-success' : 'bg-danger' %>">
+                                    <%= p.qte_dispo %>
+                                  </span>
+                                </p>
+                                
+                                <% if(p.qte_dispo > 0) { %>
+                                  <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#vendreProd<%= p.id %><%= caisse.id_caisse %>">
+                                    Mise a jour<!-- Vendre -->
+                                  </button>
+                                <% } else { %>
+                                  <button class="btn btn-secondary w-100" disabled>Rupture</button>
+                                <% } %>
+                              </div>
+                            </div>
+                          </div>
+            
+                          <%- include('partials/modalVente', {item: p, type: 'produit', id_caisse: caisse.id_caisse, id_caissier: id_caissier, lieu: caisse.lieu}) %>
+                        <% }) %>
+          
+                        <% caisse.emballages.forEach(e => { %>
+                          <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+                            <div class="card border-warning mb-3">
+                              <div class="card-body text-center bg-light">
+                                <h5 class="card-title"><%= e.nom %></h5>  
+                                <p class="card-text mb-1">
+                                  <strong>Prix :</strong> <%= e.prix_unit %> FCFA<br>
+                                  <strong>Disponible :</strong>
+                                  <span class="badge <%= e.qte_dispo > 5 ? 'bg-success' : 'bg-danger' %>">
+                                    <%= e.qte_dispo %>
+                                  </span>
+                                </p>
+                                <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#vendreEmb<%= e.id %><%= caisse.id_caisse %>">
+                                  Mise a jour<!-- Vendre / Sortir (Emballage)  <%= e.qte_dispo %>-->
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+            
+                          <%- include('partials/modalVente', {item: e, type: 'emballage', id_caisse: caisse.id_caisse, id_caissier: id_caissier, lieu: caisse.lieu}) %>
+                        <% }) %>
+            
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+            
+              <% } %>
+            </div>
+            
+            <!-- Row ends -->
+          </div>
+          
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2026</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <!-- Required jQuery first, then Bootstrap Bundle JS -->
+    <%- include('script')%>
+    <script>
+      window.addEventListener("pageshow", function (event) {
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance != "undefined" && 
+                                window.performance.navigation.type === 2);
+        if (historyTraversal) {
+            // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+            window.location.reload();
+        }
+      });
+    </script>
+  </body>
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/add-staff.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:13 GMT -->
+</html>
+
+<!-- ============================================ sequelize.js========================================= -->
+const {Sequelize, DataTypes,Op} = require('sequelize');
+const bcrypt = require('bcrypt')
+require('dotenv').config();
+
+const Appartement_m = require('../models/appartement')
+const AppartJournal_m = require('../models/appartJournal')
+const BarSimple_m = require('../models/barSimple')
+const BarSimpleJournal_m = require('../models/barSimpleJournal')
+const BarVip_m = require('../models/barVip');
+const BarVipJournal_m = require('../models/barVipJournal');
+const Caisse_m = require('../models/caisse');
+const CaisseJournal_m = require('../models/caisseJournal');
+const Chambre_m = require('../models/chambre');
+const ChambreJournal_m = require('../models/chambreJournal');
+const CrazyClub_m = require('../models/crazyClub');
+const CrazyClubJournal_m = require('../models/cclubJournal');
+const Cuisine_m = require('../models/cuisine');
+const CuisineJournal_m = require('../models/cuisineJournal');
+const MaisonColse_m = require('../models/maisonClose');
+const Personnel_m = require('../models/personnel');
+const Poste_m = require('../models/poste');
+const Sanction_m = require('../models/sanction');
+const Client_m = require('../models/client')
+const Occupe_m = require('../models/occupe')
+const Categorie_m = require('../models/categorie')
+const Produit_m = require('../models/produit')
+const Emballage_m = require('../models/emballage')
+const HistEntrer_m = require('../models/histEntrer')
+const HistSortie_m = require('../models/histSortie')
+const Presence_m = require('../models/presence')
+const Occupent_m = require('../models/occupent')
+const AppartFondJournal_m = require('../models/appartFondJournal');
+const HistCaisse_m = require('../models/histCaise');
+const occupe = require('../models/occupe');
+const Depense_m = require('../models/depense');
+const CategorieDepense_m = require('../models/categorieDepense');
+
+const { on } = require('nodemailer/lib/xoauth2');
+
+// On utilise l'URL de Render (DATABASE_URL)
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false // Indispensable pour que Render accepte la connexion
+      }
+    }
+});
+
+const Appartement = Appartement_m(sequelize, DataTypes);
+const AppartJournal = AppartJournal_m(sequelize, DataTypes);
+const BarSimple = BarSimple_m(sequelize, DataTypes);
+const BarSimpleJournal = BarSimpleJournal_m(sequelize, DataTypes);
+const BarVip = BarVip_m(sequelize, DataTypes);
+const BarVipJournal = BarVipJournal_m(sequelize, DataTypes);
+const Caisse = Caisse_m(sequelize, DataTypes);
+const CaisseJournal = CaisseJournal_m(sequelize, DataTypes);
+const Chambre = Chambre_m(sequelize, DataTypes);
+const ChambreJournal = ChambreJournal_m(sequelize, DataTypes);
+const CrazyClub = CrazyClub_m(sequelize, DataTypes);
+const CrazyClubJournal = CrazyClubJournal_m(sequelize, DataTypes);
+const Cuisine = Cuisine_m(sequelize, DataTypes);
+const CuisineJournal = CuisineJournal_m(sequelize, DataTypes);
+const MaisonColse = MaisonColse_m(sequelize, DataTypes);
+const Personnel = Personnel_m(sequelize, DataTypes);
+const Poste = Poste_m(sequelize, DataTypes);
+const Sanction = Sanction_m(sequelize, DataTypes);
+const Client = Client_m(sequelize, DataTypes);
+const Occupe = Occupe_m(sequelize, DataTypes);
+const Categorie = Categorie_m(sequelize, DataTypes);
+const Produit = Produit_m(sequelize, DataTypes);
+const Emballage = Emballage_m(sequelize, DataTypes);
+const HistEntrer = HistEntrer_m(sequelize, DataTypes);
+const HistSortie = HistSortie_m(sequelize, DataTypes);
+const Presence = Presence_m(sequelize, DataTypes);
+const Occupent = Occupent_m(sequelize, DataTypes);
+const AppartFondJournal = AppartFondJournal_m(sequelize, DataTypes);
+const HistCaisse = HistCaisse_m(sequelize, DataTypes);
+const Depense = Depense_m(sequelize, DataTypes);
+const CategorieDepense = CategorieDepense_m(sequelize,DataTypes);
+
+sequelize.authenticate()
+    .then(_ => console.log("Connexion reussi avec la bd"))
+    .catch(err => console.log('erreur: ' + err))
+
+
+//creation des relation entre les table
+
+// liaison entre bar simple et son journal
+BarSimple.hasMany(BarSimpleJournal, {
+    foreignKey: 'id_barSimple',
+    onDelete: 'CASCADE', // Suppression en cascade. si on supprime un bar simple on supprime son journal
+});
+BarSimpleJournal.belongsTo(BarSimple, {
+    foreignKey: 'id_barSimple'
+});
+
+// liaison entre appartement et son journal
+Appartement.hasMany(AppartJournal, {
+    foreignKey: 'id_appart',
+    onDelete: 'CASCADE',
+});
+AppartJournal.belongsTo(Appartement, {
+    foreignKey: 'id_appart'
+});
+
+// liaison entre appartement et appart font journal
+Appartement.hasMany(AppartFondJournal, {
+    foreignKey: 'id_appart',
+    onDelete: 'CASCADE',
+});
+AppartFondJournal.belongsTo(Appartement, {
+    foreignKey: 'id_appart'
+});
+// liaison entre appartement et son journal
+// Appartement.hasMany(AppartFondJournal, {
+//     foreignKey: 'id_appart'
+// });
+// AppartFondJournal.belongsTo(Appartement, {
+//     foreignKey: 'id_appart'
+// });
+
+// liaison entre client et Appartement
+// Appartement.hasMany(Client, {
+//     foreignKey: 'id_chambre'
+// });
+// Client.belongsTo(Appartement, {
+//     foreignKey: 'id_chambre'
+// });
+
+// liaison entre client et son journal
+// Client.hasMany(AppartJournal, {
+//     foreignKey: 'id_client'
+// });
+// AppartJournal.belongsTo(Client, {
+//     foreignKey: 'id_client'
+// });
+
+// liaison entre bar vip et son journal
+BarVip.hasMany(BarVipJournal, {
+    foreignKey: 'id_barVip',
+    onDelete: 'CASCADE',
+});
+BarVipJournal.belongsTo(BarVip, {
+    foreignKey: 'id_barVip'
+});
+
+CrazyClub.hasMany(CrazyClubJournal, {
+    foreignKey: 'id_cclub',
+    onDelete: 'CASCADE',
+});
+CrazyClubJournal.belongsTo(CrazyClub, {
+    foreignKey: 'id_cclub'
+});
+
+// liaison entre bar cuisine et son journal
+Cuisine.hasMany(CuisineJournal, {
+    foreignKey: 'id_cuisine',
+    onDelete: 'CASCADE',
+});
+CuisineJournal.belongsTo(Cuisine, {
+    foreignKey: 'id_cuisine'
+});
+
+// liaison entre maison close et chambre
+MaisonColse.hasMany(Chambre, {
+    foreignKey: 'id_mclose',
+    onDelete: 'CASCADE',
+});
+Chambre.belongsTo(MaisonColse, {
+    foreignKey: 'id_mclose'
+});
+
+// liaison entre chambre et son journal
+Chambre.hasMany(ChambreJournal, {
+    foreignKey: 'id_chambre',
+    onDelete: 'CASCADE',
+});
+ChambreJournal.belongsTo(Chambre, {
+    foreignKey: 'id_chambre'
+});
+
+// liaison entre maison close et journal chambre
+MaisonColse.hasMany(ChambreJournal, {
+    foreignKey: 'id_mclose',
+    onDelete: 'CASCADE',
+});
+ChambreJournal.belongsTo(MaisonColse, {
+    foreignKey: 'id_mclose'
+});
+
+// liaison entre caisse et son journal
+Caisse.hasMany(CaisseJournal, {
+    foreignKey: 'id_caisse',
+    onDelete: 'CASCADE',
+});
+CaisseJournal.belongsTo(Caisse, {
+    foreignKey: 'id_caisse'
+});
+
+// liaison entre caisse et bar simple
+Caisse.hasMany(BarSimple, {
+    foreignKey: 'id_caisse',
+});
+BarSimple.belongsTo(Caisse, {
+    foreignKey: 'id_caisse',
+});
+
+// liaison entre caisse et appartement
+// Caisse.hasMany(Appartement, {
+//     foreignKey: 'id_caisse'
+// });
+// Appartement.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
+
+// // liaison entre caisse et bar vip
+// Caisse.hasMany(BarVip, {
+//     foreignKey: 'id_caisse'
+// });
+// BarVip.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
+
+// // liaison entre caisse et cuisine
+// Caisse.hasMany(Cuisine, {
+//     foreignKey: 'id_caisse'
+// });
+// Cuisine.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
+
+// // liaison entre caisse et maison close
+// Caisse.hasMany(MaisonColse, {
+//     foreignKey: 'id_caisse'
+// });
+// MaisonColse.belongsTo(Caisse, {
+//     foreignKey: 'id_caisse'
+// });
+
+// liaison entre personnel et occupe
+Personnel.hasMany(Occupe, {
+    foreignKey: 'id_personnel',
+    onDelete: 'CASCADE'
+});
+Occupe.belongsTo(Personnel, {
+    foreignKey: 'id_personnel'
+});
+
+// liaison entre personnel et presence
+Personnel.hasMany(Presence, {
+    foreignKey: 'id_personnel',
+    onDelete: 'CASCADE'
+});
+Presence.belongsTo(Personnel, {
+    foreignKey: 'id_personnel'
+});
+
+// liaison entre occupe et poste
+Poste.hasMany(Occupe, {
+    foreignKey: 'id_poste',
+    onDelete: 'CASCADE'
+});
+Occupe.belongsTo(Poste, {
+    foreignKey: 'id_poste'
+});
+
+
+// liaison entre occupe et sanction
+Occupe.hasMany(Sanction, {
+    foreignKey: 'id_occupe',
+    onDelete: 'CASCADE'
+});
+Sanction.belongsTo(Occupe, {
+    foreignKey: 'id_occupe'
+});
+
+// liaison entre categorieDepense et depense
+CategorieDepense.hasMany(Depense, {
+    foreignKey: 'id_categ',
+    onDelete: 'CASCADE'
+});
+Depense.belongsTo(CategorieDepense, {
+    foreignKey: 'id_categ'
+});
+
+// liaison entre Categorie et Produit
+// Categorie.hasMany(Produit, {
+//     foreignKey: 'id_categ'
+// });
+// Produit.belongsTo(Categorie, {
+//     foreignKey: 'id_categ'
+// });
+
+// liaison entre article et histAchatArticle
+// Produit.hasMany(HistEntrer, {
+//     foreignKey: 'id_produit'
+// });
+// HistEntrer.belongsTo(Produit, {
+//     foreignKey: 'id_produit'
+// });
+
+// liaison entre article et histVenteArticle
+// Produit.hasMany(HistSortie, {
+//     foreignKey: 'id_produit'
+// });
+// HistSortie.belongsTo(Produit, {
+//     foreignKey: 'id_produit'
+// });
+
+(async () =>{
+    try{
+        await sequelize.sync(); //{alter: false}
+        console.log('Base synchronisee')
+
+        const count = await Poste.count({
+            where:{
+                nom_poste: {
+                    [Op.in]: ['Admin', 'Comptable', 'Caissier']
+                }
+            }
+        })
+
+        const admin = await Personnel.findAll({
+            where:{
+                type_personnel: 'admin'
+            }
+        })
+
+        //console.log(count)
+        if(count === 0){
+            try{
+                const insert = await Poste.bulkCreate([
+                    {nom_poste: 'Admin', salaire: 0, description: 'Administrateur de One Love'},
+                    {nom_poste: 'Comptable', salaire: 0, description: 'Comptable de One Love'},
+                    {nom_poste: 'Caissier Central', salaire: 0, description: ''},
+                    {nom_poste: 'Caissier', salaire: 0, description: ''},
+                    {nom_poste: 'Gerant', salaire: 0, description: ''}
+                ])
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+        if(!admin || admin.length === 0){
+            try{
+                const salt = await bcrypt.genSalt(10);
+                const hash_pass = await bcrypt.hash('adminadmin', salt)
+                const admin = await Personnel.create({
+                    nom: 'admin', 
+                    prenom: 'admin',
+                    adresse: '',
+                    email: 'admin@gmail.com',
+                    mdp: hash_pass,
+                    numero: '',
+                    age: 0,
+                    genre: '',
+                    type_personnel: 'admin',
+                    description: '',
+                    validation: true,
+                    periode: 'Mensuel'
+                })
+
+                await Occupe.create(
+                    {salaire:0,
+                    id_personnel: admin.id_personnel,
+                    id_poste: 1}
+                )
+                console.log('Compte Admin et affectation créés avec succès');
+            }catch (e){
+                console.log(e)
+            }
+        }
+
+    }catch (e){
+        console.log(e)
+    }
+})();
+// sequelize.sync({alter: false})
+//     .then(_ => console.log('Base synchronisee'))
+//     .catch(err => console.log('Erreur ' + err))
+
+// const count = Poste.count({
+//     where:{
+//         nom_poste: {
+//             [Op.in]: ['Admin', 'Comptable', 'Caissier']
+//         }
+//     }
+// })
+//     .then(count => {
+//         console.log(count)
+//         if(count === 0){
+//             Poste.create({
+//                 nom_poste: 'Admin',
+//                 salaire: 0,
+//                 description: ''
+//             })
+//                 .then(poste => {
+//                     console.log('cree')
+//                 })
+//                 .catch(_ => console.log('erreure de ajout', _))
+//         }
+//     })
+//     .catch(_ => console.log('erreure de count', _))
+
+module.exports = {
+    sequelize,
+    Appartement,
+    AppartJournal,
+    BarSimple,
+    BarSimpleJournal,
+    BarVip,
+    BarVipJournal,
+    Caisse,
+    CaisseJournal,
+    Chambre,
+    ChambreJournal,
+    CrazyClub,
+    CrazyClubJournal,
+    Cuisine,
+    CuisineJournal,
+    MaisonColse,
+    Personnel,
+    Poste,
+    Sanction,
+    Client,
+    Occupe,
+    Categorie,
+    Produit,
+    Emballage,
+    HistEntrer,
+    HistSortie,
+    Presence,
+    Occupent,
+    AppartFondJournal,
+    HistCaisse,
+    CategorieDepense,
+    Depense,
+}

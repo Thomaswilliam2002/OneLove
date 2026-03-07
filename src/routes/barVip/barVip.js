@@ -1,4 +1,4 @@
-const {BarVip} = require('../../db/sequelize')
+const {BarVip, sequelize, BarVipJournal} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 allBarV = (app) => {
@@ -28,12 +28,10 @@ oneBarV = (app) => {
 
 addBarV = (app) => {
     app.post('/addBarV', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, superficie, adresse, capacite} = req.body;
+        const {nom, adresse} = req.body;
         BarVip.create({
             nom: nom,
             adresse: adresse,
-            superficie: superficie,
-            capacite: capacite
         })
             .then(barS => {
                 const msg = "le Bar  VIP" + req.body.name + "a ete ajouter avec succes"
@@ -46,12 +44,10 @@ addBarV = (app) => {
 
 updateBarV = (app) => {
     app.put('/updateBarV/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, superficie, adresse, capacite} = req.body;
+        const {nom, adresse} = req.body;
         BarVip.update({
             nom: nom,
-            adresse: adresse,
-            superficie: superficie,
-            capacite: capacite
+            adresse: adresse
         }, {
             where: {id_barVip: req.params.id}
         })
@@ -65,16 +61,47 @@ updateBarV = (app) => {
 }
 
 deleteBarV = (app) => {
-    app.delete('/deleteBarV/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        BarVip.findByPk(req.params.id)
-            .then(barV => {
-                const appartDel = barV;
-                BarVip.destroy({where: {id_barVip: appartDel.id_barVip}})
-                    .then(_ => {
-                        res.redirect('/allBarClub?type=barv&msg=sup')
-                    })
-                    .catch(_ => res.redirect('/notFound'))
-            })
+    app.delete('/deleteBarV/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try{
+            const t = await sequelize.transaction();
+        
+            // update retourne un tableau
+            const [logicDel] = await BarVip.update(
+                { is_active: false },
+                { where: { id_barVip: req.params.id}, transaction: t }
+            )
+        
+            // desactiver toute l'historique du bar
+            await BarVipJournal.update(
+                { is_active: false },
+                { where: { id_barVip: req.params.id, is_active: true  }, transaction: t }
+            )
+        
+            await t.commit();
+        
+            if (logicDel > 0) {
+                return res.redirect('/allBarClub?type=bars&msg=Bar supprimé avec succès&tc=alert-danger')
+            } else {
+                return res.redirect('/allBarClub?type=bars&msg=Bar introuvable&tc=alert-warning')
+            }
+        
+        }
+        catch(e){
+            console.error(e);
+            await t.rollback();
+            res.redirect('/notFound');
+            return;
+        }
+
+    //     BarVip.findByPk(req.params.id)
+    //         .then(barV => {
+    //             const appartDel = barV;
+    //             BarVip.destroy({where: {id_barVip: appartDel.id_barVip}})
+    //                 .then(_ => {
+    //                     res.redirect('/allBarClub?type=barv&msg=sup')
+    //                 })
+    //                 .catch(_ => res.redirect('/notFound'))
+    //         })
     })
 }
 

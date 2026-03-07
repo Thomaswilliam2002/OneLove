@@ -1,4 +1,4 @@
-const {BarSimple, Caisse} = require('../../db/sequelize')
+const {BarSimple, sequelize, BarSimpleJournal} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 allBarS = (app) => {
@@ -27,12 +27,10 @@ oneBarS = (app) => {
 
 addBarS = (app) => {
     app.post('/addBarS', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, superficie, adresse, capacite} = req.body;
+        const {nom, adresse } = req.body;
         BarSimple.create({
             nom: nom,
             adresse: adresse,
-            superficie: superficie,
-            capacite: capacite
         })
             .then(barS => {
                 const msg = "le Bar " + req.body.nom + "a ete ajouter avec succes"
@@ -45,12 +43,10 @@ addBarS = (app) => {
 
 updateBarS = (app) => {
     app.put('/updateBarS/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, superficie, adresse, capacite} = req.body;
+        const {nom, adresse} = req.body;
         BarSimple.update({
             nom: nom,
-            adresse: adresse,
-            superficie: superficie,
-            capacite: capacite
+            adresse: adresse
         },{
             where:{id_barSimple: req.params.id}
         })
@@ -62,16 +58,47 @@ updateBarS = (app) => {
 }
 
 deleteBarS = (app) => {
-    app.delete('/deleteBarS/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        BarSimple.findByPk(req.params.id)
-            .then(barS => {
-                const appartDel = barS;
-                BarSimple.destroy({where: {id_barSimple: appartDel.id_barSimple}})
-                    .then(_ => {
-                        res.redirect('/allBarClub?type=bars&msg=sup')
-                    })
-                    .catch(_ => res.redirect('/notFound'))
-            })
+    app.delete('/deleteBarS/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try{
+            const t = await sequelize.transaction();
+        
+            // update retourne un tableau
+            const [logicDel] = await BarSimple.update(
+                { is_active: false },
+                { where: { id_barSimple: req.params.id}, transaction: t }
+            )
+        
+            // desactiver toute l'historique du bar
+            await BarSimpleJournal.update(
+                { is_active: false },
+                { where: { id_barSimple: req.params.id, is_active: true  }, transaction: t }
+            )
+        
+            await t.commit();
+        
+            if (logicDel > 0) {
+                return res.redirect('/allBarClub?type=bars&msg=Bar supprimé avec succès&tc=alert-danger')
+            } else {
+                return res.redirect('/allBarClub?type=bars&msg=Bar introuvable&tc=alert-warning')
+            }
+        
+        }
+        catch(e){
+            console.error(e);
+            await t.rollback();
+            res.redirect('/notFound');
+            return;
+        }
+        // le code ci-dessous permet de supprimer un bar. il marche mais j'ai opter pour une supression logique
+        // BarSimple.findByPk(req.params.id)
+        //     .then(barS => {
+        //         const appartDel = barS;
+        //         BarSimple.destroy({where: {id_barSimple: appartDel.id_barSimple}})
+        //             .then(_ => {
+        //                 res.redirect('/allBarClub?type=bars&msg=sup')
+        //             })
+        //             .catch(_ => res.redirect('/notFound'))
+        //     })
     })
 }
 

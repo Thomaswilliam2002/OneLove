@@ -7,6 +7,7 @@ allChJournal = (app) => {
                 {model: MaisonColse},
                 {model: Chambre}
             ],
+            where: {is_active: true},
             order:[['id_journal', 'DESC']]
         })
             .then(chambreJournals => {
@@ -50,7 +51,7 @@ addChJournal = (app) => {
             id_mclose: mclose1
         })
             .then(chambreJournal => {
-                res.redirect('/formFondBarClub?msg=ajout&type=mclose')
+                res.redirect('/formFondBarClub?msg=Journal ajouter avec succes&type=mclose')
             })
             .catch(_ => {
                 console.error(_);
@@ -79,31 +80,19 @@ updateChJournal = (app) => {
 }
 
 deleteChJournal = (app) => {
-    app.delete('/deleteChJournal/:id_j/:id_ch/:id_mc', (req, res) => {
-        ChambreJournal.findByPk(req.params.id_j)
-            .then(cj => {
-                const appartDel = cj;
-                ChambreJournal.destroy({where: {id_journal: appartDel.id_journal}})
-                    .then(_ => {
-                        // const msg = "Suppression du journal avec succes"
-                        // res.json({msg})
-                        if(req.query.sender === 'profil'){
-                            res.redirect('/oneChambre/' + req.params.id_ch + '/' + req.params.id_mc)
-                        }else if(req.query.sender === 'hist'){
-                            res.redirect('/allChJournal')
-                        }
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
-            .catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
+    app.delete('/deleteChJournal/:id_j/:id_ch/:id_mc', async (req, res) => {
+        try{
+            await ChambreJournal.update({is_active: false}, {where: {id_journal: req.params.id_j}});
+            if(req.query.sender === 'profil'){
+                res.redirect('/oneChambre/' + req.params.id_ch + '/' + req.params.id_mc)
+            }else if(req.query.sender === 'hist'){
+                res.redirect('/allChJournal')
+            }
+        }catch(_){
+            console.log(_)
+            res.redirect('/notFound');
+            return;
+        }
     })
 }
 

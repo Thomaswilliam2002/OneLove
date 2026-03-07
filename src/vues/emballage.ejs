@@ -66,44 +66,12 @@
                     <a href="/formAddEmballage" class="btn btn-primary ms-auto">Ajouter un nouvel emballage</a>
                   </div>
                   <div class="card-body">
-                      <% if(msg) {%>
-                        <% if(type === 'achat') {%>
-                          <% if(msg === 'ajout') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                              <b>Transaction </b> ajouter avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                        <% }%>
-                        <% if(type === 'vente') {%>
-                          <% if(msg === 'ajout') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                              <b>Transaction </b> ajouter avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                        <% }%>
-                        <% if(type === 'article') {%>
-                          <% if(msg === 'ajout') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                              <b>Emballage </b> ajouter avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                          <% if(msg === 'modif') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                              <b>Emballage </b> modifier avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                          <% if(msg === 'sup') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                              <b>Emballage </b> supprimer avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                        <% }%>
-                      <% }%>
+                    <% if(msg) {%>
+                      <div class="alert bg-white border alert-dismissible fade show <%= tc %>"  role="alert">
+                        <b><%= msg %></b>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    <% }%>
                     <!-- Table starts -->
                     <div class="table-responsive">
                       <table id="customButtons" class="table truncate m-0 align-middle">
@@ -298,20 +266,13 @@
                                           </div>
                                           <div class="col-sm-12">
                                             <div class="mb-3">
-                                              <label class="form-label" for="a8">Nom du destinataire<span class="text-danger">*</span></label>
-                                              <input list="dest" class="form-control"  placeholder=" Ajouter le nom l'entité ou de la personne qui est destinataire" name="dest" required>
-                                              <!-- <input type="hidden" class="form-control" id="dest_id" placeholder=" Ajouter le nom l'entité ou de la personne qui est destinataire" name="dest" required> -->
-                                              <datalist id="dest">
-                                                <% if(barSimples){ barSimples.forEach(barSimple => {%>
-                                                  <option value="<%= barSimple.nom %>" data-id="<%= barSimple.id_barSimple %>" ></option>
+                                              <label class="form-label" for="a8">Nom de la caisse destinataire<span class="text-danger">*</span></label>
+                                              <select name="dest" class="form-select" id="">
+                                                <option disabled value="" selected>choisir un destinataire</option>
+                                                <% if(caisses.length > 0){ caisses.forEach(c => {%>
+                                                  <option value="<%= c.id_lieu %>|<%= c.type_lieu %>|<%= c.id_caisse %>" ><%= c.nom %> (<%= c.type_lieu %>)</option>
                                                 <% }) }%>
-                                                <% if(barVips){ barVips.forEach(barVip => {%>
-                                                  <option value="<%= barVip.nom %>" data-id="<%= barVip.id_barVip %>"></option>
-                                                <% }) } %>
-                                                <% if(crazycs){ crazycs.forEach(crazyc => {%>
-                                                  <option value="<%= crazyc.nom %>" data-id="<%= crazyc.id_cclub %>"></option>
-                                                <% }) } %>
-                                              </datalist>
+                                              </select>
                                             </div>
                                           </div>
                                           <div class="col-sm-12">

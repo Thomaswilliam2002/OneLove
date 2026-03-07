@@ -41,6 +41,11 @@ module.exports = (sequelize, DataTypes) => {
         pointeur: { // ID de l'admin qui fait l'action
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     }, {
         timestamps: true,

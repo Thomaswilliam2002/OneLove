@@ -29,13 +29,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        // motif: {
-        //     type: DataTypes.TEXT,
-        //     allowNull: true
-        // },
         description: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

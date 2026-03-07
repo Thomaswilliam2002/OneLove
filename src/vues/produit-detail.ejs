@@ -65,46 +65,10 @@
           <div class="app-body">
 
             <% if(msg) {%>
-              <% if(type === 'achat') {%>
-                <% if(msg === 'ajout') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                    <b>Achat </b> ajouter avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'modif') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                    <b>Achat </b> modifier avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'sup') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                    <b>Achat </b> supprimer avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-              <% }%>
-              <% if(type === 'vente') {%>
-                <% if(msg === 'ajout') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                    <b>Vente </b> ajouter avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'modif') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                    <b>Vente </b> modifier avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'sup') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                    <b>Vente </b> supprimer avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-              <% }%>
+              <div class="alert bg-white border alert-dismissible fade show <%= tc %>"  role="alert">
+                <b><%= msg %></b>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
             <% }%>
 
             <!-- Row starts -->

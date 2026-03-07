@@ -34,19 +34,31 @@ const HistCaisse_m = require('../models/histCaise');
 const occupe = require('../models/occupe');
 const Depense_m = require('../models/depense');
 const CategorieDepense_m = require('../models/categorieDepense');
-
+const CaissePersonnel_m = require('../models/caissePersonnel');
 const { on } = require('nodemailer/lib/xoauth2');
 
-// On utilise l'URL de Render (DATABASE_URL)
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false // Indispensable pour que Render accepte la connexion
-      }
+const sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASS,
+    {
+        host: process.env.DB_HOST || 'localhost',
+        dialect: 'mariadb',
+        // dialectModule: require('mysql2'), // Optionnel mais conseillé pour éviter des erreurs au déploiement
+        port: process.env.DB_PORT || 3306
     }
-});
+)
+
+// On utilise l'URL de Render (DATABASE_URL)
+// const sequelize = new Sequelize(process.env.DATABASE_URL, {
+//     dialect: 'postgres',
+//     dialectOptions: {
+//       ssl: {
+//         require: true,
+//         rejectUnauthorized: false // Indispensable pour que Render accepte la connexion
+//       }
+//     }
+// });
 
 const Appartement = Appartement_m(sequelize, DataTypes);
 const AppartJournal = AppartJournal_m(sequelize, DataTypes);
@@ -79,6 +91,7 @@ const AppartFondJournal = AppartFondJournal_m(sequelize, DataTypes);
 const HistCaisse = HistCaisse_m(sequelize, DataTypes);
 const Depense = Depense_m(sequelize, DataTypes);
 const CategorieDepense = CategorieDepense_m(sequelize,DataTypes);
+const CaissePersonnel = CaissePersonnel_m(sequelize, DataTypes);
 
 sequelize.authenticate()
     .then(_ => console.log("Connexion reussi avec la bd"))
@@ -89,8 +102,7 @@ sequelize.authenticate()
 
 // liaison entre bar simple et son journal
 BarSimple.hasMany(BarSimpleJournal, {
-    foreignKey: 'id_barSimple',
-    onDelete: 'CASCADE', // Suppression en cascade. si on supprime un bar simple on supprime son journal
+    foreignKey: 'id_barSimple'
 });
 BarSimpleJournal.belongsTo(BarSimple, {
     foreignKey: 'id_barSimple'
@@ -98,8 +110,7 @@ BarSimpleJournal.belongsTo(BarSimple, {
 
 // liaison entre appartement et son journal
 Appartement.hasMany(AppartJournal, {
-    foreignKey: 'id_appart',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_appart'
 });
 AppartJournal.belongsTo(Appartement, {
     foreignKey: 'id_appart'
@@ -107,8 +118,7 @@ AppartJournal.belongsTo(Appartement, {
 
 // liaison entre appartement et appart font journal
 Appartement.hasMany(AppartFondJournal, {
-    foreignKey: 'id_appart',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_appart'
 });
 AppartFondJournal.belongsTo(Appartement, {
     foreignKey: 'id_appart'
@@ -139,16 +149,14 @@ AppartFondJournal.belongsTo(Appartement, {
 
 // liaison entre bar vip et son journal
 BarVip.hasMany(BarVipJournal, {
-    foreignKey: 'id_barVip',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_barVip'
 });
 BarVipJournal.belongsTo(BarVip, {
     foreignKey: 'id_barVip'
 });
 
 CrazyClub.hasMany(CrazyClubJournal, {
-    foreignKey: 'id_cclub',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_cclub'
 });
 CrazyClubJournal.belongsTo(CrazyClub, {
     foreignKey: 'id_cclub'
@@ -156,8 +164,7 @@ CrazyClubJournal.belongsTo(CrazyClub, {
 
 // liaison entre bar cuisine et son journal
 Cuisine.hasMany(CuisineJournal, {
-    foreignKey: 'id_cuisine',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_cuisine'
 });
 CuisineJournal.belongsTo(Cuisine, {
     foreignKey: 'id_cuisine'
@@ -165,8 +172,7 @@ CuisineJournal.belongsTo(Cuisine, {
 
 // liaison entre maison close et chambre
 MaisonColse.hasMany(Chambre, {
-    foreignKey: 'id_mclose',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_mclose'
 });
 Chambre.belongsTo(MaisonColse, {
     foreignKey: 'id_mclose'
@@ -174,8 +180,7 @@ Chambre.belongsTo(MaisonColse, {
 
 // liaison entre chambre et son journal
 Chambre.hasMany(ChambreJournal, {
-    foreignKey: 'id_chambre',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_chambre'
 });
 ChambreJournal.belongsTo(Chambre, {
     foreignKey: 'id_chambre'
@@ -183,8 +188,7 @@ ChambreJournal.belongsTo(Chambre, {
 
 // liaison entre maison close et journal chambre
 MaisonColse.hasMany(ChambreJournal, {
-    foreignKey: 'id_mclose',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_mclose'
 });
 ChambreJournal.belongsTo(MaisonColse, {
     foreignKey: 'id_mclose'
@@ -192,57 +196,102 @@ ChambreJournal.belongsTo(MaisonColse, {
 
 // liaison entre caisse et son journal
 Caisse.hasMany(CaisseJournal, {
-    foreignKey: 'id_caisse',
-    onDelete: 'CASCADE',
+    foreignKey: 'id_caisse'
 });
 CaisseJournal.belongsTo(Caisse, {
     foreignKey: 'id_caisse'
 });
-
+//===================================================================================
 // liaison entre caisse et bar simple
-Caisse.hasMany(BarSimple, {
-    foreignKey: 'id_caisse',
+Caisse.belongsTo(BarSimple, {
+    foreignKey: 'id_lieu'
 });
-BarSimple.belongsTo(Caisse, {
-    foreignKey: 'id_caisse',
+BarSimple.hasMany(Caisse, {
+    foreignKey: 'id_lieu',
+    onDelete: 'CASCADE'
 });
 
 // liaison entre caisse et appartement
-// Caisse.hasMany(Appartement, {
-//     foreignKey: 'id_caisse'
-// });
-// Appartement.belongsTo(Caisse, {
-//     foreignKey: 'id_caisse'
+Caisse.belongsTo(Appartement, {
+    foreignKey: 'id_lieu'
+});
+Appartement.hasMany(Caisse, {
+    foreignKey: 'id_lieu',
+    onDelete: 'CASCADE'
+});
+
+// liaison entre caisse et bar vip
+Caisse.belongsTo(BarVip, {
+    foreignKey: 'id_lieu'
+});
+BarVip.hasMany(Caisse, {
+    foreignKey: 'id_lieu',
+    onDelete: 'CASCADE'
+});
+
+// liaison entre caisse et cuisine
+Caisse.belongsTo(Cuisine, {
+    foreignKey: 'id_lieu'
+});
+Cuisine.hasMany(Caisse, {
+    foreignKey: 'id_lieu',
+    onDelete: 'CASCADE'
+});
+
+// liaison entre caisse et maison close
+Caisse.belongsTo(MaisonColse, {
+    foreignKey: 'id_lieu'
+});
+MaisonColse.hasMany(Caisse, {
+    foreignKey: 'id_lieu',
+    onDelete: 'CASCADE'
+});
+// liaison entre caisse et crazy club
+Caisse.belongsTo(CrazyClub, {
+    foreignKey: 'id_lieu'
+});
+CrazyClub.hasMany(Caisse, {
+    foreignKey: 'id_lieu',
+    onDelete: 'CASCADE'
+});
+
+//================================================================
+// Relations Many-to-Many
+// Quand on supprime une Caisse, on supprime les liens dans CaissePersonnel
+// Caisse.belongsToMany(Personnel, {
+//     through: CaissePersonnel,
+//     foreignKey: 'id_caisse',
+//     onDelete: 'CASCADE'
 // });
 
-// // liaison entre caisse et bar vip
-// Caisse.hasMany(BarVip, {
-//     foreignKey: 'id_caisse'
-// });
-// BarVip.belongsTo(Caisse, {
-//     foreignKey: 'id_caisse'
-// });
-
-// // liaison entre caisse et cuisine
-// Caisse.hasMany(Cuisine, {
-//     foreignKey: 'id_caisse'
-// });
-// Cuisine.belongsTo(Caisse, {
-//     foreignKey: 'id_caisse'
+// // Quand on supprime un Personnel, on supprime les liens dans CaissePersonnel
+// Personnel.belongsToMany(Caisse, {
+//     through: CaissePersonnel,
+//     foreignKey: 'id_personnel',
+//     onDelete: 'CASCADE'
 // });
 
-// // liaison entre caisse et maison close
-// Caisse.hasMany(MaisonColse, {
-//     foreignKey: 'id_caisse'
-// });
-// MaisonColse.belongsTo(Caisse, {
-//     foreignKey: 'id_caisse'
-// });
+// Association Caisse -> Personnel
+Caisse.belongsToMany(Personnel, {
+    through: CaissePersonnel,
+    foreignKey: 'id_caisse',      // Clé pointant vers Caisse dans CaissePersonnel
+    otherKey: 'id_personnel',     // Clé pointant vers Personnel dans CaissePersonnel
+    onDelete: 'CASCADE',
+    // as: 'Personnels'              // Alias pour tes requêtes include
+});
+
+// Association Personnel -> Caisse
+Personnel.belongsToMany(Caisse, {
+    through: CaissePersonnel,
+    foreignKey: 'id_personnel',   // Clé pointant vers Personnel dans CaissePersonnel
+    otherKey: 'id_caisse',        // Clé pointant vers Caisse dans CaissePersonnel
+    onDelete: 'CASCADE',
+    // as: 'Caisses'                 // Alias pour tes requêtes include
+});
 
 // liaison entre personnel et occupe
 Personnel.hasMany(Occupe, {
-    foreignKey: 'id_personnel',
-    onDelete: 'CASCADE'
+    foreignKey: 'id_personnel'
 });
 Occupe.belongsTo(Personnel, {
     foreignKey: 'id_personnel'
@@ -250,8 +299,7 @@ Occupe.belongsTo(Personnel, {
 
 // liaison entre personnel et presence
 Personnel.hasMany(Presence, {
-    foreignKey: 'id_personnel',
-    onDelete: 'CASCADE'
+    foreignKey: 'id_personnel'
 });
 Presence.belongsTo(Personnel, {
     foreignKey: 'id_personnel'
@@ -259,8 +307,7 @@ Presence.belongsTo(Personnel, {
 
 // liaison entre occupe et poste
 Poste.hasMany(Occupe, {
-    foreignKey: 'id_poste',
-    onDelete: 'CASCADE'
+    foreignKey: 'id_poste'
 });
 Occupe.belongsTo(Poste, {
     foreignKey: 'id_poste'
@@ -269,8 +316,7 @@ Occupe.belongsTo(Poste, {
 
 // liaison entre occupe et sanction
 Occupe.hasMany(Sanction, {
-    foreignKey: 'id_occupe',
-    onDelete: 'CASCADE'
+    foreignKey: 'id_occupe'
 });
 Sanction.belongsTo(Occupe, {
     foreignKey: 'id_occupe'
@@ -283,6 +329,15 @@ CategorieDepense.hasMany(Depense, {
 });
 Depense.belongsTo(CategorieDepense, {
     foreignKey: 'id_categ'
+});
+
+//liaison entre caisse et HistCaisse
+Caisse.hasMany(HistCaisse, {
+    foreignKey: 'id_caisse',
+    onDelete: 'CASCADE'
+});
+HistCaisse.belongsTo(Caisse, {
+    foreignKey: 'id_caisse',
 });
 
 // liaison entre Categorie et Produit
@@ -311,7 +366,7 @@ Depense.belongsTo(CategorieDepense, {
 
 (async () =>{
     try{
-        await sequelize.sync(); //{alter: false}
+        await sequelize.sync() //{alter: false}
         console.log('Base synchronisee')
 
         const count = await Poste.count({
@@ -347,7 +402,7 @@ Depense.belongsTo(CategorieDepense, {
             try{
                 const salt = await bcrypt.genSalt(10);
                 const hash_pass = await bcrypt.hash('adminadmin', salt)
-                const admin = await Personnel.create({
+                Personnel.create({
                     nom: 'admin', 
                     prenom: 'admin',
                     adresse: '',
@@ -362,12 +417,11 @@ Depense.belongsTo(CategorieDepense, {
                     periode: 'Mensuel'
                 })
 
-                await Occupe.create(
+                Occupe.create(
                     {salaire:0,
-                    id_personnel: admin.id_personnel,
+                    id_personnel: 1,
                     id_poste: 1}
                 )
-                console.log('Compte Admin et affectation créés avec succès');
             }catch (e){
                 console.log(e)
             }
@@ -437,4 +491,5 @@ module.exports = {
     HistCaisse,
     CategorieDepense,
     Depense,
+    CaissePersonnel
 }

@@ -1,16 +1,21 @@
-const {BarSimpleJournal, BarSimple, Caisse} = require('../../db/sequelize')
+const { where } = require('sequelize')
+const {BarSimpleJournal, BarSimple} = require('../../db/sequelize')
 
 allBSJournal = (app) => {
     app.get('/allBSJournal', (req, res) => {
         BarSimpleJournal.findAll({
             include:[
-                {model: BarSimple}
+                {
+                    model: BarSimple,
+                    where: {is_active: true}
+                }
             ],
+            where: {is_active: true},
             order:[['id_journal', 'DESC']]
         })
             .then(barSimpleJournals => {
                 //res.json(barSimpleJournals)
-                res.status(200).render('allJournal', {Journals: barSimpleJournals, type: 'simple', msg: req.query.msg, indice: req.query.indice})
+                res.status(200).render('allJournal', {Journals: barSimpleJournals, type: 'simple', msg: req.query.msg, indice: req.query.indice, tc: req.query.tc})
             })
             .catch(_ => res.redirect('/notFound'))
     })
@@ -30,36 +35,21 @@ oneBSJournal = (app) => {
 addBSJournal = (app) => {
     app.post('/addBSJournal', async (req, res) => {
         try{
-            const {barClub, montant, date, caisse} = req.body;
-            if(caisse && caisse === 'null'){
-                const barSimpleJournal = await BarSimpleJournal.create({
-                    recette: montant,
-                    depense: 0,
-                    date: date,
-                    id_barSimple: parseInt(barClub.split(' ')[0])
-                })
-            }else if(caisse && caisse !== 'null'){
-                const barSimpleJournal = await BarSimpleJournal.create({
-                    recette: montant,
-                    depense: 0,
-                    date: date,
-                    id_barSimple: parseInt(barClub.split(' ')[0])
-                })
-
-                const caisse_ = await Caisse.findByPk(caisse)
-                if(caisse_){
-                    let recette = caisse_.recette - montant < 0 ? 0 : caisse_.recette - montant
-                    const up = await Caisse.update({
-                        recette : recette,
-                    },{
-                        where: {id_caisse: caisse}
-                    })
-                }
+            const {barClub, montant, date} = req.body;
+            const barSimpleJournal = await BarSimpleJournal.create({
+                recette: montant,
+                date: date,
+                id_barSimple: parseInt(barClub.split(' ')[0])
+            })
+            if(barSimpleJournal){
+                return res.redirect('/formFondBarClub?msg=Fond ajouter avec succes&type=bc&tc=alert-success')
+            }else{
+                return res.res.redirect('/formFondBarClub?msg=Une erreur s\'est produite. Le fond n\'a pas pu etre ajouter. Veillez reessayer&type=bc&tc=alert-danger')
             }
-            res.redirect('/formFondBarClub?msg=ajout&type=bc')
         }
         catch(e){
             res.redirect('/notFound')
+            return
         }
     })
 }
@@ -78,16 +68,35 @@ updateBSJournal = (app) => {
 }
 
 deleteBSJournal = (app) => {
-    app.delete('/deleteBSJournal/:id', (req, res) => {
-        BarSimpleJournal.findByPk(req.params.id)
-            .then(barSimpleJournal => {
-                const appartDel = barSimpleJournal;
-                BarSimpleJournal.destroy({where: {id_barSimple: appartDel.id_barSimple}})
-                    .then(_ => {
-                        res.redirect('/allBSJournal?msg=sup')
-                    })
-                    .catch(_ => res.redirect('/notFound'))
-            })
+    app.delete('/deleteBSJournal/:id', async (req, res) => {
+        try{
+            // update retourne un tableau.
+            const [logicDel] = await BarSimpleJournal.update(
+                { is_active: false },
+                { where: { id_journal: req.params.id } }
+            )
+            
+            if (logicDel > 0) {
+                return res.redirect('/allBSJournal?msg=Journal supprimé avec succès&tc=alert-danger')
+            } else {
+                return res.redirect('/allBSJournal?msg=Une erreur s\'est produite. Le journal n\'a pas pu etre supprimé. Veuillez réessayer&tc=alert-danger')
+            }
+        }
+        catch(e){
+            console.error(e);
+            res.redirect('/notFound')
+            return
+        }
+        // le code ci-dessous permet de supprimer un journal. il marche mais j'ai opter pour une supression logique
+        // BarSimpleJournal.findByPk(req.params.id)
+        //     .then(barSimpleJournal => {
+        //         const appartDel = barSimpleJournal;
+        //         BarSimpleJournal.destroy({where: {id_barSimple: appartDel.id_barSimple}})
+        //             .then(_ => {
+        //                 res.redirect('/allBSJournal?msg=sup')
+        //             })
+        //             .catch(_ => res.redirect('/notFound'))
+        //     })
     })
 }
 

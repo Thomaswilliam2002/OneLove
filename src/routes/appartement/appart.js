@@ -1,29 +1,23 @@
-const {Appartement, AppartFondJournal, AppartJournal} = require('../../db/sequelize')
+const {Appartement, AppartFondJournal, AppartJournal, sequelize} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 const {fn, col, literal} = require('sequelize');
 
 allAppart = (app) => {
     app.get('/allAppart', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant', 'caissier central'), (req, res) => {
         Appartement.findAll({
+            where: {is_active: true},
             order:[['id_appart', 'DESC']]
         })
             .then(appartements => {
                 const msg = "Liste recuperer avec succes"
                 //res.json({msg, data: appartements})
                 //console.log(appartements);
-                res.status(200).render('appart-list', {appartements: appartements, msg: req.query.msg});
+                res.status(200).render('appart-list', {appartements: appartements, msg: req.query.msg, tc: req.query.tc});
             })
             .catch(_ => {
                 // console.log('erreure de selection all')
                 res.redirect('/notFound');
             })
-    })
-}
-
-ell = (app) =>{
-    console.log("marche");
-    app.get('/allAppart', (req, res) => {
-        res.json('ca marche')
     })
 }
 
@@ -119,17 +113,13 @@ formEditAppart = (app) =>{
 
 updateAppart = (app) => {
     app.put('/updateAppart/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, prix, adresse, type, image, dispo} = req.body;
+        const {nom, prix, adresse, type, dispo} = req.body;
         Appartement.update({
             nom_appart: nom,
             prix_appart: prix,
-            adresse_appart: adresse, 
-            photo_appart: image,
+            adresse_appart: adresse,
             type_appart: type,
-            //desc_appart: '',
             dispo_appart: dispo,
-            //status: dispo,
-            //description: description
         }, 
         {
             where: {id_appart: req.params.id}
@@ -145,21 +135,57 @@ updateAppart = (app) => {
 }
 
 deleteAppart = (app) => {
-    app.delete('/deleteAppart/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Appartement.findByPk(req.params.id)
-            .then(appartement => {
-                const appartDel = appartement;
-                Appartement.destroy({where: {id_appart: appartDel.id_appart}})
-                    .then(_ => {
-                        const msg = "Suppression de l'Appartement avec succes"
-                        //res.json({msg})
-                        res.redirect('/allAppart?msg=sup');
-                    })
-                    .catch(_ => {
-                        //console.log('erreure de suppression')
-                        res.redirect('/notFound');
-                    })
-            })
+    app.delete('/deleteAppart/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+
+        try{
+            const t = await sequelize.transaction();
+        
+            // update retourne un tableau
+            const [logicDel] = await Appartement.update(
+                { is_active: false },
+                { where: { id_appart: req.params.id}, transaction: t }
+            )
+        
+            // desactiver toute l'historique du bar
+            await AppartJournal.update(
+                { is_active: false },
+                { where: { id_appart: req.params.id, is_active: true  }, transaction: t }
+            )
+
+            await AppartFondJournal.update(
+                { is_active: false },
+                { where: { id_appart: req.params.id, is_active: true  }, transaction: t }
+            )
+        
+            await t.commit();
+        
+            if (logicDel > 0) {
+                return res.redirect('/allAppart?msg=Appartement supprimé avec succès&tc=alert-danger')
+            } else {
+                return res.redirect('/allAppart?msg=Appartement introuvable&tc=alert-warning')
+            }
+        
+        }
+        catch(e){
+            console.error(e);
+            await t.rollback();
+            res.redirect('/notFound');
+            return;
+        }
+        // Appartement.findByPk(req.params.id)
+        //     .then(appartement => {
+        //         const appartDel = appartement;
+        //         Appartement.destroy({where: {id_appart: appartDel.id_appart}})
+        //             .then(_ => {
+        //                 const msg = "Suppression de l'Appartement avec succes"
+        //                 //res.json({msg})
+        //                 res.redirect('/allAppart?msg=sup');
+        //             })
+        //             .catch(_ => {
+        //                 //console.log('erreure de suppression')
+        //                 res.redirect('/notFound');
+        //             })
+        //     })
     })
 }
 

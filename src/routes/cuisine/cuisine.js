@@ -1,9 +1,10 @@
-const {Cuisine} = require('../../db/sequelize')
+const {Cuisine, CaisseJournal, sequelize} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 allCuisine = (app) => {
     app.get('/allCuisine', protrctionRoot, authorise('admin', 'comptable', 'caissier central'), (req, res) => {
         Cuisine.findAll({
+            where: { is_active: true },
             order:[['id_cuisine', 'DESC']]
         })
             .then(cuisines => {
@@ -56,7 +57,7 @@ oneCuisine = (app) => {
 
 addCuisine = (app) => {
     app.post('/addCuisine', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, nom_lo, prenom, age, selectGenderOptions, numero, adresse, email, desc} = req.body
+        const {nom, nom_lo, prenom, numero, adresse, email, desc} = req.body
         Cuisine.create({
             nom_cuisine: nom,
             nom_locataire: nom_lo,
@@ -67,8 +68,8 @@ addCuisine = (app) => {
             description: desc
         })
             .then(cuisine => {
-                const msg = "la cuisine " + req.body.name + "a ete ajouter avec succes"
-                res.redirect('/allCuisine?msg=ajout')
+                const msg = "la cuisine " + nom + "a ete ajouter avec succes"
+                res.redirect('/allCuisine?msg='+msg)
             })
             .catch(_ => {
                 console.error(_);
@@ -80,7 +81,7 @@ addCuisine = (app) => {
 
 updateCuisine = (app) => {
     app.put('/updateCuisine/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        const {nom, nom_lo, prenom, age, selectGenderOptions, numero, email, adresse, desc} = req.body;
+        const {nom, nom_lo, prenom, numero, email, adresse, desc} = req.body;
         Cuisine.update({
             nom_cuisine: nom,
             nom_locataire: nom_lo,
@@ -93,9 +94,7 @@ updateCuisine = (app) => {
             where: {id_cuisine: req.params.id}
         })
             .then(_ => {
-                // const msg = "Modification de la Cuisine avec succes"
-                // res.json({_})
-                res.redirect('/allCuisine?msg=modif')
+                res.redirect('/allCuisine?msg=Modification de la Cuisine avec succes&tc=alert-success')
             })
             .catch(_ => {
                 console.error(_);
@@ -106,26 +105,21 @@ updateCuisine = (app) => {
 }
 
 deleteCuisine = (app) => {
-    app.delete('/deleteCuisine/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Cuisine.findByPk(req.params.id)
-            .then(cuisine => {
-                const appartDel = cuisine;
-                Cuisine.destroy({where: {id_cuisine: appartDel.id_cuisine}})
-                    .then(_ => {
-                        // const msg = "Suppression de la Cuisine avec succes"
-                        // res.json({msg})
-                        res.redirect('/allCuisine?msg=sup')
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            }).catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
+    app.delete('/deleteCuisine/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try{
+            const t = sequelize.transaction();
+            await Cuisine.update({is_active: false}, {where: {id_cuisine: req.params.id}, transaction: t});
+            await CaisseJournal.update({is_active: false}, {where: {id_cuisine: req.params.id, is_active: true}, transaction: t});
+
+            await t.commit();
+            res.redirect('/allCuisine?msg=Suppression de la Cuisine avec succes&tc=alert-success');
+        }
+        catch(_){
+            console.error(_);
+            await t.rollback();
+            res.redirect('/notFound');
+            return; // On stoppe tout ici !
+        }
     })
 }
 

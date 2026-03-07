@@ -14,15 +14,15 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         id_mclose: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: true
         },
         id_chambre: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: true
         }, 
         date_arriver: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: true
         }, 
         date_depart: {
@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         commentaire: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

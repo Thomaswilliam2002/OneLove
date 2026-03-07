@@ -13,17 +13,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-        // sous_depart: { 
-        //     type: DataTypes.STRING,
-        //     allowNull: true
-        // },
-        // departement: {
-        //     type: DataTypes.STRING,
-        //     allowNull: true
-        // },
         description: {
             type: DataTypes.TEXT,
             allowNull: true
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

@@ -13,18 +13,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        superficie: {
-            type: DataTypes.FLOAT,
-            allowNull: true
-        },
-        // capaciter: {
-        //     type: DataTypes.INTEGER,
-        //     allowNull: true
-        // },
-        // nb_employer: {
-        //     type: DataTypes.INTEGER,
-        //     allowNull: true
-        // },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
+        }
     },
     {
         timestamps: true,

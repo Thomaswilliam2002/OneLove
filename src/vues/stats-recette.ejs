@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<%- include('head') %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+
+<body>
+    <div class="page-wrapper">
+        <%- (user.Personnel.type_personnel === 'admin') ? include('header') : include('header-staff') %>
+
+        <div class="main-container">
+            <%- (user.Personnel.type_personnel === 'admin') ? include('menu') : include('menu-staff') %>
+
+            <div class="app-container">
+                <div class="app-hero-header d-flex align-items-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><i class="ri-home-8-line"></i> <a href="/index">Accueil</a></li>
+                        <li class="breadcrumb-item active">Statistiques des Recettes</li>
+                    </ol>
+                </div>
+
+                <div class="app-body">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Choisir une Année</label>
+                                    <select id="navAnnee" class="form-select border-primary">
+                                        <option value="">Vue Globale (Par Année)</option>
+                                        <% annees.forEach(a => { %>
+                                            <option value="<%= a.annee %>" <%= (params.annee == a.annee) ? 'selected' : '' %>><%= a.annee %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                
+                                <% if (params.annee) { %>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Mois</label>
+                                    <select id="navMois" class="form-select border-info">
+                                        <option value="">Tous les mois</option>
+                                        <% for(let m=1; m<=12; m++) { %>
+                                            <option value="<%= m %>" <%= (params.mois == m) ? 'selected' : '' %>>
+                                                <%= new Date(0, m-1).toLocaleString('fr', {month: 'long'}) %>
+                                            </option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <% } %>
+
+                                <% if (params.annee && params.mois) { %>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Semaine</label>
+                                    
+                                        <select id="navSemaine" class="form-select border-warning">
+                                    
+                                            <option value="">Toutes les semaines</option>
+                                    
+                                            <% for(let s=1; s<=53; s++) { %>
+                                                <option value="<%= s %>" <%= (params.semaine == s) ? 'selected' : '' %>>
+                                                    Semaine <%= s %>
+                                                </option>
+                                            <% } %>
+                                    
+                                        </select>
+                                    </div>
+                                <% } %>
+
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary w-100" onclick="window.location.href='/stats/recette'">
+                                        <i class="ri-refresh-line"></i> Réinitialiser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row gx-3">
+                        <div class="col-xl-12">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5 class="card-title">Évolution des Recettes - Vue par <%= niveau.toUpperCase() %></h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="revenueChart" style="height: 350px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Détails des encaissements</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered customButtone m-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Période (<%= niveau %>)</th>
+                                            <% caisses.forEach(c => { %>
+                                                <th><%= c %></th>
+                                            <% }) %>
+                                            <th class="bg-light">Total Jour</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% chartData.forEach(row => { %>
+                                            <tr>
+                                                <td class="fw-bold"><%= row.y %></td>
+                                                <% let totalLigne = 0; %>
+                                                <% caisses.forEach(c => { %>
+                                                    <td>
+                                                        <%= (row[c] || 0).toLocaleString() %> 
+                                                        <% totalLigne += (row[c] || 0); %>
+                                                    </td>
+                                                <% }) %>
+                                                <td class="bg-light fw-bold text-primary"><%= totalLigne.toLocaleString() %> FCFA</td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="app-footer bg-white border-top">
+                    <span>© OneLove admin 2026</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('script') %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+
+    <script>
+        // 1. Initialisation du Graphique Morris
+        const rawData = JSON.parse(`<%- JSON.stringify(chartData) %>`);
+        const keysCaisses = JSON.parse(`<%- JSON.stringify(caisses) %>`);
+
+        if (rawData.length > 0) {
+            new Morris.Area({
+                element: 'revenueChart',
+                data: rawData,
+                xkey: 'y',
+                ykeys: keysCaisses,
+                labels: keysCaisses,
+                lineColors: ['#3498db', '#2ecc71', '#e74c3c', '#f1c40f'],
+                pointSize: 4,
+                fillOpacity: 0.3,
+                behaveLikeLine: true,
+                gridLineColor: '#e1e5ed',
+                hideHover: 'auto',
+                resize: true,
+                parseTime: false,
+                preUnits: 'CFA '
+            });
+        } else {
+            $('#revenueChart').html('<div class="alert alert-info">Aucune donnée disponible pour cette période.</div>');
+        }
+
+        // 2. Logique de Navigation (Redirection)
+        $('#navAnnee').change(function() {
+            const annee = $(this).val();
+            window.location.href = annee ? `/stats/recette/${annee}` : '/stats/recette';
+        });
+
+        $('#navMois').change(function() {
+            const annee = $('#navAnnee').val();
+            const mois = $(this).val();
+            window.location.href = mois ? `/stats/recette/${annee}/${mois}` : `/stats/recette/${annee}`;
+        });
+
+        $('#navSemaine').change(function() {
+
+        const annee = $('#navAnnee').val();
+        const mois = $('#navMois').val();
+        const semaine = $(this).val();
+
+        if(semaine){
+            window.location.href = `/stats/recette/${annee}/${mois}/${semaine}`;
+        }else{
+            window.location.href = `/stats/recette/${annee}/${mois}`;
+        }
+
+        });
+    </script>
+</body>
+</html>

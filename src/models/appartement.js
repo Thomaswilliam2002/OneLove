@@ -17,14 +17,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true
         },
-        // photo_appart: {
-        //     type: DataTypes.STRING,
-        //     allowNull: true
-        // },
-        // type_appart: {
-        //     type: DataTypes.STRING,
-        //     allowNull: true
-        // },
         desc_appart: {
             type: DataTypes.TEXT,
             allowNull: true
@@ -33,13 +25,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        // status: {
-        //     type: DataTypes.STRING,
-        //     allowNull: false
-        // },
         description: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

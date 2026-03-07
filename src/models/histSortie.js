@@ -17,18 +17,31 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        id_caisse: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         id_probal: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
         receveur: { // celui qui recois 
-            type: DataTypes.TEXT,
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        type_lieu_receveur:{
+            type: DataTypes.STRING,
             allowNull: false
         },
         commantaire: { // celui qui recois 
             type: DataTypes.TEXT,
             allowNull: true
         },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
+        }
     },
     {
         timestamps: true,

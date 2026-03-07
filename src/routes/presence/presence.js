@@ -216,9 +216,9 @@ addAbsence = (app) => {
 allPresence = (app) => {
     app.get('/allPresence', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
         const histps = await Presence.findAll({
-            where: {etat_presence: 'Present'},
+            where: {etat_presence: 'Present', is_active: true},
             include:[
-                {model: Personnel}
+                {model: Personnel, where: {is_active: true}}
             ],
             order:[['id_presence', 'DESC']]
         })
@@ -234,9 +234,9 @@ allPresence = (app) => {
 allAbsence = (app) => {
     app.get('/allAbsence', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
         const histas = await Presence.findAll({
-            where: {etat_presence: 'Absent'},
+            where: {etat_presence: 'Absent', is_active: true},
             include:[
-                {model: Personnel}
+                {model: Personnel, where: {is_active: true}}
             ]
         })
         if(histas){
@@ -253,7 +253,7 @@ deletePresence = (app) => {
         Presence.findByPk(req.params.id)
             .then(presence => {
                 const appartDel = presence;
-                Presence.destroy({where: {id_presence: appartDel.id_presence}})
+                Presence.update({is_active: false},{where: {id_presence: appartDel.id_presence}})
                     .then(_ => {
                         res.redirect('/presence')
                     })

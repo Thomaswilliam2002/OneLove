@@ -6,6 +6,7 @@ allCCJournal = (app) => {
             include:[
                 {model: CrazyClub}
             ],
+            where: {is_active: true},
             order:[['id_journal', 'DESC']]
         })
             .then(ccJournals => {
@@ -40,33 +41,12 @@ oneCCJournal = (app) => {
 addCCJournal = (app) => {
     app.post('/addCCJournal', async(req, res) => {
         try{
-            const {barClub, montant, date, caisse} = req.body;
-            if(caisse && caisse === 'null'){
-                const ccJournal = await CrazyClubJournal.create({
-                    recette: montant,
-                    depense: 0,
-                    date: date,
-                    id_cclub: parseInt(barClub.split(' ')[0])
-                })
-            }else if(caisse && caisse !== 'null'){
-                const ccJournal = CrazyClubJournal.create({
-                    recette: montant,
-                    depense: 0,
-                    date: date,
-                    id_barVip: parseInt(barClub.split(' ')[0])
-                })
-
-                const caisse_ = await Caisse.findByPk(caisse)
-                if(caisse_){
-                    let recette = caisse_.recette - montant < 0 ? 0 : caisse_.recette - montant
-                    const up = await Caisse.update({
-                        recette : recette,
-                    },{
-                        where: {id_caisse: caisse}
-                    })
-                }
-            }
-            res.redirect('/formFondBarClub?msg=ajout&type=bc' )
+            const ccJournal = CrazyClubJournal.create({
+                recette: montant,
+                date: date,
+                id_barVip: parseInt(barClub.split(' ')[0])
+            })
+            res.redirect('/formFondBarClub?msg=Journal ajouter avec succes&type=bc&tc=alert-success' )
         }catch(e){
             console.error(e);
             res.redirect('/notFound');
@@ -93,20 +73,25 @@ updateCCJournal = (app) => {
 }
 
 deleteCCJournal = (app) => {
-    app.delete('/deleteCCJournal/:id', (req, res) => {
-        CrazyClubJournal.findByPk(req.params.id)
-            .then(ccJournal => {
-                const appartDel = ccJournal;
-                CrazyClubJournal.destroy({where: {id_cclub: appartDel.id_cclub}})
-                    .then(_ => {
-                        res.redirect('/allCCJournal?msg=sup')
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
+    app.delete('/deleteCCJournal/:id', async (req, res) => {
+        try{
+            // update retourne un tableau.
+            const [logicDel] = await CrazyClubJournal.update(
+                { is_active: false },
+                { where: { id_journal: req.params.id } }
+            )
+            
+            if (logicDel > 0) {
+                return res.redirect('/allCCJournal?msg=Journal supprimé avec succès&tc=alert-danger')
+            } else {
+                return res.redirect('/allCCJournal?msg=Une erreur s\'est produite. Le journal n\'a pas pu etre supprimé. Veuillez réessayer&tc=alert-danger')
+            }
+        }
+        catch(e){
+            console.error(e);
+            res.redirect('/notFound')
+            return
+        }
     })
 }
 

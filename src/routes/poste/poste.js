@@ -1,5 +1,6 @@
-const {Poste} = require('../../db/sequelize')
+const {Poste, Personnel, sequelize, Occupe} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
+const { Op } = require('sequelize')
 
 // Poste.findOne({
 //     where: {nom_poste: 'Admin'}
@@ -24,6 +25,7 @@ const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 allPoste = (app) => {
     app.get('/allPoste', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         Poste.findAll({
+            where:{is_active: true},
             order:[['id_poste', 'DESC']]
         })
             .then(postes => {
@@ -66,7 +68,7 @@ addPoste = (app) => {
             .then(poste => {
                 const msg = "le Poste " + req.body.nom + "a ete ajouter avec succes"
                 //res.json({msg, data: poste})
-                res.redirect('allPoste?msg=ajout');
+                res.redirect('allPoste?msg=' + msg);
             })
             .catch(_ => {
                 console.error(_);
@@ -99,20 +101,56 @@ updatePoste = (app) => {
 }
 
 deletePoste = (app) => {
-    app.delete('/deletePoste/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Poste.findByPk(req.params.id)
-            .then(poste => {
-                const appartDel = poste;
-                Poste.destroy({where: {id_poste: appartDel.id_poste}})
-                    .then(_ => {
-                        res.redirect('/allPoste?msg=sup')
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            })
+    app.delete('/deletePoste/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        let t;
+
+        try {
+
+            t = await sequelize.transaction();
+
+            // récupérer les personnels occupant ce poste
+            const occupe = await Occupe.findAll({
+                include: [{
+                    model: Personnel,
+                    attributes: ['id_personnel'],
+                    where: { is_active: true },
+                    required: true
+                }],
+                where: { id_poste: req.params.id },
+                transaction: t
+            });
+
+            const tabPersonnel = occupe.map(o => o.Personnel.id_personnel);
+
+            // désactiver les occupations
+            await Occupe.update(
+                { is_active: false },
+                { where: { id_poste: req.params.id }, transaction: t }
+            );
+
+            // désactiver les personnels
+            if (tabPersonnel.length > 0) {
+                await Personnel.update(
+                    { is_active: false },
+                    {
+                        where: { id_personnel: { [Op.in]: tabPersonnel } },
+                        transaction: t
+                    }
+                );
+            }
+
+            await t.commit();
+
+            res.redirect('/allPoste?msg=Poste supprimer avec succes&tc=alert-success');
+
+        } catch (error) {
+
+            console.error(error);
+
+            if (t) await t.rollback();
+
+            res.redirect('/notFound');
+        }
     })
 }
 

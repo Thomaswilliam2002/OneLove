@@ -33,9 +33,9 @@ deleteOccupent = (app) => {
         Occupent.findByPk(req.params.id)
             .then(occupent => {
                 const appartDel = occupent;
-                Occupent.destroy({where: {id_occup: appartDel.id_occup}})
+                Occupent.update({is_active: false}, {where: {id_occup: appartDel.id_occup}})
                     .then(_ => {
-                        res.redirect('/oneChambre/' + req.params.chambre + '/' + req.params.mclose)
+                        res.redirect('/oneChambre/' + req.params.chambre + '/' + req.params.mclose + '?msg=Suppression de l\'occupant avec succes&tc=alert-success')
                     })
                     .catch(_ => {
                         console.error(_);

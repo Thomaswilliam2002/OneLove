@@ -58,26 +58,11 @@
           
           <div class="app-body">
             <% if(msg) {%>
-              <% if(msg === 'ajout') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                  <b>Appartement </b> ajouter avec succes !
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
-              <% if(msg === 'modif') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                  <b>Appartement </b> modifier avec succes !
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
-              <% if(msg === 'sup') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                  <b>Appartement </b> supprimer avec succes !
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
+              <div class="alert bg-white border alert-dismissible fade show <%= tc %>" role="alert">
+                <%= msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
             <% }%>
-
             <!-- Row starts -->
             <div class="row gx-3">
               <div class="col-sm-12">
@@ -113,7 +98,7 @@
                             <td>
                               <div class="d-inline-flex gap-1">
                                 <!-- ----------------------------------------------------------------------------------- -->
-                                
+                                <%if(['comptable', 'admin'].includes(user.Poste.nom_poste.toLowerCase())){%>
                                   <!-- Card starts appartement.id_appart-->
                                       <!-- Button trigger modal -->
                                       <button type="button" data-bs-toggle="modal"
@@ -164,6 +149,7 @@
                                   data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Modifier">
                                   <i class="ri-edit-box-line"></i>
                                 </a>
+                              <%}%>
                                 <a href="/oneAppart/<%= appartement.id_appart %>" class="btn btn-outline-info btn-sm"
                                   data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Voir les Details">
                                   <i class="ri-eye-line"></i>

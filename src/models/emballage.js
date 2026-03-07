@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         id_categ: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     },
     {

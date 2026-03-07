@@ -1,6 +1,6 @@
 const {CategorieDepense, Depense} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
-const {fn, col} = require('sequelize');
+const {fn, col, where} = require('sequelize');
 const formAddDepense = (app) => {
     app.get('/formAddDepense', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
@@ -39,10 +39,12 @@ const allDepense = (app) => {
         try{
             const depenses = await Depense.findAll({
                 include:[
-                    {model:CategorieDepense}
-                ]
+                    {model:CategorieDepense, where:{is_active: true}}
+                ],
+                where:{is_active: true},
+                order:[['id_depense', 'DESC']]
             })
-            const categories = await CategorieDepense.findAll()
+            const categories = await CategorieDepense.findAll({where:{is_active: true}});
             // const moisExpr = fn('TO_CHAR', col('date'), 'YYYY-MM');
 
             // const sum_depenses = await Depense.findAll({
@@ -141,11 +143,14 @@ const updateDepense = (app) => {
 const deleteDepense = (app) => {
     app.delete('/deleteDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try{
-            const depense = await Depense.destroy({
+
+            const [depense] = await Depense.update({
+                is_active: false
+            },{
                 where:{id_depense: req.params.id}
             })
             let msg = ""
-            if(depense){
+            if(depense > 0){
                 msg = "Dépense supprimer avec succès"
             }else{
                 msg = "Une erreur s'est produite. La dépense n'a pas pu être supprimer. Veillez réessayer !"

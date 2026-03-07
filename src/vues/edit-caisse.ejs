@@ -81,32 +81,31 @@
                       </div>
                       <div class="col-xxl-3 col-lg-4 col-sm-6">
                         <div class="mb-3">
-                          <label class="form-label" for="a2">Solde initial <span class="text-danger">*</span></label>
-                          <input type="number" min="0" step="0.01" class="form-control" value="<%= caisse.solde %>" name="solde_init" id="a2" required>
+                          <label class="form-label" for="a2">Choisire le caissier a remplacer <span class="text-danger">*</span></label>
+                          <select class="form-select" id="dep" name="old_caissier" required>
+                            <% if(caisse?.Personnels){ %>
+                              <% caisse?.Personnels.forEach(personnel => {%>
+                                <option value="<%= personnel.id_personnel %>"><%= personnel.nom %> <%= personnel.prenom %> </option>
+                              <% }) %>
+                            <% }else{ %>
+                              <option value="null">Aucun caissier disponinble</option>
+                            <% } %>
+                          </select> 
                         </div>
                       </div>
+
+                      <input type="hidden" name="id_caisse" value="<%= caisse.id_caisse %>">
+
                       <div class="col-xxl-3 col-lg-4 col-sm-6">
                         <div class="mb-3">
-                          <label class="form-label" for="a2">Recette initial <span class="text-danger">*</span></label>
-                          <input type="number" min="0" step="0.01" class="form-control" value="<%= caisse.recette %>" name="recette_init" id="a2" required>
-                        </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-6">
-                        <div class="mb-3">
-                          <label class="form-label" for="a2">Depence initial <span class="text-danger">*</span></label>
-                          <input type="number" min="0" step="0.01" class="form-control" value="<%= caisse.depense %>" name="depence_init" id="a2" required>
-                        </div>
-                      </div>
-                      <div class="col-xxl-3 col-lg-4 col-sm-6">
-                        <div class="mb-3">
-                          <label class="form-label" for="a2">Choisire le responsable caissier <span class="text-danger">*</span></label>
-                          <select class="form-select" id="dep" name="comptable">
+                          <label class="form-label" for="a2">Choisire le nouveau caissier <span class="text-danger">*</span></label>
+                          <select class="form-select" id="dep" name="new_caissier" required>
                             <% if(personnels){ %>
                               <% personnels.forEach(personnel => { %>
                                 <option value="<%= personnel.Personnel.id_personnel %>"><%= personnel.Personnel.nom %> <%= personnel.Personnel.prenom %> </option>
                               <% }) %>
                             <% }else{ %>
-                              <option value="null">Aucun Comptable disponinble</option>
+                              <option value="null">Aucun caissier disponinble</option>
                             <% } %>
                           </select> 
                         </div>
@@ -157,6 +156,8 @@
             window.location.reload();
         }
       });
+      const data = JSON.parse(`<%- JSON.stringify(caisse) %>`);
+      console.log(data);
     </script>
   </body>
 

@@ -5,8 +5,9 @@ allCuJournal = (app) => {
     app.get('/allCuJournal', (req, res) => {
         Cuisine.findAll({
             include:[
-                {model: CuisineJournal}
+                {model: CuisineJournal, where: {is_active: true}}
             ],
+            where: {is_active: true},
             order:[['id_cuisine', 'DESC']]
         })
             .then(jcuisines => {
@@ -74,24 +75,16 @@ updateCuJournal = (app) => {
 }
 
 deleteCuJournal = (app) => {
-    app.delete('/deleteCuJournal/:id', (req, res) => {
-        CuisineJournal.findByPk(req.params.id)
-            .then(jcuisine => {
-                const appartDel = jcuisine;
-                CuisineJournal.destroy({where: {id_journal: appartDel.id_journal}})
-                    .then(_ => {
-                        res.redirect('/allCuJournal?msg=sup&indice' + req.query.indice)
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-            }).catch(_ => {
-                console.error(_);
-                res.redirect('/notFound');
-                return; // On stoppe tout ici !
-            })
+    app.delete('/deleteCuJournal/:id', async (req, res) => {
+       try{
+           await CuisineJournal.update({is_active: false}, {where: {id_journal: req.params.id}});
+           res.redirect('/allCuJournal?msg=Journal supprime avec succes&tc=alert-success&indice' + req.query.indice)
+       }
+       catch(_){
+           console.error(_);
+           res.redirect('/notFound');
+           return; // On stoppe tout ici !
+       }
     })
 }
 
