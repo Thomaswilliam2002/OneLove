@@ -1,6 +1,6 @@
 const { where, Op } = require('sequelize')
 const {MaisonColse} = require('../../db/sequelize')
-const {Chambre, ChambreJournal, sequelize, ChambreJournal, Occupent} = require('../../db/sequelize')
+const {Chambre, sequelize, ChambreJournal, Occupent} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 // formAddAdmin = (app) =>{
