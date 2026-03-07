@@ -239,7 +239,6 @@ app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, re
             recetteCuisine: sum_cui || 0,
             recetteAppart: sum_ap || 0,
             recetteChambre: sum_ch || 0,
-            sum_caisse_recette: sum_caisse_recette || 0,
             sum_depense: sum_depense || 0
         };
 
@@ -263,7 +262,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
         const [
             nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
-            sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai,sum_depense
+            ecette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai,sum_depense
         ] = await Promise.all([
             Personnel.count(),
             Appartement.count(),
@@ -280,7 +279,6 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             AppartJournal.sum("loyer", { where: { date_debut: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             ChambreJournal.sum("loyer", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             // Totaux globaux
-            Caisse.sum("recette"),
             MaisonColse.count(),
             Chambre.count(),
             Cuisine.count(),
@@ -311,7 +309,6 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
             "recetteCuisine": sum_cui || 0,
             "recetteAppart": sum_ap || 0,
             "recetteChambre": sum_ch || 0,
-            "sum_caisse_recette": sum_caisse_recette || 0,
             "sum_depense": sum_depense || 0
         };
 
