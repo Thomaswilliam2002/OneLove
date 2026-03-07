@@ -413,7 +413,7 @@
                       <td>
                         <% 
                           const journalDuJour = chambre.ChambreJournals.find(j => {
-                            const journalDate = new Date(j.date).toISOString().split('T')[0];
+                            const journalDate = j.date;
                             return journalDate === today;
                           });
                           if(journalDuJour){
