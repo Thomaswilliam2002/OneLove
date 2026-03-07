@@ -1,4 +1,4 @@
-const {Categorie, Produit, Emballage, sequelize, HistEntrer, HistSortie, sequelize} = require('../../db/sequelize')
+const {Categorie, Produit, Emballage, sequelize, HistEntrer, HistSortie} = require('../../db/sequelize')
 
 const { Op } = require('sequelize');
 
