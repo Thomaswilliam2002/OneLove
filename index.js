@@ -173,7 +173,7 @@ app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, re
         const [
             nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
-            sum_caisse_recette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai, sum_depense
+            nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai, sum_depense
         ] = await Promise.all([
 
             Personnel.count(),
@@ -206,7 +206,6 @@ app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, re
                 where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             }),
 
-            Caisse.sum("recette"),
             MaisonColse.count(),
             Chambre.count(),
             Cuisine.count(),
