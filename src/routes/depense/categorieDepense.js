@@ -87,44 +87,45 @@ updateCategorieDepense = (app) => {
     })
 }
 
-app.delete('/deleteCategorieDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+deleteCategorieDepense = (app) =>{
+    app.delete('/deleteCategorieDepense/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
 
-    const t = await sequelize.transaction();
+        const t = await sequelize.transaction();
 
-    try{
+        try{
 
-        await Depense.update(
-            {is_active: false},
-            {where: {id_categ: req.params.id}, transaction: t}
-        );
+            await Depense.update(
+                {is_active: false},
+                {where: {id_categ: req.params.id}, transaction: t}
+            );
 
-        const categorie = await CategorieDepense.update(
-            {is_active: false},
-            {where: {id_categ: req.params.id}, transaction: t}
-        );
+            const categorie = await CategorieDepense.update(
+                {is_active: false},
+                {where: {id_categ: req.params.id}, transaction: t}
+            );
 
-        await t.commit();
+            await t.commit();
 
-        let msg = "";
+            let msg = "";
 
-        if(categorie[0] > 0){
-            msg = "Categorie supprimée avec succès";
-        }else{
-            msg = "La categorie n'existe pas ou est déjà supprimée.";
+            if(categorie[0] > 0){
+                msg = "Categorie supprimée avec succès";
+            }else{
+                msg = "La categorie n'existe pas ou est déjà supprimée.";
+            }
+
+            res.redirect(`/allCategorieDepense?msg=${msg}&tc=text-danger`);
+
+        }catch(err){
+
+            await t.rollback();
+            console.error(err);
+            res.redirect('/notFound');
+
         }
 
-        res.redirect(`/allCategorieDepense?msg=${msg}&tc=text-danger`);
-
-    }catch(err){
-
-        await t.rollback();
-        console.error(err);
-        res.redirect('/notFound');
-
-    }
-
-});
-
+    });
+}
 module.exports = {
     formAddCategorieDepense,
     allCategorieDepense,

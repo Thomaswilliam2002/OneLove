@@ -717,6 +717,8 @@ caisseProduit.allProduitCaisse(app);
 caisseProduit.addHistCaisse(app);
 caisseProduit.allHistCaisse(app);
 caisseProduit.deleteHistCaisse(app);
+caisseProduit.statsRecetteMoris(app);
+caisseProduit.allCaisseArticle(app);
 
 caisseJournal.allCJournal(app);
 caisseJournal.oneCJournal(app);
