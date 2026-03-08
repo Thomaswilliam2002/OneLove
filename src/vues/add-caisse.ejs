@@ -86,7 +86,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-white text-success border-success"><i class="fas fa-cash-register"></i></span>
                                     <select name="id_caisse" class="form-select border-success shadow-sm" required>
-                                        <% if(caisses){ caisse.forEach(c => { %>
+                                        <% if(caisse){ caisse.forEach(c => { %>
                                             <option value="<%= c.id_caisse %>"><%= c.nom %> (<%= c.type_lieu %>)</option>
                                         <% })} else { %>
                                             <option value="" disabled selected>Aucune Caisse disponible</option>
