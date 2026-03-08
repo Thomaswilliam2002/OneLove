@@ -3333,3 +3333,89 @@ module.exports = {
   //     );
   // };
   
+
+  addHSortie = (app) => {
+    app.post('/addHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+        //console.log('ici')
+        const {nbr, prix, type, idpro, dest, cmm} = req.body;
+        if(req.query.art === 'produit'){
+            Produit.findByPk(req.params.id)
+                .then(produit => {
+                    const q = produit.quantiter
+                    HistSortie.create({
+                        quantiter: nbr,
+                        prix_unit: prix,
+                        type: type,
+                        id_probal: idpro,
+                        receveur: dest,
+                        commantaire: cmm
+                    })
+                        .then(hsortie => {
+                            console.log(hsortie)
+                            Produit.update({
+                                quantiter: parseInt(q) - parseInt(nbr)
+                            },{
+                                where: {id_produit:produit.id_produit}
+                            })
+                                .then(art => {
+                                    res.redirect('/allProduit?type=Produit envoyé avec succes&tc=alert-success&msg=ajout')
+                                })
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
+                        })
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
+                })
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
+        }
+        else if(req.query.art === 'emballage'){
+            Emballage.findByPk(req.params.id)
+                .then(emballage => {
+                    const q = emballage.quantiter
+                    HistSortie.create({
+                        quantiter: nbr,
+                        prix_unit: prix,
+                        type: type,
+                        id_probal: idpro,
+                        receveur: dest,
+                        commantaire: cmm
+                    })
+                        .then(hsortie => {
+                            Emballage.update({
+                                quantiter: parseInt(q) - parseInt(nbr)
+                            },{
+                                where: {id_emballage:emballage.id_emballage}
+                            })
+                                .then(art => {
+                                    res.redirect('/allEmballage?type=emballage envoyé avec succes&tc=alert-success&msg=ajout')
+                                })
+                                .catch(_ => {
+                                    console.error(_);
+                                    res.redirect('/notFound');
+                                    return; // On stoppe tout ici !
+                                })
+                        })
+                        .catch(_ => {
+                            console.error(_);
+                            res.redirect('/notFound');
+                            return; // On stoppe tout ici !
+                        })
+                })
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; // On stoppe tout ici !
+                })
+        }
+    })
+}

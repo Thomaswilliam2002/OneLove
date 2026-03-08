@@ -18,92 +18,65 @@ allHSortie = (app) => {
 }
 
 addHSortie = (app) => {
-    app.post('/addHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        //console.log('ici')
-        const {nbr, prix, type, idpro, dest, cmm} = req.body;
-        if(req.query.art === 'produit'){
-            console.log('id ',idpro)
-            Produit.findByPk(req.params.id)
-                .then(produit => {
-                    const q = produit.quantiter
-                    HistSortie.create({
-                        quantiter: nbr,
-                        prix_unit: prix,
-                        type: type,
-                        id_probal: idpro,
-                        receveur: dest,
-                        commantaire: cmm
-                    })
-                        .then(hsortie => {
-                            console.log(hsortie)
-                            Produit.update({
-                                quantiter: parseInt(q) - parseInt(nbr)
-                            },{
-                                where: {id_produit:produit.id_produit}
-                            })
-                                .then(art => {
-                                    res.redirect('/allProduit?type=Produit envoyé avec succes&tc=alert-success&msg=ajout')
-                                })
-                                .catch(_ => {
-                                    console.error(_);
-                                    res.redirect('/notFound');
-                                    return; // On stoppe tout ici !
-                                })
-                        })
-                        .catch(_ => {
-                            console.error(_);
-                            res.redirect('/notFound');
-                            return; // On stoppe tout ici !
-                        })
-                })
-                .catch(_ => {
-                    console.error(_);
-                    res.redirect('/notFound');
-                    return; // On stoppe tout ici !
-                })
-        }
-        else if(req.query.art === 'emballage'){
-            Emballage.findByPk(req.params.id)
-                .then(emballage => {
-                    const q = emballage.quantiter
-                    HistSortie.create({
-                        quantiter: nbr,
-                        prix_unit: prix,
-                        type: type,
-                        id_probal: idpro,
-                        receveur: dest,
-                        commantaire: cmm
-                    })
-                        .then(hsortie => {
-                            Emballage.update({
-                                quantiter: parseInt(q) - parseInt(nbr)
-                            },{
-                                where: {id_emballage:emballage.id_emballage}
-                            })
-                                .then(art => {
-                                    res.redirect('/allEmballage?type=emballage envoyé avec succes&tc=alert-success&msg=ajout')
-                                })
-                                .catch(_ => {
-                                    console.error(_);
-                                    res.redirect('/notFound');
-                                    return; // On stoppe tout ici !
-                                })
-                        })
-                        .catch(_ => {
-                            console.error(_);
-                            res.redirect('/notFound');
-                            return; // On stoppe tout ici !
-                        })
-                })
-                .catch(_ => {
-                    console.error(_);
-                    res.redirect('/notFound');
-                    return; // On stoppe tout ici !
-                })
-        }
-    })
-}
+    app.post('/addHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
 
+        try {
+
+            const { nbr, prix, type, idpro, dest, cmm } = req.body;
+            const art = req.query.art;
+            const [desti, type_lieu, id_caisse] = dest.split('|');
+            let model;
+            let idField;
+            let redirectUrl;
+
+            if (art === 'produit') {
+                model = Produit;
+                idField = 'id_produit';
+                redirectUrl = '/allProduit?msg=Produit envoye avec succes&tc=alert-success'; 
+            }
+
+            if (art === 'emballage') {
+                model = Emballage;
+                idField = 'id_emballage';
+                redirectUrl = '/allEmballage?msg=Emballage envoye avec succes&tc=alert-success';
+            }
+            
+            const article = await model.findByPk(req.params.id);
+
+            if (!article) {
+                return res.redirect('/notFound');
+            }
+
+            const q = article.quantiter;
+
+            await HistSortie.create({
+                quantiter: nbr,
+                prix_unit: prix,
+                type: type,
+                id_probal: idpro,
+                receveur: desti,
+                type_lieu_receveur: type_lieu,
+                commantaire: cmm,
+                id_caisse: id_caisse
+            });
+
+            await model.update({
+                quantiter: parseInt(q) - parseInt(nbr)
+            }, {
+                where: {
+                    [idField]: article[idField]
+                }
+            });
+
+            res.redirect(redirectUrl);
+
+        } catch (error) {
+            console.error(error);
+            res.redirect('/notFound');
+        }
+
+    });
+}
 const deleteHSortie = (app) => {
     app.delete('/deleteHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try {

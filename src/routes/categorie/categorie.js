@@ -12,7 +12,7 @@ allCateg = (app) => {
         })
             .then(categories => {
                 //const msg = "Liste recuperer avec succes"
-                res.status(200).render('add-categ', {categories: categories, msg: req.query.msg});
+                res.status(200).render('add-categ', {categories: categories, msg: req.query.msg, tc: req.query.tc});
             })
             .catch(_ => {
                 console.error(_);
