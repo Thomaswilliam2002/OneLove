@@ -35,7 +35,7 @@ addBarS = (app) => {
             .then(barS => {
                 const msg = "le Bar " + req.body.nom + "a ete ajouter avec succes"
                 //res.json({msg, data: barS})
-                res.redirect('/allBarClub?type=bars&msg=ajout')
+                res.redirect('/allBarClub?type=bars&msg=Bar Simple ajouter avec succes&tc=alert-success')
             })
             .catch(err => res.redirect('/notFound'))
     })

@@ -51,6 +51,10 @@ assignCaisse = (app) =>{
         try {
             const { id_caisse, id_personnel } = req.body;
 
+            if (!id_caisse || !id_personnel) {
+                return res.redirect('/formAddCaisse?msg=Veuillez remplir tous les champs&tc=alert-warning');
+            }
+
             // On vérifie si le lien existe déjà pour éviter les doublons
             const existeDeja = await CaissePersonnel.findOne({ 
                 where: { id_caisse, id_personnel, is_active: true } 
@@ -76,6 +80,10 @@ addCaisse = (app) => {
     app.post('/addCaisse', async (req, res) => {
         try {
             const { nom, id_personnel, lieu_composite } = req.body;
+
+            if (!nom || !id_personnel || !lieu_composite) {
+                return res.redirect('/formAddCaisse?msg=Veuillez remplir tous les champs&tc=alert-warning');
+            }
         
             // 1. Vérification de l'existence du nom (Optimisée avec findOne)
             const caisseExistante = await Caisse.findOne({

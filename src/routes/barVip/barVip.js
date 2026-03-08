@@ -36,7 +36,7 @@ addBarV = (app) => {
             .then(barS => {
                 const msg = "le Bar  VIP" + req.body.name + "a ete ajouter avec succes"
                 //res.json({msg, data: barS})
-                res.redirect('/allBarClub?type=barv&msg=ajout')
+                res.redirect('/allBarClub?type=barv&msg=Bar VIP ajouter avec succes&tc=alert-success')
             })
             .catch(_ => res.redirect('/notFound'))
     })

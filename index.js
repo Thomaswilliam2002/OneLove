@@ -496,7 +496,7 @@ app.get('/allBarClub', protrctionRoot, authorise('admin', 'comptable'), (req, re
                 .then(barv => {
                     CrazyClub.findAll()
                         .then(crazyc => {
-                            res.render('all-bars-club', {bars: bars, barv: barv, crazyc: crazyc, msg: req.query.msg, type: req.query.type})
+                            res.render('all-bars-club', {bars: bars, barv: barv, crazyc: crazyc, msg: req.query.msg, type: req.query.type, tc: req.query.tc})
                         })
                         .catch(_ => console.log('erreure de selection all' + _))
                 })
