@@ -36,8 +36,20 @@ oneCClub = (app) => {
 }
 
 addCClub = (app) => {
-    app.post('/addCClub', protrctionRoot, authorise('admin', 'comptable'), protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.post('/addCClub', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         const {nom, adresse} = req.body;
+
+        const exist = await CrazyClub.findOne({
+            where: {
+                nom: nom,
+                is_active: true
+            }
+        })
+
+        if (exist) {
+            return res.redirect('/Add?msg=Un Club portant ce nom existe deja.Pour eviter toute confusion, veuillez choisir un autre nom&tc=alert-warning');
+        }
+
         CrazyClub.create({
             nom: nom,
             adresse: adresse,

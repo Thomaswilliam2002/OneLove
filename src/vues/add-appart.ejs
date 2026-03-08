@@ -56,7 +56,12 @@
 
           <!-- App body starts -->
           <div class="app-body">
-
+            <% if(msg) { %>
+              <div class="alert <%= tc || 'alert-info' %> alert-dismissible fade show" role="alert">
+                <%= msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <% } %>
             <!-- Row starts -->
             <div class="row gx-3">
               <div class="col-sm-12">

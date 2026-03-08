@@ -178,46 +178,46 @@ app.get('/recap', protrctionRoot, authorise('admin','comptable'), async (req, re
             nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai, sum_depense
         ] = await Promise.all([
 
-            Personnel.count(),
-            Appartement.count(),
-            BarSimple.count(),
-            BarVip.count(),
-            CrazyClub.count(),
+            Personnel.count({ where: { is_active: true } }),
+            Appartement.count({ where: { is_active: true } }),
+            BarSimple.count({ where: { is_active: true } }),
+            BarVip.count({ where: { is_active: true } }),
+            CrazyClub.count({ where: { is_active: true } }),
 
             BarSimpleJournal.sum("recette", {
-                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+                where: { is_active: true ,date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             }),
 
             BarVipJournal.sum("recette", {
-                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+                where: { is_active: true ,date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             }),
 
             CrazyClubJournal.sum("recette", {
-                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+                where: { is_active: true ,date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             }),
 
             CuisineJournal.sum("montant_verser", {
-                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+                where: { is_active: true ,date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             }),
 
             AppartJournal.sum("loyer", {
-                where: { date_debut: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+                where: { is_active: true ,date_debut: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             }),
 
             ChambreJournal.sum("loyer", {
-                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+                where: { is_active: true ,date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             }),
 
-            MaisonColse.count(),
-            Chambre.count(),
-            Cuisine.count(),
-            Categorie.count(),
-            Produit.count(),
-            Emballage.count(),
-            Caisse.count(),
+            MaisonColse.count({ where: { is_active: true } }),
+            Chambre.count({ where: { is_active: true } }),
+            Cuisine.count({ where: { is_active: true } }),
+            Categorie.count({ where: { is_active: true } }),
+            Produit.count({ where: { is_active: true } }),
+            Emballage.count({ where: { is_active: true } }),
+            Caisse.count({ where: { is_active: true } }),
 
             Depense.sum("montant", {
-                where: { date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
+                where: { is_active: true ,date: { [Op.gte]: todayStart, [Op.lt]: todayEnd } }
             })
         ]);
 
@@ -264,31 +264,31 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
         const [
             nb_personnel, nb_appart, nb_barSimple, nb_barVip, nb_crazyClub,
             sum_bs, sum_bv, sum_cc, sum_cui, sum_ap, sum_ch,
-            ecette, nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai,sum_depense
+            nb_mc, nb_ch, nb_cu, nb_cat, nb_prod, nb_emb, nb_cai,sum_depense
         ] = await Promise.all([
-            Personnel.count(),
-            Appartement.count(),
-            BarSimple.count(),
-            BarVip.count(),
-            CrazyClub.count(),
+            Personnel.count({ where: { is_active: true } }),
+            Appartement.count({ where: { is_active: true } }),
+            BarSimple.count({ where: { is_active: true } }),
+            BarVip.count({ where: { is_active: true } }),
+            CrazyClub.count({ where: { is_active: true } }),
             // Sommes avec gestion de la période (Gte = Supérieur ou égal, Lt = Strictement inférieur)
              // -----------------------------------------------------------
             
-            BarSimpleJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            BarVipJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            CrazyClubJournal.sum("recette", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            CuisineJournal.sum("montant_verser", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            AppartJournal.sum("loyer", { where: { date_debut: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
-            ChambreJournal.sum("loyer", { where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            BarSimpleJournal.sum("recette", { where: { is_active: true ,date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            BarVipJournal.sum("recette", { where: { is_active: true ,date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            CrazyClubJournal.sum("recette", { where: { is_active: true ,date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            CuisineJournal.sum("montant_verser", { is_active: true ,where: { date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            AppartJournal.sum("loyer", { where: { is_active: true ,date_debut: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
+            ChambreJournal.sum("loyer", { where: { is_active: true ,date: { [Op.gte]: firstDay, [Op.lt]: lastDay } } }),
             // Totaux globaux
-            MaisonColse.count(),
-            Chambre.count(),
-            Cuisine.count(),
-            Categorie.count(),
-            Produit.count(),
-            Emballage.count(),
-            Caisse.count(),
-            Depense.sum("montant", {where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } })
+            MaisonColse.count({ where: { is_active: true } }),
+            Chambre.count({ where: { is_active: true } }),
+            Cuisine.count({ where: { is_active: true } }),
+            Categorie.count({ where: { is_active: true } }),
+            Produit.count({ where: { is_active: true } }),
+            Emballage.count({ where: { is_active: true } }),
+            Caisse.count({ where: { is_active: true } }),
+            Depense.sum("montant", { is_active: true ,where: {date: {[Op.gte]: firstDay,[Op.lt]: lastDay } } })
         ]);
 
         const data = {
@@ -328,9 +328,9 @@ stockJob.start();
 //route presence
 app.get('/presence', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
     const presences = await Presence.findAll({
-        include:[{model: Personnel}]
+        include:[{model: Personnel, required: false, where: { is_active: true }}],
     })
-    const personnels = await Personnel.findAll();
+    const personnels = await Personnel.findAll({where: { is_active: true }});
     if(presences){
         res.render('presence', {presences: presences,personnels: personnels, msg: req.query.msg, tc: req.query.text_color});
     }else{
@@ -341,16 +341,17 @@ app.get('/presence', protrctionRoot, authorise('admin', 'comptable', 'caissier')
 
 //route login
 app.get('/login', (req, res) => {
-    res.render('login', {msg: req.query.msg})
+    res.render('login', {msg: req.query.msg, tc: req.query.tc})
 })
 
 //route connexion
 app.post('/connexion', async (req, res) => {
     const{email, pwd} = req.body
     const personnel = await Occupe.findOne({
+        where: {is_active: true},
         include:[
-            {model: Personnel,where: {email: email}},
-            {model: Poste}
+            {model: Personnel,where: {email: email, is_active: true}, required: false},
+            {model: Poste, required: false, where: {is_active: true}}
         ]
     })
     if(personnel){
@@ -369,16 +370,16 @@ app.post('/connexion', async (req, res) => {
                 }
             }else{
                 // console.log('compte nom valider');
-                res.redirect('login?msg=validation')
+                res.redirect('login?msg= Votre compte n\'est pas valider. Veuillez pacienter ou contacter l\'administrateur.&tc=alert-danger')
             }
             
         }else{
             // console.log('mdp incorrect');
-            res.redirect('login?msg=mdp')
+            res.redirect('login?msg=Email ou mot de passe incorrect&tc=alert-danger')
         }
     }else{
         // console.log('utilisateur non trouver');
-        res.redirect('login?msg=user')
+        res.redirect('login?msg=Utilisateur non trouver.Email ou mot de passe incorrect&tc=alert-danger')
     }
 })
 
@@ -441,14 +442,14 @@ app.get('/proforma', protrctionRoot, authorise('admin', 'comptable'), (req, res)
 
 //route add
 app.get('/Add', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-    MaisonColse.findAll()
+    MaisonColse.findAll({where: {is_active: true}})
         .then(maisonColses => {
-            Chambre.findAll() 
+            Chambre.findAll({where: {is_active: true}}) 
                 .then(chambres => {
                     
                     const msg = "Liste recuperer avec succes"
                     //res.json(maisonColses[0].id_mclose)
-                    res.render('ajout', {maisonColses: maisonColses, chambres: chambres})
+                    res.render('ajout', {maisonColses: maisonColses, chambres: chambres, msg: req.query.msg, tc: req.query.text_color})
                 })
                 .catch(_ => console.log('erreure de selection all' + _))
         })
@@ -466,7 +467,7 @@ app.get('/editBarClub/:id', protrctionRoot, authorise('admin', 'comptable'), (re
     if(req.query.type === "bs"){
         BarSimple.findByPk(req.params.id)
             .then(bar => {
-                res.status(200).render('edit-bar-club', {bar: bar, type: "bs"})
+                res.status(200).render('edit-bar-club', {bar: bar, type: "bs", })
             })
             .catch(_ => console.log('erreure de selection' + _))
     }
@@ -490,11 +491,11 @@ app.get('/editBarClub/:id', protrctionRoot, authorise('admin', 'comptable'), (re
 
 //route afficher bar simple,vip and crazy club
 app.get('/allBarClub', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-    BarSimple.findAll()
+    BarSimple.findAll({where: {is_active: true}})
         .then(bars => {
-            BarVip.findAll()
+            BarVip.findAll({where: {is_active: true}})
                 .then(barv => {
-                    CrazyClub.findAll()
+                    CrazyClub.findAll({where: {is_active: true}})
                         .then(crazyc => {
                             res.render('all-bars-club', {bars: bars, barv: barv, crazyc: crazyc, msg: req.query.msg, type: req.query.type, tc: req.query.tc})
                         })
@@ -510,15 +511,16 @@ app.get('/salarier', protrctionRoot, authorise('admin', 'comptable'), async (req
     const data = []
     try{
         const salariers = await Occupe.findAll({
+            where: {is_active: true},
             include:[
-                {model: Personnel},
-                {model: Poste}
+                {model: Personnel, required: false, where: {is_active: true}},
+                {model: Poste, required: false, where: {is_active: true}}
             ],
             order:[['id_occupe', 'DESC']]
         })
         if(salariers){
             data.push(salariers)
-            const sanction = await Sanction.findAll()
+            const sanction = await Sanction.findAll({where: {is_active: true}})
             if(sanction){
                 data.push(sanction)
                 res.render('salaries', {datas: data})
@@ -542,13 +544,13 @@ app.get('/salarier', protrctionRoot, authorise('admin', 'comptable'), async (req
 app.get('/formFondBarClub', protrctionRoot, authorise('admin','comptable','caissier', 'caissier central'), async (req, res) =>{
     let chambres = null;
     if(req.query.type === 'bc'){
-        BarSimple.findAll()
+        BarSimple.findAll({where: {is_active: true}})
         .then(barss =>{
-            BarVip.findAll()
+            BarVip.findAll({where: {is_active: true}})
                 .then(barvs =>{
-                    CrazyClub.findAll()
+                    CrazyClub.findAll({where: {is_active: true}})
                         .then(crazys =>{
-                            Caisse.findAll()
+                            Caisse.findAll({where: {is_active: true}})
                                 .then(caisses => {
                                     res.render('fondBarClub', {barss: barss, chambres: chambres, barvs: barvs, crazys: crazys, caisses: caisses, msg: req.query.msg, type: req.query.type})
                                 })
@@ -560,21 +562,21 @@ app.get('/formFondBarClub', protrctionRoot, authorise('admin','comptable','caiss
         })
         .catch(err => console.log(err))
     }else if(req.query.type === 'cuisine'){
-        Cuisine.findAll()
+        Cuisine.findAll({where: {is_active: true}})
             .then(cuisines => {
                 res.render('fondBarClub', {cuisines: cuisines, chambres: chambres, msg: req.query.msg, type: req.query.type})
             })
             .catch(_ => console.log('erreure de selection all' + _))
     }else if(req.query.type === 'mclose') {
-        const mcloses = await MaisonColse.findAll()
+        const mcloses = await MaisonColse.findAll({where: {is_active: true}})
         if(mcloses){
-            const chambre = await Chambre.findAll()
+            const chambre = await Chambre.findAll({where: {is_active: true}})
             if(chambre){
                 res.render('fondBarClub', {mcloses: mcloses, chambres: chambre, msg: req.query.msg, type: req.query.type})
             }
         }
     }else if(req.query.type === 'appart') {
-        const apparts = await Appartement.findAll()
+        const apparts = await Appartement.findAll({where: {is_active: true}})
         if(apparts && apparts !== null){
             res.render('fondBarClub', {apparts:apparts,chambres: chambres, msg: req.query.msg, type: req.query.type})
         }
@@ -593,37 +595,43 @@ app.get('/caisseOnelove', protrctionRoot, authorise('admin', 'comptable'), async
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr], // Groupement par l'expression de date
                 order: [[literal('"mois"'), 'ASC']],
-                raw: true
+                raw: true,
+                where: { is_active: true }
             }),
             BarVipJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr],
                 order: [[literal('"mois"'), 'ASC']],
-                raw: true
+                raw: true,
+                where: { is_active: true }
             }),
             AppartFondJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr],
                 order: [[literal('"mois"'), 'ASC']],
-                raw: true
+                raw: true,
+                where: { is_active: true }
             }),
             CuisineJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('montant_verser')), 'total_recette']],
                 group: [moisExpr],
                 order: [[literal('"mois"'), 'ASC']],
-                raw: true
+                raw: true,
+                where: { is_active: true }
             }),
             ChambreJournal.findAll({
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('loyer')), 'total_recette']],
                 group: [moisExpr],
                 order: [[literal('"mois"'), 'ASC']],
-                raw: true
+                raw: true,
+                where: { is_active: true }
             }),
             CrazyClubJournal.findAll({ // Assure-toi que le modèle est bien importé
                 attributes: [[moisExpr, 'mois'], [fn('SUM', col('recette')), 'total_recette']],
                 group: [moisExpr],
                 order: [[literal('"mois"'), 'ASC']],
-                raw: true
+                raw: true,
+                where: { is_active: true }
             })
         ]);
 

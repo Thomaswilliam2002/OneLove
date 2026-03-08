@@ -71,8 +71,20 @@ oneAppart = (app) => {
 }
 
 addAppart = (app) => {
-    app.post('/addAppart', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.post('/addAppart', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         const {nom, prix, adresse, type, image, dispo, description} = req.body;
+
+        const exist = await Appartement.findOne({
+            where: {
+                nom_appart: nom,
+                is_active: true
+            }
+        })
+
+        if (exist) {
+            return res.redirect('/formAddAppart?msg=Un appartement portant ce nom existe deja.Pour eviter toute confusion, veuillez choisir un autre nom&tc=alert-warning');
+        }
+
         console.log(req.body);
         Appartement.create({
             nom_appart: nom,
@@ -98,7 +110,7 @@ addAppart = (app) => {
 
 formAddAppart = (app) =>{
     app.get('/formAddAppart', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        res.status(200).render('add-appart')
+        res.status(200).render('add-appart', {msg: req.query.msg, tc: req.query.tc})
     })
 }
 formEditAppart = (app) =>{

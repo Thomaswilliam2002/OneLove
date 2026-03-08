@@ -43,26 +43,12 @@
 
             <h4 class="mb-4">Connexion</h4>
 
-            <% if(msg) {%>
-              <% if(msg === 'mdp') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                  <b>Email </b> ou <b>Mot de Pass </b>incorrecte
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
-              <% if(msg === 'user') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                  <b>Email </b> ou <b>Mot de Pass </b>incorrecte
-                </div>
-              <% }%>
-              <% if(msg === 'validation') {%>
-                <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                  Votre<b> compte  </b> n'a pas encore ete activer !
-                  veillez patienter ou contacter l'administrateur.
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              <% }%>
-            <% }%>
+            <% if(msg) { %>
+              <div class="alert <%= tc || 'alert-info' %> alert-dismissible fade show" role="alert">
+                <%= msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <% } %>
             
             <div class="mb-3">
               <label class="form-label" for="email">Email <span class="text-danger">*</span></label>

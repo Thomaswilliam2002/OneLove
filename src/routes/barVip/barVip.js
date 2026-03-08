@@ -27,8 +27,18 @@ oneBarV = (app) => {
 }
 
 addBarV = (app) => {
-    app.post('/addBarV', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.post('/addBarV', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         const {nom, adresse} = req.body;
+        const exist = await BarVip.findOne({
+            where: {
+                nom: nom,
+                is_active: true
+            }
+        })
+        if (exist) {
+            return res.redirect('/Add?msg=Un bar portant ce nom existe deja.Pour eviter toute confusion, veuillez choisir un autre nom&tc=alert-warning');
+        }
+        
         BarVip.create({
             nom: nom,
             adresse: adresse,

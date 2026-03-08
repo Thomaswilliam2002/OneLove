@@ -68,8 +68,20 @@ oneChambre = (app) => {
 }
 
 addChambre = (app) => {
-    app.post('/addChambre', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.post('/addChambre', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         const {nom, montant, dispo, mclose, desc} = req.body
+
+        const exist = await Chambre.findOne({
+            where: {
+                nom: nom,
+                id_mclose: mclose,
+                is_active: true
+            }
+        })
+        if (exist) {
+            return res.redirect('/Add?msg=Une chambre portant ce nom au sein de cette maison Colse existe deja.Pour eviter toute confusion, veuillez choisir un autre nom&tc=alert-warning');
+        }
+        
         Chambre.create({
             nom: nom,
             loyer: montant,

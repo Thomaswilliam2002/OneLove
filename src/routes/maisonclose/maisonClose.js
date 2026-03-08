@@ -66,8 +66,19 @@ oneMClose = (app) => {
 }
 
 addMClose = (app) => {
-    app.post('/addMClose', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.post('/addMClose', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         const {nom, adresse, nbr} = req.body
+
+        const exist = await MaisonColse.findOne({
+            where: {
+                nom: nom,
+                is_active: true
+            }
+        })
+        if (exist) {
+            return res.redirect('/Add?msg=Une maison Colse portant ce nom existe deja.Pour eviter toute confusion, veuillez choisir un autre nom&tc=alert-warning');
+        }
+        
         MaisonColse.create({
             nom: nom,
             adresse: adresse,
