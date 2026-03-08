@@ -1,5 +1,5 @@
 const { where, literal, Op, fn, col, } = require('sequelize');
-const {Produit,Caisse, HistSortie, Emballage, HistCaisse} = require('../../db/sequelize');
+const {Produit,Caisse, HistSortie, Emballage, HistCaisse, Personnel} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 statsRecetteMoris = (app) => {
@@ -335,7 +335,8 @@ allProduitCaisse = (app) => {
                                 type: modelType,
                                 receveur: idLieu,
                                 type_lieu_receveur: typeLieu,
-                                id_caisse: idCaisse
+                                id_caisse: idCaisse,
+                                is_active: true
                             },
                             attributes: [
                                 'id_probal',
@@ -352,7 +353,8 @@ allProduitCaisse = (app) => {
                         const ventes = await HistCaisse.findAll({
                             where: {
                                 type: modelType,
-                                id_caisse: caisse.id_caisse
+                                id_caisse: caisse.id_caisse,
+                                is_active: true
                             },
                             attributes: [
                                 'id_probal',
@@ -394,8 +396,8 @@ allProduitCaisse = (app) => {
                                         type: modelType,
                                         receveur: idLieu,
                                         type_lieu_receveur: typeLieu,
-                                        id_caisse: idCaisse
-
+                                        id_caisse: idCaisse,
+                                        is_active: true
                                     },
                                     order: [['created', 'DESC']],
                                     attributes: ['prix_unit'],
