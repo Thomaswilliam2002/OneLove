@@ -88,7 +88,7 @@
                                     <select name="id_caisse" class="form-select border-success shadow-sm" required>
                                         <% if(caisses){ caisse.forEach(c => { %>
                                             <option value="<%= c.id_caisse %>"><%= c.nom %> (<%= c.type_lieu %>)</option>
-                                        <% }) else { %>
+                                        <% })} else { %>
                                             <option value="" disabled selected>Aucune Caisse disponible</option>
                                         <% } %>
                                     </select>
@@ -102,7 +102,7 @@
                                     <select name="id_personnel" class="form-select border-success shadow-sm" required>
                                         <% if(personnels){ personnels.forEach(p => { %>
                                             <option value="<%= p.Personnel.id_personnel %>"><%= p.Personnel.nom %> <%= p.Personnel.prenom %></option>
-                                        <% }) else { %>
+                                        <% })} else { %>
                                             <option value="" disabled selected>Aucun Personnel disponible</option>
                                         <% } %>
                                     </select>
