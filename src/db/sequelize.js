@@ -379,7 +379,6 @@ HistCaisse.belongsTo(Caisse, {
                     {nom_poste: 'Comptable', salaire: 0, description: 'Comptable de One Love'},
                     {nom_poste: 'Caissier Central', salaire: 0, description: ''},
                     {nom_poste: 'Caissier', salaire: 0, description: ''},
-                    {nom_poste: 'Gerant', salaire: 0, description: ''}
                 ])
             }catch (e){
                 console.log(e)

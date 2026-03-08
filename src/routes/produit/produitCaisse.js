@@ -289,352 +289,352 @@ statsRecetteMoris = (app) => {
     );
 };
 
-allProduitCaisse = (app) => {
-    app.get(
-        '/allProduitCaisse/:id',
-        protrctionRoot,
-        authorise('admin', 'comptable', 'caissier', 'gerant'),
-        async (req, res) => {
-            try {
-                const employerId = parseInt(req.params.id);
-
-                if (!employerId) {
-                    console.log("ID employer invalide :", req.params.id);
-                    return res.redirect('/notFound');
-                }
-
-                const caisseAssocier = await Caisse.findAll({
-                    where: { id_employer: employerId, is_active: true }
-                });
-
-                if (!caisseAssocier || caisseAssocier.length === 0) {
-                    console.log("Aucune caisse trouvée pour :", employerId);
-                }
-
-                const caissesData = await Promise.all(
-                    caisseAssocier.map(async (caisse) => {
-
-                        // 🔒 Sécurisation caisse_of
-                        if (!caisse.caisse_of || !caisse.caisse_of.includes('#')) {
-                            console.log("Format caisse_of invalide :", caisse.caisse_of);
-                            return null;
-                        }
-
-                        const parts = caisse.caisse_of.split('#');
-
-                        if (parts.length < 3) {
-                            console.log("Découpage incorrect :", caisse.caisse_of);
-                            return null;
-                        }
-
-                        const [idSource, nomSource, typeSource] = parts;
-
-                        // 🔹 Récupération des entrées
-                        const toutesEntrees = await HistSortie.findAll({
-                            where: { receveur: nomSource, is_active: true }
-                        });
-
-                        let produitsMap = {};
-                        let emballagesMap = {};
-
-                        for (const item of toutesEntrees) {
-
-                            if (!item.id_probal) continue;
-
-                            const key = parseInt(item.id_probal);
-
-                            const targetMap =
-                                item.type === 'produit'
-                                    ? produitsMap
-                                    : emballagesMap;
-
-                            if (!targetMap[key]) {
-                                targetMap[key] = {
-                                    qte_totale: 0,
-                                    prix_recent: item.prix_unit,
-                                    date: item.created
-                                };
-                            }
-
-                            targetMap[key].qte_totale += item.quantiter;
-
-                            // mise à jour du prix si plus récent
-                            if (new Date(item.created) > new Date(targetMap[key].date)) {
-                                targetMap[key].prix_recent = item.prix_unit;
-                                targetMap[key].date = item.created;
-                            }
-                        }
-
-                        // 🔹 Produits
-                        let produitsListe = [];
-
-                        for (const id in produitsMap) {
-
-                            const idInt = parseInt(id);
-
-                            const vendus =
-                                (await HistCaisse.sum('quantiter', {
-                                    where: {
-                                        is_active: true,
-                                        id_probal: idInt,
-                                        type: 'produit',
-                                        nomBarClub: caisse.caisse_of
-                                    }
-                                })) || 0;
-
-                            const detail = await Produit.findByPk(idInt);
-
-                            if (detail) {
-                                produitsListe.push({
-                                    id: detail.id_produit,
-                                    nom: detail.nom,
-                                    image: detail.image,
-                                    prix_unit: produitsMap[id].prix_recent,
-                                    qte_dispo:
-                                        produitsMap[id].qte_totale - vendus
-                                });
-                            }
-                        }
-
-                        // 🔹 Emballages
-                        let emballagesListe = [];
-
-                        for (const id in emballagesMap) {
-
-                            const idInt = parseInt(id);
-
-                            const vendus =
-                                (await HistCaisse.sum('quantiter', {
-                                    where: {
-                                        is_active: true,
-                                        id_probal: idInt,
-                                        type: 'emballage',
-                                        nomBarClub: caisse.caisse_of
-                                    }
-                                })) || 0;
-
-                            const detail = await Emballage.findByPk(idInt);
-
-                            if (detail) {
-                                emballagesListe.push({
-                                    id: detail.id_emballage,
-                                    nom: detail.nom,
-                                    prix_unit: emballagesMap[id].prix_recent,
-                                    qte_dispo:
-                                        emballagesMap[id].qte_totale - vendus
-                                });
-                            }
-                        }
-
-                        return {
-                            id_caisse: caisse.id_caisse,
-                            nom_caisse: caisse.nom,
-                            lieu: nomSource,
-                            produits: produitsListe,
-                            emballages: emballagesListe
-                        };
-                    })
-                );
-
-                // 🔒 On retire les null éventuels
-                const result = caissesData.filter(c => c !== null);
-
-                res.render('produitCaisse', {
-                    caisses: result,
-                    msg: req.query.msg,
-                    id_caissier: employerId
-                });
-
-            } catch (error) {
-                console.error("ERREUR allProduitCaisse :", error);
-                return res.redirect('/notFound');
-            }
-        }
-    );
-};
-
 // allProduitCaisse = (app) => {
-//     app.get('/allProduitCaisse/:id', async (req, res) => {
+//     app.get(
+//         '/allProduitCaisse/:id',
+//         protrctionRoot,
+//         authorise('admin', 'comptable', 'caissier', 'gerant'),
+//         async (req, res) => {
+//             try {
+//                 const employerId = parseInt(req.params.id);
 
-//         try {
+//                 if (!employerId) {
+//                     console.log("ID employer invalide :", req.params.id);
+//                     return res.redirect('/notFound');
+//                 }
 
-//             const personnelId = req.params.id;
+//                 const caisseAssocier = await Caisse.findAll({
+//                     where: { id_employer: employerId, is_active: true }
+//                 });
 
-//             // ================================
-//             // 1️⃣ Récupérer le personnel + ses caisses
-//             // ================================
-//             const personnel = await Personnel.findByPk(personnelId, {
-//                 include: [{
-//                     model: Caisse,
-//                     through: { attributes: [] }
-//                 }]
-//             });
+//                 if (!caisseAssocier || caisseAssocier.length === 0) {
+//                     console.log("Aucune caisse trouvée pour :", employerId);
+//                 }
 
-//             if (!personnel || !personnel.Caisses || personnel.Caisses.length === 0) {
+//                 const caissesData = await Promise.all(
+//                     caisseAssocier.map(async (caisse) => {
+
+//                         // 🔒 Sécurisation caisse_of
+//                         if (!caisse.caisse_of || !caisse.caisse_of.includes('#')) {
+//                             console.log("Format caisse_of invalide :", caisse.caisse_of);
+//                             return null;
+//                         }
+
+//                         const parts = caisse.caisse_of.split('#');
+
+//                         if (parts.length < 3) {
+//                             console.log("Découpage incorrect :", caisse.caisse_of);
+//                             return null;
+//                         }
+
+//                         const [idSource, nomSource, typeSource] = parts;
+
+//                         // 🔹 Récupération des entrées
+//                         const toutesEntrees = await HistSortie.findAll({
+//                             where: { receveur: nomSource, is_active: true }
+//                         });
+
+//                         let produitsMap = {};
+//                         let emballagesMap = {};
+
+//                         for (const item of toutesEntrees) {
+
+//                             if (!item.id_probal) continue;
+
+//                             const key = parseInt(item.id_probal);
+
+//                             const targetMap =
+//                                 item.type === 'produit'
+//                                     ? produitsMap
+//                                     : emballagesMap;
+
+//                             if (!targetMap[key]) {
+//                                 targetMap[key] = {
+//                                     qte_totale: 0,
+//                                     prix_recent: item.prix_unit,
+//                                     date: item.created
+//                                 };
+//                             }
+
+//                             targetMap[key].qte_totale += item.quantiter;
+
+//                             // mise à jour du prix si plus récent
+//                             if (new Date(item.created) > new Date(targetMap[key].date)) {
+//                                 targetMap[key].prix_recent = item.prix_unit;
+//                                 targetMap[key].date = item.created;
+//                             }
+//                         }
+
+//                         // 🔹 Produits
+//                         let produitsListe = [];
+
+//                         for (const id in produitsMap) {
+
+//                             const idInt = parseInt(id);
+
+//                             const vendus =
+//                                 (await HistCaisse.sum('quantiter', {
+//                                     where: {
+//                                         is_active: true,
+//                                         id_probal: idInt,
+//                                         type: 'produit',
+//                                         nomBarClub: caisse.caisse_of
+//                                     }
+//                                 })) || 0;
+
+//                             const detail = await Produit.findByPk(idInt);
+
+//                             if (detail) {
+//                                 produitsListe.push({
+//                                     id: detail.id_produit,
+//                                     nom: detail.nom,
+//                                     image: detail.image,
+//                                     prix_unit: produitsMap[id].prix_recent,
+//                                     qte_dispo:
+//                                         produitsMap[id].qte_totale - vendus
+//                                 });
+//                             }
+//                         }
+
+//                         // 🔹 Emballages
+//                         let emballagesListe = [];
+
+//                         for (const id in emballagesMap) {
+
+//                             const idInt = parseInt(id);
+
+//                             const vendus =
+//                                 (await HistCaisse.sum('quantiter', {
+//                                     where: {
+//                                         is_active: true,
+//                                         id_probal: idInt,
+//                                         type: 'emballage',
+//                                         nomBarClub: caisse.caisse_of
+//                                     }
+//                                 })) || 0;
+
+//                             const detail = await Emballage.findByPk(idInt);
+
+//                             if (detail) {
+//                                 emballagesListe.push({
+//                                     id: detail.id_emballage,
+//                                     nom: detail.nom,
+//                                     prix_unit: emballagesMap[id].prix_recent,
+//                                     qte_dispo:
+//                                         emballagesMap[id].qte_totale - vendus
+//                                 });
+//                             }
+//                         }
+
+//                         return {
+//                             id_caisse: caisse.id_caisse,
+//                             nom_caisse: caisse.nom,
+//                             lieu: nomSource,
+//                             produits: produitsListe,
+//                             emballages: emballagesListe
+//                         };
+//                     })
+//                 );
+
+//                 // 🔒 On retire les null éventuels
+//                 const result = caissesData.filter(c => c !== null);
+
+//                 res.render('produitCaisse', {
+//                     caisses: result,
+//                     msg: req.query.msg,
+//                     id_caissier: employerId
+//                 });
+
+//             } catch (error) {
+//                 console.error("ERREUR allProduitCaisse :", error);
 //                 return res.redirect('/notFound');
 //             }
-
-//             // ================================
-//             // 2️⃣ Traiter chaque caisse
-//             // ================================
-//             const caissesAvecInventaire = await Promise.all(
-
-//                 personnel.Caisses.map(async (caisse) => {
-
-//                     const idLieu = caisse.id_lieu;
-//                     const typeLieu = caisse.type_lieu;
-//                     const idCaisse = caisse.id_caisse;
-
-//                     // ====================================================
-//                     // Fonction qui récupère l'inventaire (produit ou emballage)
-//                     // ====================================================
-//                     const recupererInventaire = async (modelType) => {
-//                         // ====================================================
-//                         // A️⃣ TOTAL REÇU DANS LA CAISSE
-//                         // ====================================================
-//                         const mouvements = await HistSortie.findAll({
-//                             where: {
-//                                 type: modelType,
-//                                 receveur: idLieu,
-//                                 type_lieu_receveur: typeLieu,
-//                                 id_caisse: idCaisse
-//                             },
-//                             attributes: [
-//                                 'id_probal',
-//                                 [sequelize.fn('SUM', sequelize.col('quantiter')), 'total_recu']
-//                             ],
-//                             group: ['id_probal'],
-//                             raw: true
-//                         });
-
-//                         // ⭐ AJOUT
-//                         // ====================================================
-//                         // B️⃣ TOTAL VENDU PAR LA CAISSE (HistCaisse)
-//                         // ====================================================
-//                         const ventes = await HistCaisse.findAll({
-//                             where: {
-//                                 type: modelType,
-//                                 id_caisse: caisse.id_caisse
-//                             },
-//                             attributes: [
-//                                 'id_probal',
-//                                 [sequelize.fn('SUM', sequelize.col('quantiter')), 'total_vendu']
-//                             ],
-//                             group: ['id_probal'],
-//                             raw: true
-//                         });
-
-//                         // ⭐ AJOUT
-//                         // Transformer les ventes en objet pour accès rapide
-//                         const ventesMap = {};
-
-//                         ventes.forEach(v => {
-//                             ventesMap[v.id_probal] = parseFloat(v.total_vendu);
-//                         });
-
-//                         // ====================================================
-//                         // C️⃣ Construire l'inventaire final
-//                         // ====================================================
-//                         return await Promise.all(
-
-//                             mouvements.map(async (mouv) => {
-
-//                                 // ✏️ MODIFICATION
-//                                 // récupération info article
-//                                 let infoArticle;
-
-//                                 if (modelType === 'produit') {
-//                                     infoArticle = await Produit.findByPk(mouv.id_probal);
-//                                 } else {
-//                                     infoArticle = await Emballage.findByPk(mouv.id_probal);
-//                                 }
-
-//                                 // récupérer dernier prix
-//                                 const dernierPrix = await HistSortie.findOne({
-//                                     where: {
-//                                         id_probal: mouv.id_probal,
-//                                         type: modelType,
-//                                         receveur: idLieu,
-//                                         type_lieu_receveur: typeLieu,
-//                                         id_caisse: idCaisse
-
-//                                     },
-//                                     order: [['created', 'DESC']],
-//                                     attributes: ['prix_unit'],
-//                                     raw: true
-//                                 });
-
-//                                 // ====================================================
-//                                 // ✏️ MODIFICATION : CALCUL STOCK REEL
-//                                 // ====================================================
-
-//                                 const totalRecu = parseFloat(mouv.total_recu || 0);
-
-//                                 // ⭐ AJOUT
-//                                 const totalVendu = ventesMap[mouv.id_probal] || 0;
-
-//                                 // ⭐ AJOUT
-//                                 const stockReel = totalRecu - totalVendu;
-
-//                                 return {
-//                                     id: mouv.id_probal,
-//                                     nom: infoArticle ? (infoArticle.nom || infoArticle.nom_produit) : "Inconnu",
-
-//                                     // ✏️ MODIFICATION
-//                                     quantite_disponible: stockReel,
-
-//                                     prix_unitaire: dernierPrix ? dernierPrix.prix_unit : 0,
-//                                     type: modelType
-//                                 };
-//                             })
-//                         );
-//                     };
-
-//                     // ====================================================
-//                     // 3️⃣ Récupérer produits et emballages
-//                     // ====================================================
-//                     const [listeProduits, listeEmballages] = await Promise.all([
-//                         recupererInventaire('produit'),
-//                         recupererInventaire('emballage')
-//                     ]);
-
-//                     // ====================================================
-//                     // 4️⃣ Construire l'objet caisse
-//                     // ====================================================
-//                     return {
-//                         id_caisse: caisse.id_caisse,
-//                         nom_caisse: caisse.nom,
-//                         sous_departement: caisse.nom_lieu,
-//                         departement: typeLieu,
-//                         inventaire: {
-//                             produits: listeProduits,
-//                             emballages: listeEmballages
-//                         }
-//                     };
-
-//                 })
-//             );
-//             // ================================
-//             // 5️⃣ Envoyer vers la vue
-//             // ================================
-//             res.render('produitCaisse', {
-//                 caisses: caissesAvecInventaire,
-//                 personnel: personnel,
-//                 msg: req.query.msg,
-//                 tc: req.query.tc
-//             });
-
-//         } catch (error) {
-
-//             console.error("Erreur critique dans allProduitCaisse:", error);
-
-//             if (!res.headersSent) {
-//                 res.redirect('/notFound');
-//             }
-
 //         }
-//     });
+//     );
 // };
+
+allProduitCaisse = (app) => {
+    app.get('/allProduitCaisse/:id', async (req, res) => {
+
+        try {
+
+            const personnelId = req.params.id;
+
+            // ================================
+            // 1️⃣ Récupérer le personnel + ses caisses
+            // ================================
+            const personnel = await Personnel.findByPk(personnelId, {
+                include: [{
+                    model: Caisse,
+                    through: { attributes: [] }
+                }]
+            });
+
+            if (!personnel || !personnel.Caisses || personnel.Caisses.length === 0) {
+                return res.redirect('/notFound');
+            }
+
+            // ================================
+            // 2️⃣ Traiter chaque caisse
+            // ================================
+            const caissesAvecInventaire = await Promise.all(
+
+                personnel.Caisses.map(async (caisse) => {
+
+                    const idLieu = caisse.id_lieu;
+                    const typeLieu = caisse.type_lieu;
+                    const idCaisse = caisse.id_caisse;
+
+                    // ====================================================
+                    // Fonction qui récupère l'inventaire (produit ou emballage)
+                    // ====================================================
+                    const recupererInventaire = async (modelType) => {
+                        // ====================================================
+                        // A️⃣ TOTAL REÇU DANS LA CAISSE
+                        // ====================================================
+                        const mouvements = await HistSortie.findAll({
+                            where: {
+                                type: modelType,
+                                receveur: idLieu,
+                                type_lieu_receveur: typeLieu,
+                                id_caisse: idCaisse
+                            },
+                            attributes: [
+                                'id_probal',
+                                [sequelize.fn('SUM', sequelize.col('quantiter')), 'total_recu']
+                            ],
+                            group: ['id_probal'],
+                            raw: true
+                        });
+
+                        // ⭐ AJOUT
+                        // ====================================================
+                        // B️⃣ TOTAL VENDU PAR LA CAISSE (HistCaisse)
+                        // ====================================================
+                        const ventes = await HistCaisse.findAll({
+                            where: {
+                                type: modelType,
+                                id_caisse: caisse.id_caisse
+                            },
+                            attributes: [
+                                'id_probal',
+                                [sequelize.fn('SUM', sequelize.col('quantiter')), 'total_vendu']
+                            ],
+                            group: ['id_probal'],
+                            raw: true
+                        });
+
+                        // ⭐ AJOUT
+                        // Transformer les ventes en objet pour accès rapide
+                        const ventesMap = {};
+
+                        ventes.forEach(v => {
+                            ventesMap[v.id_probal] = parseFloat(v.total_vendu);
+                        });
+
+                        // ====================================================
+                        // C️⃣ Construire l'inventaire final
+                        // ====================================================
+                        return await Promise.all(
+
+                            mouvements.map(async (mouv) => {
+
+                                // ✏️ MODIFICATION
+                                // récupération info article
+                                let infoArticle;
+
+                                if (modelType === 'produit') {
+                                    infoArticle = await Produit.findByPk(mouv.id_probal);
+                                } else {
+                                    infoArticle = await Emballage.findByPk(mouv.id_probal);
+                                }
+
+                                // récupérer dernier prix
+                                const dernierPrix = await HistSortie.findOne({
+                                    where: {
+                                        id_probal: mouv.id_probal,
+                                        type: modelType,
+                                        receveur: idLieu,
+                                        type_lieu_receveur: typeLieu,
+                                        id_caisse: idCaisse
+
+                                    },
+                                    order: [['created', 'DESC']],
+                                    attributes: ['prix_unit'],
+                                    raw: true
+                                });
+
+                                // ====================================================
+                                // ✏️ MODIFICATION : CALCUL STOCK REEL
+                                // ====================================================
+
+                                const totalRecu = parseFloat(mouv.total_recu || 0);
+
+                                // ⭐ AJOUT
+                                const totalVendu = ventesMap[mouv.id_probal] || 0;
+
+                                // ⭐ AJOUT
+                                const stockReel = totalRecu - totalVendu;
+
+                                return {
+                                    id: mouv.id_probal,
+                                    nom: infoArticle ? (infoArticle.nom || infoArticle.nom_produit) : "Inconnu",
+
+                                    // ✏️ MODIFICATION
+                                    quantite_disponible: stockReel,
+
+                                    prix_unitaire: dernierPrix ? dernierPrix.prix_unit : 0,
+                                    type: modelType
+                                };
+                            })
+                        );
+                    };
+
+                    // ====================================================
+                    // 3️⃣ Récupérer produits et emballages
+                    // ====================================================
+                    const [listeProduits, listeEmballages] = await Promise.all([
+                        recupererInventaire('produit'),
+                        recupererInventaire('emballage')
+                    ]);
+
+                    // ====================================================
+                    // 4️⃣ Construire l'objet caisse
+                    // ====================================================
+                    return {
+                        id_caisse: caisse.id_caisse,
+                        nom_caisse: caisse.nom,
+                        sous_departement: caisse.nom_lieu,
+                        departement: typeLieu,
+                        inventaire: {
+                            produits: listeProduits,
+                            emballages: listeEmballages
+                        }
+                    };
+
+                })
+            );
+            // ================================
+            // 5️⃣ Envoyer vers la vue
+            // ================================
+            res.render('produitCaisse', {
+                caisses: caissesAvecInventaire,
+                personnel: personnel,
+                msg: req.query.msg,
+                tc: req.query.tc
+            });
+
+        } catch (error) {
+
+            console.error("Erreur critique dans allProduitCaisse:", error);
+
+            if (!res.headersSent) {
+                res.redirect('/notFound');
+            }
+
+        }
+    });
+};
 
 allCaisseArticle = (app) => {
     app.get('/allCaisseArticle/:id', async (req, res) => {
