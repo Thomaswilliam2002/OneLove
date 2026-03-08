@@ -651,7 +651,7 @@ addHistCaisse = (app) => {
 )}
 
 allHistCaisse = (app) => {
-    app.get(['/allHistCaisse/:id', '/allHistCaisse'], protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant'), async (req, res) => {
+    app.get(['/allHistCaisse/:id', '/allHistCaisse'], protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
         try {
             let hists;
 
@@ -674,7 +674,7 @@ allHistCaisse = (app) => {
                 }
             } else {
                 // Cas Admin : tout l'historique
-                hists = await HistCaisse.findAll({ order: [['created', 'DESC']] });
+                hists = await HistCaisse.findAll({ order: [['created', 'DESC']], where: { is_active: true } });
             }
 
             // 2. JOINTURES MANUELLES POUR CHAQUE LIGNE
@@ -739,7 +739,12 @@ deleteHistCaisse = (app) => {
             // 3. Redirection
             // Le calcul dynamique dans 'allProduitCaisse' affichera 
             // désormais la quantité correcte automatiquement.
-            res.redirect(`/allHistCaisse/${histDel.id_caissier}?msg=Vente annulée, le stock de la caisse a été mis à jour.`);
+            if(req.query.ns && req.query.ns === 'nc'){
+                res.redirect(`/allHistCaisse?msg=Vente annulée, le stock de la caisse n'a pas éte mis à jour.&tc=alert-warning`);
+            }
+            else if(req.query.is){
+                res.redirect(`/allHistCaisse/${req.query.is}?msg=Vente annulée, le stock de la caisse a été mis à jour.&tc=alert-warning`);
+            }
 
         } catch (error) {
             console.error("Erreur deleteHistCaisse:", error);
