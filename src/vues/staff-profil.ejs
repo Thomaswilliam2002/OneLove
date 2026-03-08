@@ -70,18 +70,20 @@
                       <thead class="text-center">
                         <tr>
                           <th>#</th>
-                          <th>Caisse</th>
-                          <th>Recette</th>
+                          <th>Nom de la Caisse</th>
+                          <th>Département</th>
+                          <th>Sous Département</th>
                         </tr>
                       </thead>
                       <tbody class="text-center">
-                        <% i = 1;caisses.forEach(caisse => { %>
+                        <% occupe.Personnel.Caisse.forEach((caisse, i) => { %>
                           <tr>
                             <td><%= i %></td>
                             <td><%= caisse.nom %></td>
-                            <td><%= caisse.recette %></td>
+                            <td><%= caisse.type_lieu %></td>
+                            <td><%= caisse.nom_lieu %></td>
                           </tr>
-                        <%i++})%>
+                        <%})%>
                       </tbody>
                     </table>
                   </div>

@@ -1,5 +1,5 @@
 //const { where } = require('sequelize')
-const {Personnel, BarSimple, BarVip, CrazyClub, Caisse} = require('../../db/sequelize') 
+const {Personnel, Caisse} = require('../../db/sequelize') 
 const {Poste} = require('../../db/sequelize')
 const {Occupe} = require('../../db/sequelize')
 const {Sanction} = require('../../db/sequelize')
@@ -50,27 +50,23 @@ onePersonnel = (app) => {
     app.get('/onePersonnel/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'caissier central', 'gerant'), (req, res) => {
         Occupe.findOne({
             include:[
-                {model:Personnel, where: {id_personnel: req.params.id}},
-                {model: Poste},
-                {model: Sanction}
-            ]
+                {
+                    model:Personnel,
+                    include: [{
+                        model: Caisse,
+                        through: { attributes: [] },
+                        where: {is_active: true}
+                    }],
+                    where: {id_personnel: req.params.id}
+                },
+                {model: Poste, where: {is_active: true}},
+                {model: Sanction, where: {is_active: true}}
+            ],
         })
             .then(occupe => {
                 // const msg = "personnel recuperer avec succes"
                 //res.json({msg, data: occupe})//staff-profil
                 if(occupe.Personnel.type_personnel === 'caissier'){
-                    Caisse.findAll({
-                        where: {id_employer: occupe.Personnel.id_personnel, is_active: true}
-                    })
-                    .then(caisses => {
-                        res.status(200).render('staff-profil', {occupe: occupe, indice: req.query.indice, caisses: caisses});
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
-                }else{
                     res.status(200).render('staff-profil', {occupe: occupe, indice: req.query.indice});
                 }
             })
