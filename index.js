@@ -100,6 +100,7 @@ mySessionStore.sync();
 app.use(methodOverride('_method'));
 
 app.use('/assets', express.static(path.join(__dirname, 'src/vues/assets')))
+app.use('/sweetalert2', express.static(__dirname + '/node_modules/sweetalert2/dist'));
 
 app.use(express.urlencoded({extended: false}))
 

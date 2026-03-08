@@ -182,7 +182,7 @@
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-user-tie"></i></span>
                                             <select name="id_personnel" class="form-select border-primary" required>
-                                                <option value="" disabled selected>Choisir un personnel...</option>
+                                                <!-- <option value="" disabled selected>Choisir un personnel...</option> -->
                                                 <% personnels.forEach(p => { %>
                                                     <option value="<%= p.Personnel.id_personnel %>"><%= p.Personnel.nom %> <%= p.Personnel.prenom %></option>
                                                 <% }) %>
@@ -227,7 +227,7 @@
 		************* -->
     <!-- Required jQuery first, then Bootstrap Bundle JS -->
     <%- include('script')%>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/sweetalert2/sweetalert2.all.min.js"></script>
     <script>
       window.addEventListener("pageshow", function (event) {
         var historyTraversal = event.persisted || 
@@ -270,7 +270,7 @@
           const lieux = databaseLieux[type];
           if (lieux && lieux.length > 0) {
               // Vider le select et ajouter l'option par défaut
-              select.innerHTML = '<option value="" disabled selected>-- Choisir l\'emplacement --</option>';
+            //   select.innerHTML = '<option value="" disabled selected>-- Choisir l\'emplacement --</option>';
   
               // Remplir le select dynamiquement
               lieux.forEach(l => {
@@ -297,7 +297,7 @@
             // Remplacement de l'alert moche par SweetAlert2
                 Swal.fire({
                     title: 'Aucun résultat',
-                    text: `Désolé, nous n'avons trouvé aucun lieu pour la catégorie : ${type}`,
+                    text: `Désolé, aucun lieu trouvé pour la catégorie : ${type}`,
                     icon: 'warning',
                     confirmButtonColor: '#3085d6', // Tu peux mettre ta couleur de thème ici
                     confirmButtonText: 'OK',
