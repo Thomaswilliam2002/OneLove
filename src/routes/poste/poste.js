@@ -114,7 +114,7 @@ deletePoste = (app) => {
                     model: Personnel,
                     attributes: ['id_personnel'],
                     where: { is_active: true },
-                    required: true
+                    required: false
                 }],
                 where: { id_poste: req.params.id },
                 transaction: t

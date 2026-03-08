@@ -13,10 +13,12 @@ formAddCaisse = (app) =>{
                 include:[
                     { 
                         model: Personnel,
+                        required: false,
                         where:{ is_active: true }
                     },
                     { 
                         model: Poste,
+                        required: false,
                         where:{
                             nom_poste: ['Comptable','Gerant','Caissier'],
                             is_active: true
@@ -129,6 +131,8 @@ allCaisse = (app) => {
             const caisses = await Caisse.findAll({
                 include: [{
                     model: Personnel,
+                    required: false,
+                    where: { is_active: true },
                     through: { attributes: ['id_personnel', 'id_caisse'] } 
                 }],
                 where: { is_active: true },
@@ -161,7 +165,7 @@ caisseBareSimple = (app) => {
                     [fn('SUM', col('recette')), 'total_recette'],
                     [col("BarSimple.nom"), "NomBar"]
                 ],
-                include: [{ model: BarSimple, attributes: [] }],
+                include: [{ model: BarSimple, attributes: [], where: { is_active: true }, required: false }],
                 group: [moisExpr, col('BarSimpleJournal.id_barSimple'), col("BarSimple.nom")],
                 order: [
                     [literal('"mois"'), 'ASC'], 
@@ -190,7 +194,7 @@ caisseBareVip = (app) => {
                     [fn('SUM', col('recette')), 'total_recette'],
                     [col("BarVip.nom"), "NomBar"]
                 ],
-                include: [{ model: BarVip, attributes: [] }],
+                include: [{ model: BarVip, attributes: [], required: false, where: { is_active: true } }],
                 group: [moisExpr, col('BarVipJournal.id_barVip'), col("BarVip.nom")],
                 order: [
                     [literal('"mois"'), 'ASC'], 
@@ -219,7 +223,7 @@ caisseCClub = (app) => {
                     [fn('SUM', col('recette')), 'total_recette'],
                     [col("CrazyClub.nom"), "NomCc"]
                 ],
-                include: [{ model: CrazyClub, attributes: [] }],
+                include: [{ model: CrazyClub, attributes: [], where: { is_active: true }, required: false }],
                 group: [moisExpr, col('CClubJournal.id_cclub'), col("CrazyClub.nom")],
                 order: [
                     [literal('"mois"'), 'ASC'], 
@@ -292,7 +296,7 @@ caisseMClose = (app) => {
                     [fn('SUM', col('loyer')), 'total_recette'],
                     [col("MaisonClose.nom"), "NomMc"]
                 ],
-                include: [{ model: MaisonColse, attributes: [] }],
+                include: [{ model: MaisonColse, attributes: [], where: { is_active: true }, required: false }],
                 group: [moisExpr, col('ChambreJournal.id_mclose'), col("MaisonClose.nom")],
                 order: [[moisExpr, 'ASC'], [col('ChambreJournal.id_mclose'), 'ASC']],
                 raw: true
@@ -312,6 +316,8 @@ formEditCaisse = (app) =>{
             const caisses = await Caisse.findByPk(req.params.id, {
                 include: [{
                     model: Personnel,
+                    required: false,
+                    where: { is_active: true },
                     through: { attributes: [] } 
                 }],
                 where: { is_active: true }
@@ -319,8 +325,8 @@ formEditCaisse = (app) =>{
 
             const caissiers = await Occupe.findAll({
                 include:[
-                    {model: Personnel},
-                    {model: Poste, where:{nom_poste: 'caissier'}}
+                    {model: Personnel, required: false, where: { is_active: true }},
+                    {model: Poste, where:{nom_poste: 'caissier', is_active: true}, required: false}
                 ],
                 where: { is_active: true }
             })

@@ -6,6 +6,7 @@ allJournal = (app) => {
             include:[
                 {
                     model: Appartement,
+                    required: false,
                     where: {is_active: true}
                 }
             ],
@@ -28,6 +29,7 @@ appartFondJournal = (app) => {
             include:[
                 {
                     model: Appartement,
+                    required: false,
                     where: {is_active: true}
                 }
             ],

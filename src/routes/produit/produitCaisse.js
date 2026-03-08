@@ -302,6 +302,8 @@ allProduitCaisse = (app) => {
             const personnel = await Personnel.findByPk(personnelId, {
                 include: [{
                     model: Caisse,
+                    required: false,
+                    where: { is_active: true },
                     through: { attributes: [] }
                 }]
             });
@@ -655,7 +657,7 @@ allHistCaisse = (app) => {
             if (req.params.id) {
                 // Cas Caissier : on cherche d'abord les IDs de ses caisses via la table pivot
                 const personnelInfos = await Personnel.findByPk(req.params.id, {
-                    include: [{ model: Caisse, through: { attributes: [] } }]
+                    include: [{ model: Caisse, through: { attributes: [] }, where: { is_active: true }, required: false }],
                 });
 
                 if (!personnelInfos || !personnelInfos.Caisses || personnelInfos.Caisses.length === 0) {

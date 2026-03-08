@@ -4,8 +4,8 @@ allChJournal = (app) => {
     app.get('/allChJournal', (req, res) => {
         ChambreJournal.findAll({
             include:[
-                {model: MaisonColse},
-                {model: Chambre}
+                {model: MaisonColse, required: false, where: {is_active: true}},
+                {model: Chambre, required: false, where: {is_active: true}}
             ],
             where: {is_active: true},
             order:[['id_journal', 'DESC']]

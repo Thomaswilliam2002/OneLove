@@ -1,6 +1,6 @@
 const {Appartement, AppartFondJournal, AppartJournal, sequelize} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
-const {fn, col, literal} = require('sequelize');
+const {fn, col, literal, where} = require('sequelize');
 
 allAppart = (app) => {
     app.get('/allAppart', protrctionRoot, authorise('admin', 'comptable', 'caissier', 'gerant', 'caissier central'), (req, res) => {
@@ -42,6 +42,8 @@ oneAppart = (app) => {
                 where: { id_appart: req.params.id },
                 include: [{
                     model: Appartement,
+                    required: true,
+                    where: { is_active: true },
                     attributes: [],
                 }],
                 // Sous Postgres, on doit grouper par l'expression exacte et la colonne d'inclusion

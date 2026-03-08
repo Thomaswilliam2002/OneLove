@@ -6,6 +6,7 @@ allBVJournal = (app) => {
             include:[
                 {
                     model: BarVip,
+                    required: false,
                     where: {is_active: true}
                 }
             ],
