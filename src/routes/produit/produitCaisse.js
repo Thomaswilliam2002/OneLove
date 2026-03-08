@@ -724,30 +724,26 @@ allHistCaisse = (app) => {
 deleteHistCaisse = (app) => {
     app.delete('/deleteHistCaisse/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
         try {
+            // 1. Trouver l'enregistrement de vente
             const histDel = await HistCaisse.findByPk(req.params.id);
             if (!histDel) return res.redirect('/notFound');
 
-            await HistCaisse.destroy({ where: { id_hist: histDel.id_hist } });
-
-            const caisse = await Caisse.findByPk(histDel.id_caisse);
-            if (!caisse) return res.redirect('/notFound');
-
-            const depense = caisse.depense;
-            const recette = caisse.recette - (histDel.prix_unit * histDel.quantiter);
-
-            await Caisse.update(
-                {
-                    solde: recette - depense,
-                    recette: recette
-                },
-                { where: { id_caisse: histDel.id_caisse } }
+            // 2. Désactivation logique de la vente
+            // En passant is_active à false, cette vente ne sera plus 
+            // prise en compte dans le calcul (Total Reçu - Total Vendu)
+            await HistCaisse.update(
+                { is_active: false }, 
+                { where: { id_hist: histDel.id_hist } }
             );
 
-            res.redirect(`/allHistCaisse/${histDel.id_caissier}?msg=sup`);
+            // 3. Redirection
+            // Le calcul dynamique dans 'allProduitCaisse' affichera 
+            // désormais la quantité correcte automatiquement.
+            res.redirect(`/allHistCaisse/${histDel.id_caissier}?msg=Vente annulée, le stock de la caisse a été mis à jour.`);
 
         } catch (error) {
             console.error("Erreur deleteHistCaisse:", error);
-            if (!res.headersSent) res.redirect('/notFound');
+            if (!res.headersSent) returnres.redirect('/notFound');
         }
     });
 };

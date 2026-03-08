@@ -3419,3 +3419,38 @@ module.exports = {
         }
     })
 }
+
+
+deleteHistCaisse = (app) => {
+  app.delete('/deleteHistCaisse/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
+      try {
+          const t = await sequelize.transaction();
+
+          const histDel = await HistCaisse.findByPk(req.params.id);
+          if (!histDel) return res.redirect('/notFound');
+
+          await HistCaisse.update({ is_active: false }, { where: { id_hist: histDel.id_hist }, transaction: t });
+
+          const caisse = await Caisse.findByPk(histDel.id_caisse);
+          if (!caisse) return res.redirect('/notFound');
+
+          if (histDel.type === 'emballage') {
+              await Emballage.update(
+                  { quantiter: literal(`quantiter + ${histDel.quantiter}`) },
+                  { where: { id_emballage: histDel.id_probal }, transaction: t }
+              );
+          } else if (histDel.type === 'produit') {
+              await Produit.update(
+                  { quantiter: literal(`quantiter + ${histDel.quantiter}`) },
+                  { where: { id_produit: histDel.id_probal }, transaction: t }
+              );
+          }
+
+          res.redirect(`/allHistCaisse/${histDel.id_caissier}?msg=sup`);
+
+      } catch (error) {
+          console.error("Erreur deleteHistCaisse:", error);
+          if (!res.headersSent) res.redirect('/notFound');
+      }
+  });
+};
