@@ -98,7 +98,7 @@ updateSanction = (app) => {
             where: {id_sanction: req.params.id}
         })
             .then(_ => {
-                res.redirect(`/onePersonnel/${req.params.id}?indice=admin&msg=Modification de la sanction avec succes&tc=alert-success`);
+                res.redirect(`/onePersonnel/${req.params.id}?&msg=Modification de la sanction avec succes&tc=alert-success`);
             })
             .catch(_ => {
                 console.error(_);
@@ -112,7 +112,7 @@ deleteSanction = (app) => {
     app.delete('/deleteSanction/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         Sanction.update({is_active: false},{where: {id_sanction: req.params.id}})
             .then(_ => {
-                res.redirect(`/onePersonnel/${req.params.id}?indice=admin&msg=Suppression de la sanction avec succes&tc=alert-success`);
+                res.redirect(`/onePersonnel/${req.params.id}?&msg=Suppression de la sanction avec succes&tc=alert-success`);
             })
             .catch(_ => {
                 console.error(_);
