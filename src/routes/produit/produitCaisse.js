@@ -308,7 +308,7 @@ allProduitCaisse = (app) => {
                 }]
             });
 
-            if (!personnel || !personnel.Caisses || personnel.Caisses.length === 0) {
+            if (!personnel) {
                 return res.redirect('/notFound');
             }
 
