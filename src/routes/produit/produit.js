@@ -39,7 +39,8 @@ allProduit = (app) => {
                         [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom']
                     ],
                     where: {
-                        type: { [Op.in]: ["produit"], is_active: true }
+                        type: { [Op.in]: ["produit"] },
+                        is_active: true
                     },
                     group: [
                         "id_probal",
