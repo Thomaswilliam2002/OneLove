@@ -1,5 +1,5 @@
 const { where, literal, Op, fn, col, } = require('sequelize');
-const {Produit,Caisse, HistSortie, Emballage, HistCaisse, Personnel} = require('../../db/sequelize');
+const {Produit,Caisse, HistSortie, Emballage, HistCaisse, Personnel, sequelize} = require('../../db/sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 
 statsRecetteMoris = (app) => {
