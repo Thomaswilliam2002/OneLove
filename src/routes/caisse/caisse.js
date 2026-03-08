@@ -13,12 +13,12 @@ formAddCaisse = (app) =>{
                 include:[
                     { 
                         model: Personnel,
-                        required: false,
+                        required: true,
                         where:{ is_active: true }
                     },
                     { 
                         model: Poste,
-                        required: false,
+                        required: true,
                         where: {
                             nom_poste: {
                                 [Op.in]: ['Caissier']
@@ -504,5 +504,5 @@ oneCaisse = (app) => {
 
 module.exports = {
     allCaisse, caisseBareSimple, caisseBareVip, caisseAppart, caisseMClose, caisseCClub, caisseCuisine,
-    formAddCaisse, formEditCaisse, addCaisse, updateCaisse, deleteCaisse, oneCaisse
+    formAddCaisse, formEditCaisse, addCaisse, updateCaisse, deleteCaisse, oneCaisse, assignCaisse
 };

@@ -66,44 +66,12 @@
                     <a href="/formAddProduit" class="btn btn-primary ms-auto">Ajouter un nouveau produit</a>
                   </div>
                   <div class="card-body">
-                      <% if(msg) {%>
-                        <% if(type === 'achat') {%>
-                          <% if(msg === 'ajout') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                              <b>Transaction </b> ajouter avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                        <% }%>
-                        <% if(type === 'vente') {%>
-                          <% if(msg === 'ajout') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                              <b>Transaction </b> ajouter avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                        <% }%>
-                        <% if(type === 'article') {%>
-                          <% if(msg === 'ajout') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                              <b>Produit </b> ajouter avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                          <% if(msg === 'modif') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                              <b>Produit </b> modifier avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                          <% if(msg === 'sup') {%>
-                            <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                              <b>Produit </b> supprimer avec succes !
-                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                          <% }%>
-                        <% }%>
-                      <% }%>
+                    <% if(msg) {%>
+                      <div class="alert bg-white border alert-dismissible fade show <%= tc %>"  role="alert">
+                        <b><%= msg %></b>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    <% }%>
                     <!-- Table starts -->
                     <div class="table-responsive">
                       <table id="customButtons" class="table truncate m-0 align-middle">
