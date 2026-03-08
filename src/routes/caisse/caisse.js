@@ -19,10 +19,8 @@ formAddCaisse = (app) =>{
                     { 
                         model: Poste,
                         required: false,
-                        where: {
-                            nom_poste: {
-                                [Op.in]: ['Caissier']
-                            },
+                        where:{
+                            nom_poste: ['Comptable','Gerant','Caissier'],
                             is_active: true
                         }
                     }
