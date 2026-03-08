@@ -89,12 +89,16 @@ addSanction = (app) => {
 
 updateSanction = (app) => {
     app.put('/updateSanction/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Sanction.update(req.body, {
-            where: {id: req.params.id}
+        const {motif, desc, montant} = req.body;
+        Sanction.update({
+            motif: motif,
+            description: desc,
+            montan_defalquer: montant
+        }, {
+            where: {id_sanction: req.params.id}
         })
             .then(_ => {
-                const msg = "Modification de la sanction avec succes"
-                res.json({msg})
+                res.redirect(`/onePersonnel/${req.params.id}?indice=admin&msg=Modification de la sanction avec succes&tc=alert-success`);
             })
             .catch(_ => {
                 console.error(_);
@@ -106,19 +110,14 @@ updateSanction = (app) => {
 
 deleteSanction = (app) => {
     app.delete('/deleteSanction/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Sanction.findByPk(req.params.id)
-            .then(sanction => {
-                const appartDel = sanction;
-                Sanction.destroy({where: {id: appartDel.id}})
-                    .then(_ => {
-                        const msg = "Suppression de la sanction avec succes"
-                        res.json({msg})
-                    })
-                    .catch(_ => {
-                        console.error(_);
-                        res.redirect('/notFound');
-                        return; // On stoppe tout ici !
-                    })
+        Sanction.update({is_active: false},{where: {id_sanction: req.params.id}})
+            .then(_ => {
+                res.redirect(`/onePersonnel/${req.params.id}?indice=admin&msg=Suppression de la sanction avec succes&tc=alert-success`);
+            })
+            .catch(_ => {
+                console.error(_);
+                res.redirect('/notFound');
+                return; // On stoppe tout ici !
             })
     })
 }

@@ -56,50 +56,12 @@
 
           <!-- App body starts -->
           <div class="app-body">
-            <% if(msg) {%>
-              <% if(type === 'staff') {%>
-                <% if(msg === 'ajout') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                    <b>Personnel </b> ajouter avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'modif') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                    <b>Personnel </b> modifier avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'sup') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                    <b>Personnel </b> supprimer avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-              <% }%>
-              <% if(type === 'admin') {%>
-                <% if(msg === 'ajout') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-success" role="alert">
-                    <b>Administrateur </b> ajouter avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'modif') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                    <!-- <b>Administrateur </b> modifier avec succes ! --> modifier avec succes !
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-                <% if(msg === 'sup') {%>
-                  <div class="alert bg-white border alert-dismissible fade show text-danger" role="alert">
-                    supprimer avec succes !<!-- <b>Administrateur </b> supprimer avec succes ! -->
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                <% }%>
-              <% }%>
-            <% }%>
-
-
+            <% if(msg) { %>
+              <div class="alert <%= tc || 'alert-info' %> alert-dismissible fade show" role="alert">
+                <%= msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <% } %>
             <!-- Row starts -->
             <div class="row gx-3">
               <div class="col-sm-12">

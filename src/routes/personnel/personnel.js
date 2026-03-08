@@ -75,7 +75,9 @@ onePersonnel = (app) => {
                 res.status(200).render('staff-profil', {
                     occupe: occupe, 
                     indice: req.query.indice, 
-                    caisses: caisses // Sera un tableau vide si ce n'est pas un caissier ou s'il n'a pas de caisse
+                    caisses: caisses, // Sera un tableau vide si ce n'est pas un caissier ou s'il n'a pas de caisse
+                    msg: req.query.msg,
+                    tc: req.query.tc
                 });
                 // if(occupe.Personnel.type_personnel === 'caissier'){
                 //     res.status(200).render('staff-profil', {occupe: occupe, indice: req.query.indice});
