@@ -64,11 +64,21 @@ onePersonnel = (app) => {
             ],
         })
             .then(occupe => {
-                // const msg = "personnel recuperer avec succes"
-                //res.json({msg, data: occupe})//staff-profil
-                if(occupe.Personnel.type_personnel === 'caissier'){
-                    res.status(200).render('staff-profil', {occupe: occupe, indice: req.query.indice});
-                }
+                if (!occupe) return res.redirect('/notFound');
+
+                // Le personnel et ses caisses sont maintenant accessibles via 'occupe.Personnel'
+                const personnel = occupe.Personnel;
+                const caisses = personnel.Caisses || []; // Sequelize met les caisses dans un tableau .Caisses
+    
+                // On rend la vue avec toutes les données
+                res.status(200).render('staff-profil', {
+                    occupe: occupe, 
+                    indice: req.query.indice, 
+                    caisses: caisses // Sera un tableau vide si ce n'est pas un caissier ou s'il n'a pas de caisse
+                });
+                // if(occupe.Personnel.type_personnel === 'caissier'){
+                //     res.status(200).render('staff-profil', {occupe: occupe, indice: req.query.indice});
+                // }
             })
             .catch(_ => {
                 console.error(_);
