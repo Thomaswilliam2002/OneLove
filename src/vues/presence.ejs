@@ -79,32 +79,61 @@
                       </thead>
                       <tbody class="text-center">
                         <% presences.forEach(p => { %>
-                          <tr>
-                            <td>
-                              <strong><%= p.Personnel.nom %> <%= p.Personnel.prenom %></strong>
-                            </td>
-                            <td>
-                              <span class="badge <%= p.etat_presence === 'Present' ? 'bg-success' : 'bg-danger' %>">
-                                <%= p.etat_presence %>
-                              </span>
-                            </td>
-                            <td><%= p.date_debut %></td>
-                            <td><%= p.date_fin || '---' %></td>
-                            <td>
-                              <small>
-                                <i class="ri-time-line text-success"></i> <%= p.heure_arriver || '--:--' %> <br>
-                                <i class="ri-time-line text-danger"></i> <%= p.heure_deppart || '--:--' %>
-                              </small>
-                            </td>
-                            <td><%= p.etat_presence === 'Absent' ? p.justification_absence : '---' %></td>
-                            <td>
-                              <form action="/deletePresence/<%= p.id_presence %>?_method=DELETE" method="POST" onsubmit="return confirm('Supprimer cet enregistrement ?')">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">
-                                  <i class="ri-delete-bin-line"></i>
-                                </button>
-                              </form>
-                            </td>
-                          </tr>
+                          <%if(['admin', 'comptable'].includes(user.Personnel.type_personnel)){%>
+                            <tr>
+                              <td>
+                                <strong><%= p.Personnel.nom %> <%= p.Personnel.prenom %></strong>
+                              </td>
+                              <td>
+                                <span class="badge <%= p.etat_presence === 'Present' ? 'bg-success' : 'bg-danger' %>">
+                                  <%= p.etat_presence %>
+                                </span>
+                              </td>
+                              <td><%= p.date_debut %></td>
+                              <td><%= p.date_fin || '---' %></td>
+                              <td>
+                                <small>
+                                  <i class="ri-time-line text-success"></i> <%= p.heure_arriver || '--:--' %> <br>
+                                  <i class="ri-time-line text-danger"></i> <%= p.heure_deppart || '--:--' %>
+                                </small>
+                              </td>
+                              <td><%= p.etat_presence === 'Absent' ? p.justification_absence : '---' %></td>
+                              <td>
+                                <form action="/deletePresence/<%= p.id_presence %>?_method=DELETE" method="POST" onsubmit="return confirm('Supprimer cet enregistrement ?')">
+                                  <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="ri-delete-bin-line"></i>
+                                  </button>
+                                </form>
+                              </td>
+                            </tr>
+                          <%} else { if(p.Personnel.id_personnel === user.Personnel.id_personnel) {%>
+                            <tr>
+                              <td>
+                                <strong><%= p.Personnel.nom %> <%= p.Personnel.prenom %></strong>
+                              </td>
+                              <td>
+                                <span class="badge <%= p.etat_presence === 'Present' ? 'bg-success' : 'bg-danger' %>">
+                                  <%= p.etat_presence %>
+                                </span>
+                              </td>
+                              <td><%= p.date_debut %></td>
+                              <td><%= p.date_fin || '---' %></td>
+                              <td>
+                                <small>
+                                  <i class="ri-time-line text-success"></i> <%= p.heure_arriver || '--:--' %> <br>
+                                  <i class="ri-time-line text-danger"></i> <%= p.heure_deppart || '--:--' %>
+                                </small>
+                              </td>
+                              <td><%= p.etat_presence === 'Absent' ? p.justification_absence : '---' %></td>
+                              <td>
+                                <form action="/deletePresence/<%= p.id_presence %>?_method=DELETE" method="POST" onsubmit="return confirm('Supprimer cet enregistrement ?')">
+                                  <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="ri-delete-bin-line"></i>
+                                  </button>
+                                </form>
+                              </td>
+                            </tr>
+                          <%}}%>
                         <% }) %>
                       </tbody>
                     </table>
@@ -122,14 +151,22 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
-                <div class="mb-3 text-center">
-                  <label class="form-label">Sélectionner l'employé</label>
-                  <select name="id_personnel" class="form-select" required>
-                    <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
-                      <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
-                    <% }}) %>
-                  </select>
-                </div>
+                <%if(['admin', 'comptable'].includes(user.Personnel.type_personnel)){%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Employé de retour</label>
+                    <select name="id_personnel" class="form-select" required>
+                      <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
+                        <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
+                      <% }}) %>
+                    </select>
+                  </div>
+                <%}else{%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Nom & Prenom</label>
+                    <input type="text" name="" value="<%= user.Personnel.nom %> <%= user.Personnel.prenom %>" class="form-control" required disabled>
+                  </div>
+                  <input type="hidden" name="id_personnel" value="<%= user.Personnel.id_personnel %>" class="form-control" >
+                <%}%>
                 <div class="mb-3 text-center">
                   <label class="form-label">Date de début</label>
                   <input type="date" name="date_debut" class="form-control" required>
@@ -155,14 +192,22 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
-                <div class="mb-3 text-center">
-                  <label class="form-label">Employé qui s'en va</label>
-                  <select name="id_personnel" class="form-select" required>
-                    <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
-                      <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
-                    <% }}) %>
-                  </select>
-                </div>
+                <%if(['admin', 'comptable'].includes(user.Personnel.type_personnel)){%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Employé de retour</label>
+                    <select name="id_personnel" class="form-select" required>
+                      <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
+                        <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
+                      <% }}) %>
+                    </select>
+                  </div>
+                <%}else{%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Nom & Prenom</label>
+                    <input type="text" name="" value="<%= user.Personnel.nom %> <%= user.Personnel.prenom %>" class="form-control" required disabled>
+                  </div>
+                  <input type="hidden" name="id_personnel" value="<%= user.Personnel.id_personnel %>" class="form-control" >
+                <%}%>
                 <div class="mb-3 text-center">
                   <label class="form-label">Date de fin</label>
                   <input type="date" name="date_fin" class="form-control" required>
@@ -188,14 +233,22 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
-                <div class="mb-3 text-center">
-                  <label class="form-label">Employé absent</label>
-                  <select name="id_personnel" class="form-select" required>
-                    <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
-                      <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
-                    <% }}) %>
-                  </select>
-                </div>
+                <%if(['admin', 'comptable'].includes(user.Personnel.type_personnel)){%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Employé de retour</label>
+                    <select name="id_personnel" class="form-select" required>
+                      <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
+                        <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
+                      <% }}) %>
+                    </select>
+                  </div>
+                <%}else{%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Nom & Prenom</label>
+                    <input type="text" name="" value="<%= user.Personnel.nom %> <%= user.Personnel.prenom %>" class="form-control" required disabled>
+                  </div>
+                  <input type="hidden" name="id_personnel" value="<%= user.Personnel.id_personnel %>" class="form-control" >
+                <%}%>
                 <div class="mb-3 text-center">
                   <label class="form-label">Date de début</label>
                   <input type="date" name="date_debut" class="form-control" required>
@@ -225,14 +278,22 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
-                <div class="mb-3 text-center">
-                  <label class="form-label">Employé de retour</label>
-                  <select name="id_personnel" class="form-select" required>
-                    <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
-                      <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
-                    <% }}) %>
-                  </select>
-                </div>
+                <%if(['admin', 'comptable'].includes(user.Personnel.type_personnel)){%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Employé de retour</label>
+                    <select name="id_personnel" class="form-select" required>
+                      <% personnels.forEach(p => { if(p.type_personnel !== 'admin'){%>
+                        <option value="<%= p.id_personnel %>"><%= p.nom %> <%= p.prenom %></option>
+                      <% }}) %>
+                    </select>
+                  </div>
+                <%}else{%>
+                  <div class="mb-3 text-center">
+                    <label class="form-label">Nom & Prenom</label>
+                    <input type="text" name="" value="<%= user.Personnel.nom %> <%= user.Personnel.prenom %>" class="form-control" required disabled>
+                  </div>
+                  <input type="hidden" name="id_personnel" value="<%= user.Personnel.id_personnel %>" class="form-control" >
+                <%}%>
                 <div class="mb-3 text-center">
                   <label class="form-label">Date de retour (Fin)</label>
                   <input type="date" name="date_fin" class="form-control" required>
