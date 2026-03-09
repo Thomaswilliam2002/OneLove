@@ -92,7 +92,7 @@ addChambre = (app) => {
             .then(chambre => {
                 // const msg = "la chambre " + req.body.nom + "a ete ajouter avec succes"
                 // res.json({msg, data: chambre})
-                res.redirect('/allMClose')
+                res.redirect('/allMClose?msg=Chambre ajouter avec succes&tc=alert-success')
             })
             .catch(_ => {
                 console.error(_);
