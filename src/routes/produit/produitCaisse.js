@@ -630,7 +630,6 @@ allCaisseArticle = (app) => {
 addHistCaisse = (app) => {
     app.post('/addHistCaisse', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) =>{
         const {qte, prix, type, idpro, caisse, caissier, nom} = req.body;
-        let pu = 0
         try{
             const ajoutHist = await HistCaisse.create({
                 quantiter: qte,
@@ -640,7 +639,11 @@ addHistCaisse = (app) => {
                 id_caisse: caisse,
                 id_caissier: caissier
             })
-            res.redirect(`/allProduitCaisse/${caissier}?msg=Nouvelle vente ajoutée !&tc=alert-success`);
+            if(req.query.src && req.query.src === 'caissier'){
+                res.redirect(`/allProduitCaisse/${caissier}?msg=Nouvelle vente ajoutée !&tc=alert-success`);
+            }else if(req.query.src && (req.query.src === 'admin' || req.query.src === 'comptable')){
+                res.redirect(`/allCaisseArticle/${caisse}?msg=Nouvelle vente ajoutée !&tc=alert-success`);
+            }
         }catch (e){
             console.error(e);
             res.redirect('/notFound');
