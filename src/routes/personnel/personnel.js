@@ -72,6 +72,7 @@ onePersonnel = (app) => {
                 const caisses = personnel.Caisses || []; // Sequelize met les caisses dans un tableau .Caisses
     
                 // On rend la vue avec toutes les données
+                console.log('occupe tour de boucle',occupe)
                 res.status(200).render('staff-profil', {
                     occupe: occupe, 
                     indice: req.query.indice, 
