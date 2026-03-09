@@ -151,7 +151,7 @@
                                             <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                                               Supprimer
                                             </button> -->
-                                            <form action="/deleteSanction/<%= sanction.id_sanction %>?_method=DELETE" method="post">
+                                            <form action="/deleteSanction/<%= sanction.id_sanction %>/<%= occupe.Personnel.id_personnel%>?_method=DELETE" method="post">
                                               <div class="col-sm-12">
                                                 <div class="d-flex gap-2 justify-content-end">
                                                   <button type="submit" class="btn btn-danger">Supprimer</button>
@@ -184,7 +184,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                       </div>
                                       <div class="modal-body">
-                                        <form action="/updateSanction/<%= sanction.id_sanction %>?_method=PUT" method="post">
+                                        <form action="/updateSanction/<%= sanction.id_sanction %>/<%= occupe.Personnel.id_personnel%>?_method=PUT" method="post">
                                           <div class="row gx-3">
                                             <div class="col-sm-12">
                                               <div class="bg-light rounded-2 px-3 py-2 mb-3">

@@ -88,7 +88,7 @@ addSanction = (app) => {
 }
 
 updateSanction = (app) => {
-    app.put('/updateSanction/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.put('/updateSanction/:id/:id_p', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         const {motif, desc, montant} = req.body;
         Sanction.update({
             motif: motif,
@@ -98,7 +98,7 @@ updateSanction = (app) => {
             where: {id_sanction: req.params.id}
         })
             .then(_ => {
-                res.redirect(`/onePersonnel/${req.params.id}?&msg=Modification de la sanction avec succes&tc=alert-success`);
+                res.redirect(`/onePersonnel/${req.params.id_p}?&msg=Modification de la sanction avec succes&tc=alert-success`);
             })
             .catch(_ => {
                 console.error(_);
@@ -109,10 +109,10 @@ updateSanction = (app) => {
 }
 
 deleteSanction = (app) => {
-    app.delete('/deleteSanction/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
+    app.delete('/deleteSanction/:id/:id_p', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         Sanction.update({is_active: false},{where: {id_sanction: req.params.id}})
             .then(_ => {
-                res.redirect(`/onePersonnel/${req.params.id}?&msg=Suppression de la sanction avec succes&tc=alert-success`);
+                res.redirect(`/onePersonnel/${req.params.id_p}?&msg=Suppression de la sanction avec succes&tc=alert-success`);
             })
             .catch(_ => {
                 console.error(_);
