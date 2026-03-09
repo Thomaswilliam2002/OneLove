@@ -289,6 +289,43 @@ statsRecetteMoris = (app) => {
     );
 };
 
+// addHistCaisse = (app) => {
+//     app.post('/addHistCaisse', protrctionRoot, authorise('admin','comptable','caissier'), async (req, res) => {
+
+//         const { qte, prix, type, idpro, caisse } = req.body;
+
+//         try {
+
+//             if(!qte || !prix || !idpro || !caisse){
+//                 return res.redirect('/notFound');
+//             }
+
+//             const ajoutHist = await HistCaisse.create({
+//                 quantiter: qte,
+//                 prix_unit: prix,
+//                 type: type,
+//                 id_probal: idpro,
+//                 id_caisse: caisse,
+//                 id_caissier: req.session.user.Personnel.id_personnel
+//             });
+
+//             const role = req.session.user.Poste.nom_poste;
+
+//             if(role === 'Caissier'){
+//                 res.redirect(`/allProduitCaisse/${req.session.user.Personnel.id_personnel}?msg=Nouvelle vente ajoutée !&tc=alert-success`);
+//             }
+//             else{
+//                 res.redirect(`/allCaisseArticle/${caisse}?msg=Nouvelle vente ajoutée !&tc=alert-success`);
+//             }
+
+//         } catch (e) {
+//             console.error(e);
+//             res.redirect('/notFound');
+//         }
+
+//     })
+// }
+
 allProduitCaisse = (app) => {
     app.get('/allProduitCaisse/:id', async (req, res) => {
 
@@ -641,7 +678,7 @@ addHistCaisse = (app) => {
             })
             if(req.query.src && req.query.src === 'caissier'){
                 res.redirect(`/allProduitCaisse/${caissier}?msg=Nouvelle vente ajoutée !&tc=alert-success`);
-            }else if(req.query.src && (req.query.src === 'admin' || req.query.src === 'comptable')){
+            }else{
                 res.redirect(`/allCaisseArticle/${caisse}?msg=Nouvelle vente ajoutée !&tc=alert-success`);
             }
         }catch (e){
