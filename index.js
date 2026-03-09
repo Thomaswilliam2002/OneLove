@@ -345,43 +345,88 @@ app.get('/login', (req, res) => {
 })
 
 //route connexion
-app.post('/connexion', async (req, res) => {
-    const{email, pwd} = req.body
-    const personnel = await Occupe.findOne({
-        where: {is_active: true},
-        include:[
-            {model: Personnel,where: {email: email, is_active: true}, required: false},
-            {model: Poste, required: false, where: {is_active: true}}
-        ]
-    })
-    if(personnel){
-        const verif = await bcrypt.compare(pwd, personnel.Personnel.mdp);
-        if(verif){
-            if(personnel.Personnel.validation === true){
-                req.session.user = personnel;
-                req.session.isLoggedIn = true;
-                // res.locals.user = personnel;
-                //console.log(res.locals.user)
-                if(personnel.Poste.nom_poste === 'Admin'){
-                    res.redirect('/index');
-                }else{
-                    // console.log('oui')
-                    res.redirect('/onePersonnel/' + personnel.Personnel.id_personnel)
-                }
-            }else{
-                // console.log('compte nom valider');
-                res.redirect('login?msg= Votre compte n\'est pas valider. Veuillez pacienter ou contacter l\'administrateur.&tc=alert-danger')
-            }
+// app.post('/connexion', async (req, res) => {
+//     const{email, pwd} = req.body
+//     const personnel = await Occupe.findOne({
+//         where: {is_active: true},
+//         include:[
+//             {model: Personnel,where: {email: email, is_active: true}, required: true},
+//             {model: Poste, required: true, where: {is_active: true}}
+//         ]
+//     })
+//     if(personnel){
+//         const verif = await bcrypt.compare(pwd, personnel.Personnel.mdp);
+//         if(verif){
+//             if(personnel.Personnel.validation === true){
+//                 req.session.user = personnel;
+//                 req.session.isLoggedIn = true;
+//                 // res.locals.user = personnel;
+//                 //console.log(res.locals.user)
+//                 if(personnel.Poste.nom_poste === 'Admin'){
+//                     res.redirect('/index');
+//                 }else{
+//                     // console.log('oui')
+//                     res.redirect('/onePersonnel/' + personnel.Personnel.id_personnel)
+//                 }
+//             }else{
+//                 // console.log('compte nom valider');
+//                 res.redirect('login?msg= Votre compte n\'est pas valider. Veuillez pacienter ou contacter l\'administrateur.&tc=alert-danger')
+//             }
             
-        }else{
-            // console.log('mdp incorrect');
-            res.redirect('login?msg=Email ou mot de passe incorrect&tc=alert-danger')
-        }
-    }else{
-        // console.log('utilisateur non trouver');
-        res.redirect('login?msg=Utilisateur non trouver.Email ou mot de passe incorrect&tc=alert-danger')
+//         }else{
+//             // console.log('mdp incorrect');
+//             res.redirect('login?msg=Email ou mot de passe incorrect&tc=alert-danger')
+//         }
+//     }else{
+//         // console.log('utilisateur non trouver');
+//         res.redirect('login?msg=Utilisateur non trouver.Email ou mot de passe incorrect&tc=alert-danger')
+//     }
+// })
+
+app.post('/connexion', async (req, res) => {
+
+    const { email, pwd } = req.body;
+
+    const personnel = await Occupe.findOne({
+        where: { is_active: true },
+        include:[
+            {
+                model: Personnel,
+                where: { email: email, is_active: true },
+                required: true
+            },
+            {
+                model: Poste,
+                where: { is_active: true },
+                required: true
+            }
+        ]
+    });
+
+    if(!personnel){
+        return res.redirect('login?msg=Utilisateur non trouver.Email ou mot de passe incorrect&tc=alert-danger')
     }
-})
+
+    const verif = await bcrypt.compare(pwd, personnel.Personnel.mdp);
+
+    if(!verif){
+        return res.redirect('login?msg=Email ou mot de passe incorrect&tc=alert-danger')
+    }
+
+    if(personnel.Personnel.validation !== true){
+        return res.redirect('login?msg=Votre compte n\'est pas valider. Veuillez patienter ou contacter l\'administrateur.&tc=alert-danger')
+    }
+
+    req.session.user = personnel;
+    req.session.isLoggedIn = true;
+
+    if(personnel.Poste.nom_poste === 'Admin'){
+        res.redirect('/index');
+    }else{
+        res.redirect('/onePersonnel/' + personnel.Personnel.id_personnel);
+    }
+
+});
 
 //route deconnexion
 app.get('/deconnexion', protrctionRoot, (req, res) => {
