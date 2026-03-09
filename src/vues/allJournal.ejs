@@ -82,7 +82,60 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        
+                        <tbody class="text-center" id="tbody">
+                            <% if(type === 'simple'){ %>
+                                <% Journals.forEach(Journal => { %>
+                                    <tr>
+                                        <td><%= Journal.BarSimple.nom %></td>
+                                        <td class="calcule"><%= Journal.recette %></td>
+                                        <td><%= journal.date %></td>
+                                        <td>
+                                            <div class="d-inline-flex gap-1">
+                                              <!-- ----------------------------------------------------------------------------------- -->
+                                              <div class="col-sm-4">
+                                                <!-- Card starts -->
+                                                    <!-- Button trigger modal -->
+                                                    <button type="button" data-bs-toggle="modal"
+                                                      data-bs-target="#<%= Journal.id_barSimple %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                                      <i class="ri-delete-bin-line"></i>
+                                                    </button>
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="<%= Journal.id_barSimple %>ModalCenter" tabindex="-1"
+                                                      aria-labelledby="<%= Journal.id_barSimple %>ModalCenterTitle" aria-hidden="true">
+                                                      <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                          <div class="modal-header">
+                                                            <h5 class="modal-title" id="<%= Journal.id_barSimple %>ModalCenterTitle">
+                                                              Confirmer
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                          </div>
+                                                          <div class="modal-body">
+                                                            <p>Voulez-vous vraiment supprimer cet Historique ?</p>
+                                                          </div>
+                                                          <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                              annuler
+                                                            </button>
+                                                            <form action="/deleteBSJournal/<%= Journal.id_barSimple %>?_method=DELETE" method="post">
+                                                              <div class="col-sm-12">
+                                                                <div class="d-flex gap-2 justify-content-end">
+                                                                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                                </div>
+                                                              </div>
+                                                            </form>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                <!-- Card ends -->
+                                              </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } %>
+                        </tbody>
                       </table>
                       <table id="" class="table truncate m-0 align-middle dataTable">
                         <thead class="text-center">
