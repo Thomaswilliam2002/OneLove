@@ -354,7 +354,7 @@ HistCaisse.belongsTo(Caisse, {
 
 (async () =>{
     try{
-        await sequelize.sync({force: true}) //{alter: false}
+        await sequelize.sync() //{alter: false}
         console.log('Base synchronisee')
 
         const count = await Poste.count({
