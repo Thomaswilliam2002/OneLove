@@ -38,12 +38,7 @@
 
           <!-- App body starts -->
           <div class="app-body">
-            <% if(msg) { %>
-              <div class="alert <%= tc || 'alert-info' %> alert-dismissible fade show" role="alert">
-                <%= msg %>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-            <% } %>
+
             <!-- Row starts -->
             <div class="row gx-3">
               <div class="col-xxl-12 col-sm-12">
@@ -55,9 +50,9 @@
                       <div class="col-sm-9">
                         <div class="text-white mt-3">
                           <h5>Nom & Prenom: <%= occupe.Personnel.nom %> <%= occupe.Personnel.prenom %></h5>
-                          <h5>Age: <%= occupe?.Personnel?.age || "Non enregistré" %></h5>
+                          <h5>Age: <%= occupe.Personnel.age %></h5>
                           <h5>Téléphone: <%= occupe.Personnel.numero %></h5>
-                          <h5>Email: <%= occupe?.Personnel?.email || "Non enregistré" %></h5>
+                          <h5>Email: <%= occupe.Personnel.email %></h5>
                           <h5>Adresse: <%= occupe.Personnel.adresse %></h5>
                           <h5>Poste: <%= occupe.Poste.nom_poste %></h5>
                           <h5>Salaire <%= occupe.Poste.salaire %> FCFA</h5>
@@ -75,20 +70,16 @@
                       <thead class="text-center">
                         <tr>
                           <th>#</th>
-                          <th>Nom de la Caisse</th>
-                          <th>Département</th>
-                          <th>Sous Département</th>
+                          <th>Caisse</th>
                         </tr>
                       </thead>
                       <tbody class="text-center">
-                        <% caisses.forEach((caisse, i) => { %>
+                        <% i = 1;caisses.forEach(caisse => { %>
                           <tr>
                             <td><%= i %></td>
-                            <td><%= caisse.nom %></td>
-                            <td><%= caisse.type_lieu %></td>
-                            <td><%= caisse.nom_lieu %></td>
+                            <td><%= caisse.nom %> (<%= caisse.type_lieu %>)</td>
                           </tr>
-                        <%})%>
+                        <%i++})%>
                       </tbody>
                     </table>
                   </div>

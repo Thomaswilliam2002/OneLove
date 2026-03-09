@@ -3454,3 +3454,287 @@ deleteHistCaisse = (app) => {
       }
   });
 };
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+  
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
+<%- include('head')%>
+
+  <body>
+
+    <!-- Page wrapper starts -->
+    <div class="page-wrapper">
+
+      <!-- App header starts -->
+      <% if(user.Personnel.type_personnel === 'admin'){%>
+        <%- include('header')%>
+      <% }else{%>
+        <%- include('header-staff')%>
+      <% }%>
+      <!-- App header ends -->
+
+      <!-- Main container starts -->
+      <div class="main-container">
+
+        <!-- Sidebar wrapper starts -->
+        <% if(user.Personnel.type_personnel === 'admin'){%>
+          <%- include('menu')%>
+        <% }else{%>
+          <%- include('menu-staff')%>
+        <% }%>
+        <!-- Sidebar wrapper ends -->
+
+        <!-- App container starts -->
+        <div class="app-container">
+
+          <!-- App hero header starts -->
+          
+          <!-- App Hero header ends -->
+
+          <!-- App body starts -->
+          <div class="app-body">
+            <% if(msg) { %>
+              <div class="alert <%= tc || 'alert-info' %> alert-dismissible fade show" role="alert">
+                <%= msg %>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            <% } %>
+            <!-- Row starts -->
+            <div class="row gx-3">
+              <div class="col-xxl-12 col-sm-12">
+                <div class="card mb-3 bg-1">
+                  <div class="card-body mh-230">
+
+                    <!-- Row starts -->
+                    <div class="row gx-3">
+                      <div class="col-sm-9">
+                        <div class="text-white mt-3">
+                          <h5>Nom & Prenom: <%= occupe.Personnel.nom %> <%= occupe.Personnel.prenom %></h5>
+                          <h5>Age: <%= occupe?.Personnel?.age || "Non enregistré" %></h5>
+                          <h5>Téléphone: <%= occupe.Personnel.numero %></h5>
+                          <h5>Email: <%= occupe?.Personnel?.email || "Non enregistré" %></h5>
+                          <h5>Adresse: <%= occupe.Personnel.adresse %></h5>
+                          <h5>Poste: <%= occupe.Poste.nom_poste %></h5>
+                          <h5>Salaire <%= occupe.Poste.salaire %> FCFA</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Row ends -->
+                  </div>
+                </div>
+
+                <!-- Table starts -->
+                 <% if(user.Personnel.type_personnel === 'caissier'){ %>
+                  <div class="table-responsive">
+                    <table id="basicExample" class="table truncate m-0 align-middle ">
+                      <thead class="text-center">
+                        <tr>
+                          <th>#</th>
+                          <th>Nom de la Caisse</th>
+                          <th>Département</th>
+                          <th>Sous Département</th>
+                        </tr>
+                      </thead>
+                      <tbody class="text-center">
+                        <% caisses.forEach((caisse, i) => { %>
+                          <tr>
+                            <td><%= i %></td>
+                            <td><%= caisse.nom %></td>
+                            <td><%= caisse.type_lieu %></td>
+                            <td><%= caisse.nom_lieu %></td>
+                          </tr>
+                        <%})%>
+                      </tbody>
+                    </table>
+                  </div>
+                  <%}%>
+                  <!-- Table ends -->
+                  <br>
+                  <br>
+                <!-- Table starts -->
+                <div class="table-responsive">
+                    <table id="basicExample" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                      <thead class="text-center">
+                        <tr>
+                          <th aria-controls="basicExample">ID</th>
+                          <th>Motif</th>
+                          <th>Description</th>
+                          <th>Date de la sanction</th>
+                          <th>Montrant defalquer</th>
+                          <% if(['admin', 'comptable'].includes(user.Personnel.type_personnel)){ %>
+                            <th>Actions</th>
+                          <%}%>
+                        </tr>
+                      </thead>
+                      <tbody class="text-center">
+                        <% i = 1; s = 0%>
+                        <% occupe.Sanctions.forEach(sanction => { %>
+                          <tr>
+                            <td><%= i %></td>
+                            <td><%= sanction.motif %></td>
+                            <td><%= sanction.description %></td>
+                            <td><%= new Date(sanction.date).getDate() < 10 ? `0${new Date(sanction.date).getDate()}` : new Date(sanction.date).getDate()  %>-<%= new Date(sanction.date).getMonth() + 1 < 10 ? `0${new Date(sanction.date).getMonth() + 1}` : new Date(sanction.date).getMonth() + 1 %>-<%= new Date(sanction.date).getFullYear()%></td>
+                            <td><%= sanction.montan_defalquer %></td>
+                            <% if(['admin', 'comptable'].includes(user.Personnel.type_personnel)){ %>
+                              <td>
+                                <div class="d-inline-flex gap-1">
+                                  <!-- ----------------------------------------------------------------------------------- -->
+                                <!-- Card starts sanction.id_sanction-->
+                                    <!-- Button trigger modal -->
+                                    <button type="button" data-bs-toggle="modal"
+                                      data-bs-target="#<%= sanction.id_sanction %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                      <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="<%= sanction.id_sanction %>ModalCenter" tabindex="-1"
+                                      aria-labelledby="<%= sanction.id_sanction %>ModalCenterTitle" aria-hidden="true">
+                                      <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="<%= sanction.id_sanction %>ModalCenterTitle">
+                                              Supprimer
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p>Voulez-vous vraiment supprimer la sanction ?</p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                              annuler
+                                            </button>
+                                            <!-- <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                              Supprimer
+                                            </button> -->
+                                            <form action="/deleteSanction/<%= sanction.id_sanction %>/<%= occupe.Personnel.id_personnel%>?_method=DELETE" method="post">
+                                              <div class="col-sm-12">
+                                                <div class="d-flex gap-2 justify-content-end">
+                                                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                </div>
+                                              </div>
+                                          </form>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                <!-- Card ends -->
+                                  
+                                  <!-- ----------------------------------------------------------------------------------------- -->
+                                   <!-- ----------------------------------------------------------------------------------- -->
+                                <!-- Card starts -->
+                                <!-- Button trigger modal -->
+                                <button type="button" data-bs-toggle="modal"
+                                  data-bs-target="#update<%= sanction.id_sanction %>ModalCenter" class="btn btn-outline-success btn-sm">
+                                  <i class="ri-edit-box-line"></i>
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="update<%= sanction.id_sanction %>ModalCenter" tabindex="-1"
+                                  aria-labelledby="personnel.id_personnelModalCenterTitle" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="update<%= sanction.id_sanction %>ModalCenterTitle" style="white-space: normal; word-wrap: break-word; overflow: break-word;">
+                                          Modification de la sanction
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form action="/updateSanction/<%= sanction.id_sanction %>/<%= occupe.Personnel.id_personnel%>?_method=PUT" method="post">
+                                          <div class="row gx-3">
+                                            <div class="col-sm-12">
+                                              <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                <h6 class="m-0">Details de la sanction</h6>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Motif de la sanction<span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="a1" value="<%= sanction.motif %>" placeholder="Entrer le motif" name="motif" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a1">Montant défalquer<span class="text-danger">*</span></label>
+                                                <input type="number" class="form-control" min="0" step="0.01" id="a1" value="<%= sanction.montan_defalquer %>" name="montant" required>
+                                              </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                              <div class="mb-3">
+                                                <label class="form-label" for="a8">Description <span class="text-danger">*</span></label>
+                                                <textarea class="form-control" id="a8" rows="2" name="desc"><%= sanction.description %></textarea>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            annuler
+                                          </button>
+                                          <button type="submit" class="btn btn-danger">Appliquer les modification</button>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  <!-- </form> -->
+                                  </div>
+                                </div>
+                                  <!-- Card ends -->
+                              <!-- ----------------------------------------------------------------------------------- -->
+                                </div>
+                              </td>
+                            <%}%>
+                          </tr>
+                        <% i++; s += sanction.montan_defalquer }) %>
+                        <tr class="text-center">
+                          <td colspan="5">Total des montant a defalquer</td>
+                          <td><%= s %></td>
+                        </tr> 
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- Table ends -->
+              </div>
+            </div>
+            <!-- Row ends -->
+
+          </div>
+          <!-- App body ends -->
+
+          <!-- App footer starts -->
+          <div class="app-footer bg-white">
+            <span>© OneLove admin 2026</span>
+          </div>
+          <!-- App footer ends -->
+
+        </div>
+        <!-- App container ends -->
+
+      </div>
+      <!-- Main container ends -->
+
+    </div>
+    <!-- Page wrapper ends -->
+
+    <!-- *************
+			************ JavaScript Files *************
+		************* -->
+    <%- include('script')%>
+    <script>
+      window.addEventListener("pageshow", function (event) {
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance != "undefined" && 
+                                window.performance.navigation.type === 2);
+        if (historyTraversal) {
+            // Si l'utilisateur est revenu en arrière, on recharge la page proprement
+            window.location.reload();
+        }
+      });
+    </script>
+    <script>
+    </script>
+  </body>
+
+
+<!-- Mirrored from buybootstrap.com/demos/medflex/medflex-admin-dashboard/doctors-profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 May 2025 12:16:09 GMT -->
+</html>
