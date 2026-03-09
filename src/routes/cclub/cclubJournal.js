@@ -4,7 +4,7 @@ allCCJournal = (app) => {
     app.get('/allCCJournal', (req, res) => {
         CrazyClubJournal.findAll({
             include:[
-                {model: CrazyClub, required: false, where: {is_active: true}}
+                {model: CrazyClub, required: true, where: {is_active: true}}
             ],
             where: {is_active: true},
             order:[['id_journal', 'DESC']]
