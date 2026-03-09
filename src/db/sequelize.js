@@ -385,6 +385,13 @@ HistCaisse.belongsTo(Caisse, {
             }
         }
 
+        //recuperer le poste admin
+        const adminPoste = await Poste.findOne({
+            where:{
+                nom_poste: 'Admin'
+            }
+        })
+
         if(!admin || admin.length === 0){
             try{
                 const salt = await bcrypt.genSalt(10);
@@ -404,18 +411,20 @@ HistCaisse.belongsTo(Caisse, {
                     periode: 'Mensuel'
                 })
 
-                Occupe.create(
+                await Occupe.create(
                     {salaire:0,
                     id_personnel: 1,
-                    id_poste: 1}
+                    id_poste: adminPoste.id_poste}
                 )
             }catch (e){
                 console.log(e)
+                redirect('/notFound')
             }
         }
 
     }catch (e){
         console.log(e)
+        redirect('/notFound')
     }
 })();
 // sequelize.sync({alter: false})
