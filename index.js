@@ -8,7 +8,7 @@ const {sequelize, Occupe, Personnel, Poste, BarSimpleJournal, BarVipJournal, App
     Caisse,Depense,
     CaisseJournal,} = require('./src/db/sequelize');
 
-const {stockJob} = require('./src/mail/email')
+// const {stockJob} = require('./src/mail/email')
 
 
 const methodOverride = require('method-override');
@@ -323,7 +323,7 @@ app.get('/index', protrctionRoot, authorise('admin'), async (req, res) => {
 });
 
 // verrifie la liste des produit et emballage en rupture de stock toutte les heure et envoi un mail aux admin
-stockJob.start();
+// stockJob.start();
 
 //route presence
 app.get('/presence', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
