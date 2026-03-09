@@ -7,7 +7,7 @@ allBSJournal = (app) => {
             include:[
                 {
                     model: BarSimple,
-                    required: false,
+                    required: true,
                     where: {is_active: true}
                 }
             ],
