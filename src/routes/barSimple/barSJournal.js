@@ -16,6 +16,7 @@ allBSJournal = (app) => {
         })
             .then(barSimpleJournals => {
                 //res.json(barSimpleJournals)
+                console.log(barSimpleJournals)
                 res.status(200).render('allJournal', {Journals: barSimpleJournals, type: 'simple', msg: req.query.msg, indice: req.query.indice, tc: req.query.tc})
             })
             .catch(_ => res.redirect('/notFound'))
