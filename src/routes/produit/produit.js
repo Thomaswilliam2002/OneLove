@@ -65,7 +65,7 @@ allProduit = (app) => {
                 categories,
                 caisses,
                 msg: req.query.msg,
-                type: req.query.type
+                tc: req.query.tc
             });
 
         } catch (err) {
