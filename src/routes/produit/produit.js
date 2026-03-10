@@ -236,24 +236,22 @@ deleteProduit = (app) => {
         let t;
         try {
             t = await sequelize.transaction();
+            const produitId = req.params.id;
+            const produit = await Produit.findByPk(produitId, { transaction: t });
+            console.log('produit',produit);
+            if (!produit) {
+                console.error('Produit introuvable');
+                await t.rollback();
+                return res.redirect('/notFound');
+            }
 
-            res.json({data: 'ok '+ t});
-            // const produitId = req.params.id;
-            // const produit = await Produit.findByPk(produitId, { transaction: t });
-            // console.log('produit',produit);
-            // if (!produit) {
-            //     console.error('Produit introuvable');
-            //     await t.rollback();
-            //     return res.redirect('/notFound');
-            // }
-
-            // // 1. Supprimer l'historique des mouvements de stock (Entrées/Sorties)
-            // await HistSortie.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
-            // // Note: Vérifiez si votre table s'appelle HistEntrer ou HistEntree
-            // if (typeof HistEntrer !== 'undefined') {
-            //     console.log('HistEntrer');
-            //     await HistEntrer.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
-            // }
+            // 1. Supprimer l'historique des mouvements de stock (Entrées/Sorties)
+            await HistSortie.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
+            // Note: Vérifiez si votre table s'appelle HistEntrer ou HistEntree
+            if (typeof HistEntrer !== 'undefined') {
+                console.log('HistEntrer');
+                await HistEntrer.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
+            }
 
             // 2. IMPORTANT : Gérer l'historique des ventes en caisse
             // On supprime les traces de vente pour ce produit spécifique
@@ -271,11 +269,12 @@ deleteProduit = (app) => {
             // console.log('produit supprimer');
             // await t.commit();
             // console.log('deleteProduit end');
-            // res.redirect('/allProduit?type=article&msg=Suppression du produit avec succes&tc=alert-success');
+            res.redirect('/allProduit?type=article&msg=Suppression du produit avec succes&tc=alert-success');
+            
 
         } catch (err) {
             // Annulation impérative de la transaction en cas d'échec
-            // if (t) await t.rollback();
+            if (t) await t.rollback();
             console.error("Erreur lors de la suppression du produit:", err);
             res.redirect('/notFound');
         }
