@@ -233,11 +233,11 @@ deleteProduit = (app) => {
         // Import de sequelize pour la transaction si non global
         // const t = await sequelize.transaction();
         console.log('deleteProduit start');
-        let t;
         try {
-            t = await sequelize.transaction();
+            const t = await sequelize.transaction();
+            console.log('t',t);
             const produitId = req.params.id;
-            const produit = await Produit.findByPk(produitId, { transaction: t });
+            const produit = await Produit.findByPk(produitId,);
             console.log('produit',produit);
             if (!produit) {
                 console.error('Produit introuvable');
@@ -246,11 +246,11 @@ deleteProduit = (app) => {
             }
 
             // 1. Supprimer l'historique des mouvements de stock (Entrées/Sorties)
-            await HistSortie.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
+            await HistSortie.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }});
             // Note: Vérifiez si votre table s'appelle HistEntrer ou HistEntree
             if (typeof HistEntrer !== 'undefined') {
                 console.log('HistEntrer');
-                await HistEntrer.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
+                await HistEntrer.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }});
             }
 
             // 2. IMPORTANT : Gérer l'historique des ventes en caisse
@@ -258,22 +258,21 @@ deleteProduit = (app) => {
             await HistCaisse.update({ 
                 is_active: false 
             }, { 
-                where: { id_probal: produitId, type: 'produit' }, 
-                transaction: t 
+                where: { id_probal: produitId, type: 'produit' },
             });
 
             console.log('HistCaisse depasser');
 
             // 3. Supprimer le produit lui-même
-            await Produit.update({ is_active: false }, { where: { id_produit: produitId }, transaction: t });
+            await Produit.update({ is_active: false }, { where: { id_produit: produitId }});
             console.log('produit supprimer');
-            await t.commit();
+            // await t.commit();
             console.log('deleteProduit end');
             res.redirect('/allProduit?type=article&msg=Suppression du produit avec succes&tc=alert-success');
 
         } catch (err) {
             // Annulation impérative de la transaction en cas d'échec
-            if (t) await t.rollback();
+            // if (t) await t.rollback();
             console.error("Erreur lors de la suppression du produit:", err);
             res.redirect('/notFound');
         }
