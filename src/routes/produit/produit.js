@@ -246,7 +246,7 @@ deleteProduit = (app) => {
             await HistSortie.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
             // Note: Vérifiez si votre table s'appelle HistEntrer ou HistEntree
             if (typeof HistEntrer !== 'undefined') {
-                await HistEntrer.update({ is_active: false }, { where: { id_produit: produitId }, transaction: t });
+                await HistEntrer.update({ is_active: false }, { where: { id_prodbal: produitId }, transaction: t });
             }
 
             // 2. IMPORTANT : Gérer l'historique des ventes en caisse

@@ -206,7 +206,7 @@ deleteEmballage = (app) => {
                 await HistEntrer.update({ 
                     is_active: false 
                 }, { 
-                    where: { id_produit: emballageId }, // Vérifiez si le champ est id_produit ou id_emballage
+                    where: { id_prodbal: emballageId }, // Vérifiez si le champ est id_produit ou id_emballage
                     transaction: t 
                 });
             }
