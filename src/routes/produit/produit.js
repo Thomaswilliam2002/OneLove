@@ -237,7 +237,7 @@ deleteProduit = (app) => {
         try {
             t = await sequelize.transaction();
 
-            res.json({data: 'ok'});
+            res.json({data: 'ok '+ t});
             // const produitId = req.params.id;
             // const produit = await Produit.findByPk(produitId, { transaction: t });
             // console.log('produit',produit);
