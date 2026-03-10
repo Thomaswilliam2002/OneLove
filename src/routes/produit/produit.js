@@ -231,9 +231,10 @@ updateProduit = (app) => {
 deleteProduit = (app) => {
     app.delete('/deleteProduit/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         // Import de sequelize pour la transaction si non global
-        const t = await sequelize.transaction();
-        
+        // const t = await sequelize.transaction();
+        let t;
         try {
+            t = await sequelize.transaction();
             const produitId = req.params.id;
             const produit = await Produit.findByPk(produitId, { transaction: t });
 
@@ -246,7 +247,7 @@ deleteProduit = (app) => {
             await HistSortie.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
             // Note: Vérifiez si votre table s'appelle HistEntrer ou HistEntree
             if (typeof HistEntrer !== 'undefined') {
-                await HistEntrer.update({ is_active: false }, { where: { id_probal: produitId }, transaction: t });
+                await HistEntrer.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
             }
 
             // 2. IMPORTANT : Gérer l'historique des ventes en caisse
