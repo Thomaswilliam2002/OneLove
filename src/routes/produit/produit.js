@@ -232,13 +232,15 @@ deleteProduit = (app) => {
     app.delete('/deleteProduit/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         // Import de sequelize pour la transaction si non global
         // const t = await sequelize.transaction();
+        console.log('deleteProduit start');
         let t;
         try {
             t = await sequelize.transaction();
             const produitId = req.params.id;
             const produit = await Produit.findByPk(produitId, { transaction: t });
-
+            console.log('produit',produit);
             if (!produit) {
+                console.error('Produit introuvable');
                 await t.rollback();
                 return res.redirect('/notFound');
             }
@@ -247,6 +249,7 @@ deleteProduit = (app) => {
             await HistSortie.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
             // Note: Vérifiez si votre table s'appelle HistEntrer ou HistEntree
             if (typeof HistEntrer !== 'undefined') {
+                console.log('HistEntrer');
                 await HistEntrer.update({ is_active: false }, { where: { id_probal: produitId, type: 'produit' }, transaction: t });
             }
 
@@ -259,10 +262,13 @@ deleteProduit = (app) => {
                 transaction: t 
             });
 
+            console.log('HistCaisse depasser');
+
             // 3. Supprimer le produit lui-même
             await Produit.update({ is_active: false }, { where: { id_produit: produitId }, transaction: t });
-
+            console.log('produit supprimer');
             await t.commit();
+            console.log('deleteProduit end');
             res.redirect('/allProduit?type=article&msg=Suppression du produit avec succes&tc=alert-success');
 
         } catch (err) {
