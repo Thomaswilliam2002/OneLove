@@ -267,7 +267,7 @@ deleteProduit = (app) => {
             // // 3. Supprimer le produit lui-même
             // await Produit.update({ is_active: false }, { where: { id_produit: produitId }, transaction: t });
             // console.log('produit supprimer');
-            // await t.commit();
+            await t.commit();
             // console.log('deleteProduit end');
             res.redirect('/allProduit?type=article&msg=Suppression du produit avec succes&tc=alert-success');
             
