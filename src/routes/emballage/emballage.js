@@ -1,5 +1,5 @@
 const {Emballage, Caisse} = require('../../db/sequelize');
-const {Categorie} = require('../../db/sequelize');
+const {Categorie, HistCaisse} = require('../../db/sequelize');
 const {HistEntrer} = require('../../db/sequelize');
 const {HistSortie} = require('../../db/sequelize');
 const {fn, col, literal, Op, where} = require('sequelize');
