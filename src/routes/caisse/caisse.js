@@ -37,6 +37,7 @@ formAddCaisse = (app) =>{
             const maisons = await MaisonColse.findAll({where: { is_active: true }});
             const appartements = await Appartement.findAll({where: { is_active: true }});
             const caisse = await Caisse.findAll({where: { is_active: true }});
+            console.log(personnels);
             res.render('add-caisse', { 
                 personnels, bars, vips, clubs, cuisines, appartements, maisons, caisse, msg:req.query.msg, tc:req.query.tc
             });

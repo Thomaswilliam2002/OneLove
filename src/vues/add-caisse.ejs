@@ -253,6 +253,8 @@
         Appartement: JSON.parse(`<%- JSON.stringify(appartements) %>`),
         MaisonClose: JSON.parse(`<%- JSON.stringify(maisons) %>`),
       };
+
+      console.log(JSON.parse(`<%- JSON.stringify(maisons) %>`));
   
       function updateLieuList(type, btnElement) {
           // Sélection des éléments du DOM
