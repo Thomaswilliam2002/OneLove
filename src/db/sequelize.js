@@ -192,34 +192,38 @@ CaisseJournal.belongsTo(Caisse, {
 //===================================================================================
 // liaison entre caisse et bar simple
 Caisse.belongsTo(BarSimple, {
-    foreignKey: 'id_lieu'
+    foreignKey: 'id_lieu',
+    constraints: false // Désactive la création de la clé étrangère SQL
 });
 BarSimple.hasMany(Caisse, {
     foreignKey: 'id_lieu',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
 });
 
 // liaison entre caisse et appartement
 Caisse.belongsTo(Appartement, {
-    foreignKey: 'id_lieu'
+    foreignKey: 'id_lieu',
+    constraints: false // Désactive la création de la clé étrangère SQL
 });
 Appartement.hasMany(Caisse, {
     foreignKey: 'id_lieu',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
 });
 
 // liaison entre caisse et bar vip
 Caisse.belongsTo(BarVip, {
-    foreignKey: 'id_lieu'
+    foreignKey: 'id_lieu',
+    constraints: false // Désactive la création de la clé étrangère SQL
 });
 BarVip.hasMany(Caisse, {
     foreignKey: 'id_lieu',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
 });
 
 // liaison entre caisse et cuisine
 Caisse.belongsTo(Cuisine, {
-    foreignKey: 'id_lieu'
+    foreignKey: 'id_lieu',
+    constraints: false // Désactive la création de la clé étrangère SQL
 });
 Cuisine.hasMany(Caisse, {
     foreignKey: 'id_lieu',
@@ -228,7 +232,8 @@ Cuisine.hasMany(Caisse, {
 
 // liaison entre caisse et maison close
 Caisse.belongsTo(MaisonColse, {
-    foreignKey: 'id_lieu'
+    foreignKey: 'id_lieu',
+    constraints: false // Désactive la création de la clé étrangère SQL
 });
 MaisonColse.hasMany(Caisse, {
     foreignKey: 'id_lieu',
@@ -236,7 +241,8 @@ MaisonColse.hasMany(Caisse, {
 });
 // liaison entre caisse et crazy club
 Caisse.belongsTo(CrazyClub, {
-    foreignKey: 'id_lieu'
+    foreignKey: 'id_lieu',
+    constraints: false // Désactive la création de la clé étrangère SQL
 });
 CrazyClub.hasMany(Caisse, {
     foreignKey: 'id_lieu',
