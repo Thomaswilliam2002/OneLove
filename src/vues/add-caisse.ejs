@@ -274,7 +274,7 @@
           const lieux = databaseLieux[type];
           if (lieux && lieux.length > 0) {
               // Vider le select et ajouter l'option par défaut
-            //   select.innerHTML = '<option value="" disabled selected>-- Choisir l\'emplacement --</option>';
+              select.innerHTML = '';
   
               // Remplir le select dynamiquement
               lieux.forEach(l => {

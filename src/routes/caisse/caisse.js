@@ -335,8 +335,8 @@ formEditCaisse = (app) =>{
 
             const caissiers = await Occupe.findAll({
                 include:[
-                    {model: Personnel, required: false, where: { is_active: true }},
-                    {model: Poste, where:{nom_poste: 'caissier', is_active: true}, required: false}
+                    {model: Personnel, required: true, where: { is_active: true }},
+                    {model: Poste, where:{nom_poste: 'caissier', is_active: true}, required: true}
                 ],
                 where: { is_active: true }
             })
