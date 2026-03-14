@@ -5,7 +5,6 @@ const {HistSortie} = require('../../db/sequelize');
 const {fn, col, literal, Op, where} = require('sequelize');
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 const { sequelize } = require('../../db/sequelize'); 
-const caisse = require('../../models/caisse');
 
 allEmballage = (app) => {
     app.get('/allEmballage', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
@@ -49,70 +48,117 @@ formAddEmballage = (app) => {
 }
 
 oneEmballage = (app) => {
-    app.get('/oneEmballage/:id', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
-        Emballage.findByPk(req.params.id)
-            .then(emballage => {
-                if (!emballage) return res.redirect('/notFound');
+    app.get('/oneEmballage/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
 
-                // 1. Historique groupé des entrées (Postgres compatible)
-                const pEntreeGrouped = HistEntrer.findAll({
-                    attributes: [
-                        [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
-                        'id_probal',
-                        [fn('SUM', literal('quantiter * prix_unit')), 'recette']
-                    ],
-                    where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true },
-                    group: [
-                        fn('TO_CHAR', col('created'), 'YYYY-MM'), 
-                        'id_probal', 
-                        'id_hist' // Clé primaire obligatoire dans le group by sur Postgres
-                    ],
-                    order: [[fn('TO_CHAR', col('created'), 'YYYY-MM'), 'ASC']],
-                    raw: true,
-                });
+        try {
 
-                // 2. Historique groupé des sorties (Postgres compatible)
-                const pSortieGrouped = HistSortie.findAll({
-                    attributes: [
-                        [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
-                        'id_probal',
-                        [fn('SUM', literal('quantiter * prix_unit')), 'recette']
-                    ],
-                    where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true },
-                    group: [
-                        fn('TO_CHAR', col('created'), 'YYYY-MM'), 
-                        'id_probal', 
-                        'id_hist'
-                    ],
-                    order: [[fn('TO_CHAR', col('created'), 'YYYY-MM'), 'ASC']],
-                    raw: true
-                });
+            const emballage = await Emballage.findByPk(req.params.id);
 
-                // 3. Historiques détaillés (pour hachats et hventes si nécessaire)
-                const pEntreeDetail = HistEntrer.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true } });
-                const pSortieDetail = HistSortie.findAll({ where: { id_probal: emballage.id_emballage, type: 'emballage', is_active: true } });
+            if (!emballage) return res.redirect('/notFound');
 
-                Promise.all([pEntreeGrouped, pSortieGrouped, pEntreeDetail, pSortieDetail])
-                    .then(([hr, hs, hachats, hventes]) => {
-                        res.status(200).render('emballage-detail', {
-                            histe: hr, 
-                            hists: hs, 
-                            emballage: emballage, 
-                            hachats: hachats, 
-                            hventes: hventes, 
-                            msg: req.query.msg, 
-                            type: req.query.type
-                        });
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        res.redirect('/notFound');
-                    });
-            })
-            .catch(err => {
-                console.error(err);
-                res.redirect('/notFound');
+            // 1. Historique groupé des entrées
+            const pEntreeGrouped = HistEntrer.findAll({
+                attributes: [
+                    [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
+                    'id_probal',
+                    [fn('SUM', literal('quantiter * prix_unit')), 'recette']
+                ],
+                where: { 
+                    id_probal: emballage.id_emballage, 
+                    type: 'emballage', 
+                    is_active: true 
+                },
+                group: [
+                    fn('TO_CHAR', col('created'), 'YYYY-MM'),
+                    'id_probal',
+                    'id_hist'
+                ],
+                order: [[fn('TO_CHAR', col('created'), 'YYYY-MM'), 'ASC']],
+                raw: true
             });
+
+            // 2. Historique groupé des sorties
+            const pSortieGrouped = HistSortie.findAll({
+                attributes: [
+                    [fn('TO_CHAR', col('created'), 'YYYY-MM'), 'mois'],
+                    'id_probal',
+                    [fn('SUM', literal('quantiter * prix_unit')), 'recette']
+                ],
+                where: { 
+                    id_probal: emballage.id_emballage, 
+                    type: 'emballage', 
+                    is_active: true 
+                },
+                group: [
+                    fn('TO_CHAR', col('created'), 'YYYY-MM'),
+                    'id_probal',
+                    'id_hist'
+                ],
+                order: [[fn('TO_CHAR', col('created'), 'YYYY-MM'), 'ASC']],
+                raw: true
+            });
+
+            // 3. Historiques détaillés
+            const pEntreeDetail = HistEntrer.findAll({
+                where: { 
+                    id_probal: emballage.id_emballage, 
+                    type: 'emballage', 
+                    is_active: true 
+                }
+            });
+
+            const pSortieDetail = HistSortie.findAll({
+                where: { 
+                    id_probal: emballage.id_emballage, 
+                    type: 'emballage', 
+                    is_active: true 
+                }
+            });
+
+            const [hr, hs, hachats, hventesRaw] = await Promise.all([
+                pEntreeGrouped,
+                pSortieGrouped,
+                pEntreeDetail,
+                pSortieDetail
+            ]);
+
+            // récupérer les id de caisse
+            const idsCaisses = [...new Set(hventesRaw.map(h => h.id_caisse))];
+
+            // récupérer les caisses
+            const caisses = await Caisse.findAll({
+                where: {
+                    id_caisse: idsCaisses,
+                    is_active: true
+                }
+            });
+
+            // map rapide
+            const caisseMap = new Map(caisses.map(c => [c.id_caisse, c]));
+
+            // enrichir les ventes
+            const hventes = hventesRaw.map(h => ({
+                ...h.toJSON(),
+                caisse: caisseMap.get(h.id_caisse) || null
+            }));
+
+            res.status(200).render('emballage-detail', {
+                histe: hr,
+                hists: hs,
+                emballage: emballage,
+                hachats: hachats,
+                hventes: hventes,
+                msg: req.query.msg,
+                type: req.query.type
+            });
+
+        } catch (err) {
+
+            console.error(err);
+            res.redirect('/notFound');
+
+        }
+
     });
 }
 

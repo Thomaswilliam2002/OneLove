@@ -103,11 +103,11 @@ oneProduit = (app) => {
             const [hachats, hventesRaw, hr, hs] = await Promise.all([
 
                 HistEntrer.findAll({
-                    where: { id_probal: produit.id_produit, type: 'produit' }
+                    where: { id_probal: produit.id_produit, type: 'produit', is_active: true },
                 }),
 
                 HistSortie.findAll({
-                    where: { id_probal: produit.id_produit, type: 'produit' },
+                    where: { id_probal: produit.id_produit, type: 'produit', is_active: true },
                 }),
 
                 HistEntrer.findAll({
@@ -119,7 +119,7 @@ oneProduit = (app) => {
                         [literal('(SELECT "nom" FROM "Produits" WHERE "Produits"."id_produit" = "HistEntrer"."id_probal")'), 'nom']
                     ],
                     where: {
-                        type: { [Op.in]: ["produit"] }
+                        type: { [Op.in]: ["produit"] }, is_active: true
                     },
                     group: [
                         "id_probal",
@@ -140,7 +140,7 @@ oneProduit = (app) => {
                         'id_probal',
                         [fn('SUM', literal('quantiter * prix_unit')), 'recette']
                     ],
-                    where: { id_probal: req.params.id },
+                    where: { id_probal: req.params.id, type: 'produit', is_active: true },
                     group: [
                         fn('TO_CHAR', col('created'), 'YYYY-MM'),
                         'id_probal',
