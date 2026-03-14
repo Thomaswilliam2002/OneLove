@@ -75,7 +75,6 @@ allProduit = (app) => {
     });
 };
 
-
 formAddProduit = (app) => {
     app.get('/formAddProduit', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
         Categorie.findAll()
@@ -108,7 +107,14 @@ oneProduit = (app) => {
                 }),
 
                 HistSortie.findAll({
-                    where: { id_probal: produit.id_produit, type: 'produit' }
+                    where: { id_probal: produit.id_produit, type: 'produit' },
+                    include : [
+                        {
+                            model: Caisse,
+                            where: { is_active: true},
+                            required: true
+                        },
+                    ]
                 }),
 
                 HistEntrer.findAll({
@@ -159,7 +165,8 @@ oneProduit = (app) => {
                 hachats: hachats,
                 hventes: hventes,
                 msg: req.query.msg,
-                type: req.query.type
+                type: req.query.type,
+                tc: req.query.tc
             });
 
         } catch (err) {
