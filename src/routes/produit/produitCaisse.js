@@ -751,7 +751,8 @@ allHistCaisse = (app) => {
 
             res.status(200).render('allHistCaisse', {
                 hists: histsEnrichi,
-                msg: req.query.msg
+                msg: req.query.msg,
+                tc: req.query.tc
             });
 
         } catch (e) {
