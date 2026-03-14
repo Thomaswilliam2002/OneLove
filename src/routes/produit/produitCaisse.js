@@ -772,6 +772,7 @@ deleteHistCaisse = (app) => {
             // 2. Désactivation logique de la vente
             // En passant is_active à false, cette vente ne sera plus 
             // prise en compte dans le calcul (Total Reçu - Total Vendu)
+            
             // await HistCaisse.update(
             //     { is_active: false }, 
             //     { where: { id_hist: histDel.id_hist } }
