@@ -39,7 +39,7 @@ const allDepense = (app) => {
         try{
             const depenses = await Depense.findAll({
                 include:[
-                    {model:CategorieDepense, where:{is_active: true}, required: false}
+                    {model:CategorieDepense, where:{is_active: true}, required: true}
                 ],
                 where:{is_active: true},
                 order:[['id_depense', 'DESC']]

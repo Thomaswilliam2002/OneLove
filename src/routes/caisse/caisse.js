@@ -326,7 +326,7 @@ formEditCaisse = (app) =>{
             const caisses = await Caisse.findByPk(req.params.id, {
                 include: [{
                     model: Personnel,
-                    required: false,
+                    required: true,
                     where: { is_active: true },
                     through: { attributes: [] } 
                 }],

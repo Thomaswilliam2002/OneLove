@@ -5,7 +5,7 @@ allCuJournal = (app) => {
     app.get('/allCuJournal', (req, res) => {
         Cuisine.findAll({
             include:[
-                {model: CuisineJournal, where: {is_active: true}, required: false}
+                {model: CuisineJournal, where: {is_active: true}, required: true}
             ],
             where: {is_active: true},
             order:[['id_cuisine', 'DESC']]

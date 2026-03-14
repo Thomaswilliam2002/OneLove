@@ -327,7 +327,7 @@ statsRecetteMoris = (app) => {
 // }
 
 allProduitCaisse = (app) => {
-    app.get('/allProduitCaisse/:id', async (req, res) => {
+    app.get('/allProduitCaisse/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
 
         try {
 
@@ -514,7 +514,7 @@ allProduitCaisse = (app) => {
 };
 
 allCaisseArticle = (app) => {
-    app.get('/allCaisseArticle/:id', async (req, res) => {
+    app.get('/allCaisseArticle/:id', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) => {
 
         try {
 
@@ -772,7 +772,7 @@ deleteHistCaisse = (app) => {
             // 2. Désactivation logique de la vente
             // En passant is_active à false, cette vente ne sera plus 
             // prise en compte dans le calcul (Total Reçu - Total Vendu)
-            
+
             // await HistCaisse.update(
             //     { is_active: false }, 
             //     { where: { id_hist: histDel.id_hist } }

@@ -236,7 +236,7 @@ allAbsence = (app) => {
         const histas = await Presence.findAll({
             where: {etat_presence: 'Absent', is_active: true},
             include:[
-                {model: Personnel, where: {is_active: true}, required: false}
+                {model: Personnel, where: {is_active: true}, required: true}
             ]
         })
         if(histas){

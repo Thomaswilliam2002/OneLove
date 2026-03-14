@@ -23,7 +23,7 @@ allClient = (app) => {
             .then(clients => {
                 AppartJournal.findAll({
                     include:[
-                        {model:Appartement, where: {is_active: true}, required: false}
+                        {model:Appartement, where: {is_active: true}, required: true}
                     ],
                     where: {is_active: true},
                     order:[['id_journal', 'DESC']]
