@@ -100,7 +100,7 @@ oneProduit = (app) => {
                 return res.redirect('/notFound');
             }
 
-            const [hachats, hventes, hr, hs] = await Promise.all([
+            const [hachats, hventesRaw, hr, hs] = await Promise.all([
 
                 HistEntrer.findAll({
                     where: { id_probal: produit.id_produit, type: 'produit' }
@@ -108,13 +108,6 @@ oneProduit = (app) => {
 
                 HistSortie.findAll({
                     where: { id_probal: produit.id_produit, type: 'produit' },
-                    include : [
-                        {
-                            model: Caisse,
-                            where: { is_active: true},
-                            required: true
-                        },
-                    ]
                 }),
 
                 HistEntrer.findAll({
@@ -157,6 +150,26 @@ oneProduit = (app) => {
                 })
 
             ]);
+
+            // récupérer les caisses
+            const idsCaisses = hventesRaw.map(h => h.id_caisse);
+
+            const caisses = await Caisse.findAll({
+                where: {
+                    id_caisse: idsCaisses,
+                    is_active: true
+                }
+            });
+
+            // enrichir
+            const hventes = hventesRaw.map(h => {
+                const caisse = caisses.find(c => c.id_caisse === h.id_caisse);
+
+                return {
+                    ...h.toJSON(),
+                    caisse: caisse || null
+                };
+            });
 
             res.status(200).render('produit-detail', {
                 histe: hr,

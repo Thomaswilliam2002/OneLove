@@ -233,7 +233,7 @@
                                 <td><%= hvente.quantiter %></td>
                                 <td><%= hvente.prix_unit %></td>
                                 <td class="calcule2"><%= hvente.prix_unit * hvente.quantiter %></td>
-                                <td><%= hvente.Caisse.nom %></td>
+                                <td><%= hvente.caisse.nom %></td>
                                 <td class="wrap-text"><%= hvente.commantaire %></td>
                                 <td><%= new Date(hvente.created).getDate() %>-<%= new Date(hvente.created).getMonth() + 1 %>-<%= new Date(hvente.created).getFullYear()%></td>
                                 <td><%= new Date(hvente.created).getHours() %>-<%= new Date(hvente.created).getMinutes() %>-<%= new Date(hvente.created).getSeconds()%></td>
