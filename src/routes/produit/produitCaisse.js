@@ -771,24 +771,29 @@ deleteHistCaisse = (app) => {
             // 2. Désactivation logique de la vente
             // En passant is_active à false, cette vente ne sera plus 
             // prise en compte dans le calcul (Total Reçu - Total Vendu)
-            await HistCaisse.update(
-                { is_active: false }, 
-                { where: { id_hist: histDel.id_hist } }
-            );
+            // await HistCaisse.update(
+            //     { is_active: false }, 
+            //     { where: { id_hist: histDel.id_hist } }
+            // );
+
+            await histDel.update({ is_active:false });
 
             // 3. Redirection
             // Le calcul dynamique dans 'allProduitCaisse' affichera 
             // désormais la quantité correcte automatiquement.
-            if(req.query.ns && req.query.ns === 'nc'){
-                res.redirect(`/allHistCaisse?msg=Vente annulée, le stock de la caisse n'a pas éte mis à jour.&tc=alert-warning`);
+            if(req.query.ns && req.query.ns === 'ns'){
+                return res.redirect(`/allHistCaisse?msg=Vente annulée, le stock de la caisse n'a pas éte mis à jour.&tc=alert-warning`);
             }
             else if(req.query.is){
-                res.redirect(`/allHistCaisse/${req.query.is}?msg=Vente annulée, le stock de la caisse a été mis à jour.&tc=alert-warning`);
+                return res.redirect(`/allHistCaisse/${req.query.is}?msg=Vente annulée, le stock de la caisse a été mis à jour.&tc=alert-warning`);
             }
+
+            // sécurité : toujours renvoyer une réponse
+            return res.redirect('/allHistCaisse');
 
         } catch (error) {
             console.error("Erreur deleteHistCaisse:", error);
-            if (!res.headersSent) returnres.redirect('/notFound');
+            if (!res.headersSent) return res.redirect('/notFound');
         }
     });
 };
