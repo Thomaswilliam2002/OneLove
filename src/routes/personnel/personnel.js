@@ -213,6 +213,8 @@ addPersonnel = (app) => {
                 const post = await Poste.findByPk(poste);
 
                 if (post) {
+                    res.json(post);
+                    return;
                     if (post.nom_poste.toLowerCase() === 'comptable') type = 'comptable';
                     else if (post.nom_poste.toLowerCase() === 'caissier central') type = 'caissier central';
                     else if (post.nom_poste.toLowerCase() === 'caissier') type = 'caissier';

@@ -1,7 +1,7 @@
 <div class="modal fade" id="vendre<%= type === 'produit' ? 'Prod' : 'Emb' %><%= item.id %><%= id_caisse %>" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="/addHistCaisse?<% !['admin','comptable'].includes(user.Personnel.type_personnel)  ? 'src=caissier' : 'src=' + user.Personnel.type_personnel %>" method="POST">
+      <form action="/addHistCaisse?<%= !['admin','comptable'].includes(user.Personnel.type_personnel)  ? 'src=caissier' : 'src=' + user.Personnel.type_personnel %>" method="POST">
         <div class="modal-header">
           <h5 class="modal-title">Action : <%= item.nom %></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -14,13 +14,7 @@
           <input type="hidden" name="type" value="<%= type %>">
           <input type="hidden" name="barclub" value="<%= lieu %>">
           <input type="hidden" name="caisse" value="<%= id_caisse %>">
-          <% if(!['admin','comptable'].includes(user.Personnel.type_personnel)){ %>
-            <% if(typeof id_caissier !== "undefined" && id_caissier){ %>
-              <input type="hidden" name="caissier" value="<%= id_caissier %>">
-            <% } %>
-          <%} else {%>
-            <input type="hidden" name="caissier" value="<%= user.Personnel.id_personnel %>">
-          <%} %>
+          <input type="hidden" name="caissier" value="<%= user.Personnel.id_personnel %>">
           <input type="hidden" name="prix" value="<%= item.prix_unitaire %>">
           <input type="hidden" name="nom" value="<%= item.nom %>">
 
