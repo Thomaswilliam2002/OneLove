@@ -73,7 +73,8 @@ const mySessionStore = new SequelizeStore({
     tableName: 'Sessions', // Nom de la table qui sera créée automatiquement
     logging: false, // <--- Ajoute cette ligne pour cacher les logs SQL des sessions
     checkExpirationInterval: 15 * 60 * 1000, // Nettoie les sessions expirées toutes les 15 min
-    expiration: 7 * 24 * 60 * 60 * 1000  // Durée max de 1 semaine
+    expiration: 7 * 24 * 60 * 60 * 1000,  // Durée max de 1 semaine
+    touchAfter: 24 * 60 * 60 // n'update la session que si modifiée après 24h
 });
 
 app.use(session({

@@ -12,8 +12,8 @@ allPersonnel = (app) => {
     app.get('/allPersonnel', protrctionRoot, authorise('admin', 'comptable', 'caissier'), (req, res) => {
         Occupe.findAll({
             include: [
-                {model: Personnel, where: {is_active: true}, required: true},
-                {model: Poste, where: {is_active: true}, required: true}
+                {model: Personnel, where: {is_active: true}, required: false},
+                {model: Poste, where: {is_active: true}, required: false}
             ],
             where: {is_active: true},
             order:[['id_occupe', 'DESC']]
@@ -56,12 +56,12 @@ onePersonnel = (app) => {
                         model: Caisse,
                         through: { attributes: [] },
                         where: {is_active: true},
-                        required: true
+                        required: false
                     }],
                     where: {id_personnel: req.params.id}
                 },
-                {model: Poste, where: {is_active: true}, required: true},
-                {model: Sanction, where: {is_active: true}, required: true}
+                {model: Poste, where: {is_active: true}, required: false},
+                {model: Sanction, where: {is_active: true}, required: false}
             ],
         })
             .then(occupe => {
