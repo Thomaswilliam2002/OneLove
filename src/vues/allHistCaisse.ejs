@@ -128,7 +128,7 @@
                                                             annuler
                                                         </button>
                                                         <!-- ns: non staff; is: is staff -->
-                                                        <form action="/deleteHistCaisse/<%= hist.id_hist %>?_method=DELETE<% ['comptable', 'admin'].includes(user.Personnel.type_personnel) ? '&ns=ns' : '&is='+ user.Personnel.id_personnel %>" method="post">
+                                                        <form action="/deleteHistCaisse/<%= hist.id_hist %>?_method=DELETE<%= ['comptable', 'admin'].includes(user.Personnel.type_personnel) ? '&ns=ns' : '&is='+ user.Personnel.id_personnel %>" method="post">
                                                             <div class="col-sm-12">
                                                             <div class="d-flex gap-2 justify-content-end">
                                                                 <button type="submit" class="btn btn-danger">Supprimer</button>
