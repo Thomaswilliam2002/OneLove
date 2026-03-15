@@ -17,7 +17,10 @@ statsRecetteMoris = (app) => {
 
             try {
 
-                const { annee, mois, semaine } = req.params;
+                // const { annee, mois, semaine } = req.params;
+                const annee = req.params.annee ? parseInt(req.params.annee) : null;
+                const mois = req.params.mois ? parseInt(req.params.mois) : null;
+                const semaine = req.params.semaine ? parseInt(req.params.semaine) : null;
 
                 let groupFormat;
                 let whereClause = {};
@@ -664,6 +667,184 @@ allCaisseArticle = (app) => {
     });
 };
 
+allCaisseContent = (app) => {
+    app.get(
+        '/allCaisseContent',
+        protrctionRoot,
+        authorise('admin', 'comptable'),
+        async (req, res) => {
+
+            try {
+
+                // ================================
+                // 1️⃣ Récupérer toutes les caisses actives
+                // ================================
+                const caisses = await Caisse.findAll({
+                    where: { is_active: true },
+                    include: [{
+                        model: Personnel,
+                        attributes: ['id_personnel', 'nom', 'prenom', 'numero'],
+                        through: { attributes: [] },
+                        required: false
+                    }]
+                });
+
+                // ================================
+                // 2️⃣ Traiter chaque caisse
+                // ================================
+                const caissesAvecInventaire = await Promise.all(
+
+                    caisses.map(async (caisse) => {
+
+                        const idLieu = caisse.id_lieu;
+                        const typeLieu = caisse.type_lieu;
+                        const idCaisse = caisse.id_caisse;
+
+                        // ============================================
+                        // Fonction récupération inventaire
+                        // ============================================
+                        const recupererInventaire = async (modelType) => {
+
+                            const mouvements = await HistSortie.findAll({
+                                where: {
+                                    type: modelType,
+                                    receveur: idLieu,
+                                    type_lieu_receveur: typeLieu,
+                                    id_caisse: idCaisse,
+                                    is_active: true
+                                },
+                                attributes: [
+                                    'id_probal',
+                                    [sequelize.fn('SUM', sequelize.col('quantiter')), 'total_recu']
+                                ],
+                                group: ['id_probal'],
+                                raw: true
+                            });
+
+                            const ventes = await HistCaisse.findAll({
+                                where: {
+                                    type: modelType,
+                                    id_caisse: idCaisse,
+                                    is_active: true
+                                },
+                                attributes: [
+                                    'id_probal',
+                                    [sequelize.fn('SUM', sequelize.col('quantiter')), 'total_vendu']
+                                ],
+                                group: ['id_probal'],
+                                raw: true
+                            });
+
+                            const ventesMap = {};
+
+                            ventes.forEach(v => {
+                                ventesMap[v.id_probal] = parseFloat(v.total_vendu);
+                            });
+
+                            return await Promise.all(
+
+                                mouvements.map(async (mouv) => {
+
+                                    let infoArticle;
+
+                                    if (modelType === 'produit') {
+                                        infoArticle = await Produit.findByPk(mouv.id_probal);
+                                    } else {
+                                        infoArticle = await Emballage.findByPk(mouv.id_probal);
+                                    }
+
+                                    const dernierPrix = await HistSortie.findOne({
+                                        where: {
+                                            id_probal: mouv.id_probal,
+                                            type: modelType,
+                                            receveur: idLieu,
+                                            type_lieu_receveur: typeLieu,
+                                            id_caisse: idCaisse,
+                                            is_active: true
+                                        },
+                                        order: [['created', 'DESC']],
+                                        attributes: ['prix_unit'],
+                                        raw: true
+                                    });
+
+                                    const totalRecu = parseFloat(mouv.total_recu || 0);
+                                    const totalVendu = ventesMap[mouv.id_probal] || 0;
+                                    const stockReel = totalRecu - totalVendu;
+
+                                    return {
+                                        id: mouv.id_probal,
+                                        nom: infoArticle ? (infoArticle.nom || infoArticle.nom_produit) : "Inconnu",
+                                        quantite_disponible: stockReel,
+                                        prix_unitaire: dernierPrix ? dernierPrix.prix_unit : 0,
+                                        type: modelType
+                                    };
+
+                                })
+                            );
+                        };
+
+                        // ============================================
+                        // 3️⃣ Récupérer produits et emballages
+                        // ============================================
+                        const [listeProduits, listeEmballages] = await Promise.all([
+                            recupererInventaire('produit'),
+                            recupererInventaire('emballage')
+                        ]);
+
+                        // ============================================
+                        // 4️⃣ Liste des caissiers
+                        // ============================================
+                        const caissiers = caisse.Personnels.map(p => ({
+                            id: p.id_personnel,
+                            nom: p.nom,
+                            prenom: p.prenom,
+                            numero: p.numero
+                        }));
+
+                        // ============================================
+                        // 5️⃣ Objet final
+                        // ============================================
+                        return {
+                            id_caisse: caisse.id_caisse,
+                            nom_caisse: caisse.nom,
+                            sous_departement: caisse.nom_lieu,
+                            departement: caisse.type_lieu,
+
+                            caissiers: caissiers,
+
+                            inventaire: {
+                                produits: listeProduits,
+                                emballages: listeEmballages
+                            }
+                        };
+
+                    })
+                );
+
+                // ================================
+                // 6️⃣ Envoyer vers la vue
+                // ================================
+                res.render('allCaisseContent', {
+                    caisses: caissesAvecInventaire,
+                    personnel: null,
+                    msg: req.query.msg,
+                    tc: req.query.tc
+                });
+
+            } catch (error) {
+
+                console.error("Erreur critique dans allCaisseContent:", error);
+
+                if (!res.headersSent) {
+                    res.redirect('/notFound');
+                }
+
+            }
+
+        }
+    );
+};
+
 addHistCaisse = (app) => {
     app.post('/addHistCaisse', protrctionRoot, authorise('admin', 'comptable', 'caissier'), async (req, res) =>{
         const {qte, prix, type, idpro, caisse, caissier, nom} = req.body;
@@ -806,5 +987,6 @@ module.exports = {
     allHistCaisse,
     deleteHistCaisse,
     statsRecetteMoris,
-    allCaisseArticle
+    allCaisseArticle,
+    allCaisseContent
 }
