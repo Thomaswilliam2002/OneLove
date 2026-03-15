@@ -75,7 +75,7 @@
                                   <th><strong><%= caisse.departement %></strong>: <%= caisse.sous_departement %></th>
                                   <th>
                                     <ul class="list-unstyled">
-                                        <% caisse.Personnels.forEach(personnel => { %>
+                                        <% caisse?.caissiers.forEach(personnel => { %>
                                           <li><%= personnel.nom %> <%= personnel.prenom %></li>
                                         <% }) %>
                                     </ul>
