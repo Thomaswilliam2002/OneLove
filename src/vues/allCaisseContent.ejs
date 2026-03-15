@@ -56,125 +56,134 @@
 
           <!-- App body starts -->
           <div class="app-body">
+
             <% if(caisses.length > 0){ %>
-              <% caisses.forEach((caisse, index) => {%>
-              <!-- Row starts -->
-              <div class="row gx-3">
-                <div class="col-sm-12">
-                  <div class="accordion mb-3" id="accordionSpecialTitle<%= caisse.id_caisse %>">
-                    <div class="accordion-item ">
-                      <div class="accordion-header d-flex justify-content-between" id="headingSpecialTitle<%= caisse.id_caiss %>">
-                          
-                        
-                          <div class="table-responsive ps-2">
-                            <table  class="table truncate m-0 align-middle ">
-                              <thead class="text-center align-middle h-100">
-                                <tr>
-                                  <!-- <th>ID</th> -->
-                                  <th><strong><%= caisse.nom %></strong></th>
-                                  <th><strong><%= caisse.departement %></strong>: <%= caisse.sous_departement %></th>
-                                  <th class="bg-info">
-                                    <ul class="list-unstyled">
-                                        <% caisse?.caissiers.forEach(personnel => { %>
-                                          <li><%= personnel.nom %> <%= personnel.prenom %></li>
-                                        <% }) %>
-                                    </ul>
-                                  </th>
-                                </tr>
-                              </thead>
-                            </table>
-                          </div>
-                      
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                              data-bs-target="#collapseSpecialTitle<%= caisse.id_caiss %>" aria-expanded="true"
-                              aria-controls="collapseSpecialTitle<%= caisse.id_caiss %>" style="width: auto;">
-                              <!-- <div class="d-flex flex-column"></div> -->
-                          </button>
-                              <!-- <div class="d-flex flex-column"></div> -->
-                          
-                          
-                      </div>
-                      
-                      <div id="collapseSpecialTitle<%= caisse.id_caiss %>" class="accordion-collapse collapse "
-                        aria-labelledby="headingSpecialTitle<%= caisse.id_caiss %>" data-bs-parent="#accordionSpecialTitle<%= caisse.id_caiss %>">
-                        
-                        <div class="accordion-body">
-                            <div class="card-header d-flex align-items-center justify-content-between">
-                                <h5 class="card-title">Liste des Produits</h5>
-                            </div>
-                            <br>
-                            <div class="table-responsive">
-                            <table id="" class="table truncate m-0 align-middle customButtone" >
-                                <thead class="text-center">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nom</th>
-                                    <th>Prix Unitaire</th>
-                                    <th>Quantiter Disponible</th>
-                                </tr>
-                                </thead>
-                                <tbody class="text-center">
-                                    <%caisse?.inventaire?.produits.forEach((produit, i) => {%>
-                                        <tr>
-                                        <td><%= i + 1 %></td>
-                                        <td>
-                                            <%= produit.nom %>
-                                        </td>
-                                        <td><%= produit.prix_unitaire %></td>
-                                        <td><%= produit.quantite_disponible %></td>
-                                        </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
-                            </div>
-                        </div>
-                        <br>
-                        
-                        <div class="accordion-body">
-                            <div class="card-header d-flex align-items-center justify-content-between">
-                                <h5 class="card-title">Liste des Emballages</h5>
-                            </div>
-                            <br>
-                            <div class="table-responsive">
-                            <table id="" class="table truncate m-0 align-middle customButtone" >
-                                <thead class="text-center">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nom</th>
-                                    <th>Prix Unitaire</th>
-                                    <th>Quantiter Disponible</th>
-                                </tr>
-                                </thead>
-                                <tbody class="text-center">
-                                    <%caisse?.inventaire?.emballages.forEach((emballage, i) => {%>
-                                        <tr>
-                                        <td><%= i %></td>
-                                        <td>
-                                            <%= emballage.nom %>
-                                        </td>
-                                        <td><%= emballage.prix_unitaire %></td>
-                                        <td><%= emballage.quantite_disponible %></td>
-                                        </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
-                            </div>
-                        </div>
-                      </div>
+        
+                <% caisses.forEach((caisse, index) => { %>
+        
+                    <div class="row gx-3">
+                        <div class="col-sm-12">
+        
+                            <div class="accordion mb-3" id="accordionSpecialTitle<%= caisse.id_caisse %>">
+        
+                                <div class="accordion-item">
+        
+                                    <div class="accordion-header d-flex justify-content-between" id="headingSpecialTitle<%= caisse.id_caisse %>">
+        
+                                        <div class="table-responsive ps-2">
+                                            <table class="table truncate m-0 align-middle">
+                                                <thead class="text-center align-middle h-100">
+                                                    <tr>
+                                                        <th>
+                                                            <strong><%= caisse.nom_caisse %></strong>
+                                                        </th>
+                                                        <th>
+                                                            <strong><%= caisse.departement %></strong> : <%= caisse.sous_departement %>
+                                                        </th>
+                                                        <th class="text-center align-middle">
+                                                            <ul class="list-unstyled">
+                                                                <% caisse?.caissiers?.forEach(personnel => { %>
+                                                                    <li>
+                                                                        <%= personnel.nom %> <%= personnel.prenom %>
+                                                                    </li>
+                                                                <% }) %>
+                                                            </ul>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+        
+                                        <button class="accordion-button collapsed" 
+                                                type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#collapseSpecialTitle<%= caisse.id_caisse %>" 
+                                                aria-expanded="false" 
+                                                aria-controls="collapseSpecialTitle<%= caisse.id_caisse %>" 
+                                                style="width:auto;">
+                                        </button>
+        
+                                    </div>
+        
+                                    <div id="collapseSpecialTitle<%= caisse.id_caisse %>" 
+                                         class="accordion-collapse collapse" 
+                                         aria-labelledby="headingSpecialTitle<%= caisse.id_caisse %>" 
+                                         data-bs-parent="#accordionSpecialTitle<%= caisse.id_caisse %>">
+        
+                                        <div class="accordion-body">
+                                            <div class="card-header d-flex align-items-center justify-content-between">
+                                                <h5 class="card-title">Liste des Produits</h5>
+                                            </div>
+                                            <br>
+                                            <div class="table-responsive">
+                                                <table class="table truncate m-0 align-middle customButtone">
+                                                    <thead class="text-center">
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Nom</th>
+                                                            <th>Prix Unitaire</th>
+                                                            <th>Quantité Disponible</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="text-center">
+                                                        <% caisse?.inventaire?.produits?.forEach((produit, i) => { %>
+                                                            <tr>
+                                                                <td><%= i + 1 %></td>
+                                                                <td><%= produit.nom %></td>
+                                                                <td><%= produit.prix_unitaire %></td>
+                                                                <td><%= produit.quantite_disponible %></td>
+                                                            </tr>
+                                                        <% }) %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+        
+                                        <div class="accordion-body">
+                                            <div class="card-header d-flex align-items-center justify-content-between">
+                                                <h5 class="card-title">Liste des Emballages</h5>
+                                            </div>
+                                            <br>
+                                            <div class="table-responsive">
+                                                <table class="table truncate m-0 align-middle customButtone">
+                                                    <thead class="text-center">
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Nom</th>
+                                                            <th>Prix Unitaire</th>
+                                                            <th>Quantité Disponible</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="text-center">
+                                                        <% caisse?.inventaire?.emballages?.forEach((emballage, i) => { %>
+                                                            <tr>
+                                                                <td><%= i + 1 %></td>
+                                                                <td><%= emballage.nom %></td>
+                                                                <td><%= emballage.prix_unitaire %></td>
+                                                                <td><%= emballage.quantite_disponible %></td>
+                                                            </tr>
+                                                        <% }) %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+        
+                                    </div> </div> </div> </div>
                     </div>
-                  </div>
+        
+                <% }) %>
+        
+            <% } else { %>
+        
+                <div class="alert bg-white border alert-dismissible fade show text-info">
+                    Aucune caisse n'a encore été ajoutée !
+                    <br>
+                    <b>Veuillez ajouter une caisse</b>
                 </div>
-              </div>
-              <!-- Row ends -->
-              <% }) %>
-            <% } else{ %>
-              <div class="alert bg-white border alert-dismissible fade show text-info" role="alert">
-                Aucune caisses n'a encore ete ajouter!
-                <b>Veillez ajouter une caisse</b>
-              </div>
+        
             <% } %>
-            <!-- Row starts -->
-          </div>
+        
+        </div>
           <!-- App body ends -->
 
           <!-- App footer starts -->
