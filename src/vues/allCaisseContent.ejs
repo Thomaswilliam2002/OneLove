@@ -172,60 +172,6 @@
               </div>
             <% } %>
             <!-- Row starts -->
-            
-            <!-- Row ends -->
-            <div class="table-responsive">
-              <table id="" class="table m-0 align-middle customButtone">
-                <thead class="text-center">
-                  <tr>
-                    <th>ID</th>
-                    <th>Chambre</th>
-                    <th>Maison close</th>
-                    <th>Montant reçu</th> 
-                    <th>Montant attendu</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  
-                  <% i = 1; const today = new Date().toISOString().split('T')[0]; %>
-                  <% let tta = 0; let ttr = 0 %>
-                  <% chambres.forEach(chambre => { %> 
-                    
-                    <tr>
-                      <td><%= i %></td>
-                      <td><%= chambre.nom %></td>
-                      <td><%= chambre.MaisonClose.nom %></td>
-
-                      <td>
-                        <% 
-                          const journalDuJour = chambre.ChambreJournals.find(j => {
-                            const journalDate = j.date;
-                            return journalDate === today;
-                          });
-                          if(journalDuJour){
-                            ttr += journalDuJour.loyer
-                          }
-                        %>
-
-                        <%= journalDuJour ? journalDuJour.loyer : 0 %> FCFA
-                      </td>
-
-                      <td><%= chambre.loyer %> FCFA</td>
-                    </tr>
-                  <% i++ }) %>
-                  <tfoot class="text-center">
-                    <tr>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>Total</td>
-                      <td><%= ttr %></td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
-                </tbody>
-              </table>
-            </div>
-
           </div>
           <!-- App body ends -->
 
