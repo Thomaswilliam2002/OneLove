@@ -200,7 +200,17 @@ $(function () {
         {
           extend: 'pdf',
           title: exportTitle,
-          exportOptions: { columns: ':visible' }
+          exportOptions: { columns: ':visible' },
+          // --- AJOUT DE LA PERSONNALISATION ICI ---
+          customize: function (doc) {
+            // Force le tableau à prendre 100% de la largeur
+            doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('*');
+            
+            // Optionnel : Aligner le texte au centre pour toutes les cellules du PDF
+            doc.styles.tableBodyEven.alignment = 'center';
+            doc.styles.tableBodyOdd.alignment = 'center';
+            doc.styles.tableHeader.alignment = 'center';
+          }
         },
         {
           extend: 'csv',

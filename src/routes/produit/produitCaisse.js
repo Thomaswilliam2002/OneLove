@@ -685,7 +685,8 @@ allCaisseContent = (app) => {
                         model: Personnel,
                         attributes: ['id_personnel', 'nom', 'prenom', 'numero'],
                         through: { attributes: [] },
-                        required: false
+                        required: false,
+                        where: { is_active: true }
                     }]
                 });
 
