@@ -76,7 +76,7 @@ $(function () {
 });
 
 // Print Export Copy PDF Buttons
-const exportTitle = 'Données extrait depuis le site officiel de Onelove';
+const exportTitle = 'Données extrait depuis la plateforme officiel de ONE LOVE';
 $(function () {
   $("#customButtons").DataTable({
     lengthMenu: [
