@@ -78,6 +78,8 @@ $(function () {
 // Print Export Copy PDF Buttons
 const exportTitle = 'Données extrait depuis la plateforme officiel de ONE LOVE';
 $(function () {
+  // On récupère le sous-titre dynamique depuis l'attribut data
+  var dynamicSubtitle = $(this).data("export-subtitle") || "";
   $("#customButtons").DataTable({
     lengthMenu: [
       [10, 25, 50],
@@ -95,9 +97,33 @@ $(function () {
       },
       {
         extend: 'pdf',
-        title: exportTitle,
-        exportOptions: {
-          columns: ':visible'
+        title: typeof exportTitle !== 'undefined' ? exportTitle + '\n' + dynamicSubtitle : 'Rapport d\'Inventaire',
+        exportOptions: { columns: ':visible' },
+        orientation: 'portrait', 
+        customize: function (doc) {
+          // 1. Calcul du nombre de colonnes visibles
+          const colCount = doc.content[1].table.body[0].length;
+      
+          // 2. Bascule dynamique paysage si > 7 colonnes
+          if (colCount > 7) {
+            doc.pageOrientation = 'landscape';
+          }
+      
+          // 3. Force 100% de largeur et gère les retours à la ligne (wrapping)
+          // Utile pour les libellés longs comme "FIZZI PAMPLEMOUSSE 0,33" 
+          doc.content[1].table.widths = Array(colCount).fill('*');
+      
+          // 4. Gestion de l'affichage sur plusieurs pages
+          doc.content[1].table.headerRows = 1; // Répète l'en-tête sur chaque page
+          doc.content[1].table.dontBreakRows = true; // Empêche de couper une ligne de produit en deux
+      
+          // 5. Alignements et styles
+          doc.styles.tableBodyEven.alignment = 'center';
+          doc.styles.tableBodyOdd.alignment = 'center';
+          doc.styles.tableHeader.alignment = 'center';
+          
+          // Ajustement de la taille de police pour assurer que tout rentre
+          doc.defaultStyle.fontSize = 10; 
         }
       },
       {

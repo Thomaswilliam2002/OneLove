@@ -92,7 +92,7 @@
                       aria-labelledby="headingSpecialTitle<%= produit.id_produit %>" data-bs-parent="#accordionSpecialTitle<%= produit.id_produit %>">
                       <div class="accordion-body">
                         <div class="table-responsive">
-                          <table id=""  class="table truncate m-0 align-middle customButtone" >
+                          <table id=""  class="table truncate m-0 align-middle customButtone" data-export-subtitle="Liste des historiques d'approvisionnement du produit <%= produit.nom %>" aria-describedby="basicExample_filter">
                             <thead class="text-center">
                               <tr>
                                 <th>ID</th>
@@ -212,7 +212,7 @@
                       aria-labelledby="<%= produit.id_produit %>headingSpecialTitle<%= produit.id_produit %>" data-bs-parent="#<%= produit.id_produit %>accordionSpecialTitle<%= produit.id_produit %>">
                       <div class="accordion-body">
                         <div class="table-responsive">
-                          <table id="" class="table truncate m-0 align-middle dataTable customButtone" aria-describedby="basicExample_filter">
+                          <table id="" class="table truncate m-0 align-middle dataTable customButtone" data-export-subtitle="Liste des historiques de vente du produit <%= produit.nom %>" aria-describedby="basicExample_filter">
                             <thead class="text-center">
                               <tr>
                                 <th>ID</th>

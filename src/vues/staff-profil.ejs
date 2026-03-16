@@ -71,7 +71,7 @@
                 <!-- Table starts -->
                  <% if(user.Personnel.type_personnel === 'caissier'){ %>
                   <div class="table-responsive">
-                    <table id="basicExample" class="table truncate m-0 align-middle ">
+                    <table class="table customButtone truncate m-0 align-middle" data-export-subtitle="Liste des caisses gere par <%= occupe.Personnel.nom %> <%= occupe.Personnel.prenom %>">
                       <thead class="text-center">
                         <tr>
                           <th>#</th>
@@ -98,7 +98,7 @@
                   <br>
                 <!-- Table starts -->
                 <div class="table-responsive">
-                    <table id="basicExample" class="table truncate m-0 align-middle dataTable" aria-describedby="basicExample_filter">
+                    <table class="table truncate customButtone m-0 align-middle dataTable" data-export-subtitle="Liste des sanctions de <%= occupe.Personnel.nom %> <%= occupe.Personnel.prenom %>" aria-describedby="basicExample_filter">
                       <thead class="text-center">
                         <tr>
                           <th aria-controls="basicExample">ID</th>

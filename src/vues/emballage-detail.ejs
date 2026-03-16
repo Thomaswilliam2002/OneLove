@@ -121,7 +121,7 @@
                       aria-labelledby="headingSpecialTitle<%= emballage.id_emballage %>" data-bs-parent="#accordionSpecialTitle<%= emballage.id_emballage %>">
                       <div class="accordion-body p-6">
                         <div class="table-responsive">
-                          <table id="customButtons"  class="table m-0 align-middle " >
+                          <table class="table customButtone m-0 align-middle" data-export-subtitle="Liste des historiques d'approvisionnement de l'emballage <%= emballage.nom %>">
                             <thead class="text-center">
                               <tr>
                                 <th >ID</th>
@@ -240,7 +240,7 @@
                       aria-labelledby="<%= emballage.id_emballage %>headingSpecialTitle<%= emballage.id_emballage %>" data-bs-parent="#<%= emballage.id_emballage %>accordionSpecialTitle<%= emballage.id_emballage %>">
                       <div class="accordion-body">
                         <div class="table-responsive">
-                          <table id=""  class="table truncate m-0 align-middle customButtone" >
+                          <table id=""  class="table truncate m-0 align-middle customButtone" data-export-subtitle="Liste des historiques de vente du l'emballage <%= emballage.nom %>" aria-describedby="basicExample_filter">
                             <thead class="text-center">
                               <tr>
                                 <th >ID</th>
