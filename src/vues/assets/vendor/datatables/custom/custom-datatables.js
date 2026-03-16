@@ -242,7 +242,7 @@ $(function () {
         
               // MODIFICATION 1 : Passage en paysage SI > 7 colonnes
               // Cela permet d'éviter que le tableau déborde lorsque beaucoup de colonnes existent
-              if (colCount > 7) {
+              if (colCount >= 6) {
                 doc.pageOrientation = 'landscape';
               }
         
@@ -253,7 +253,7 @@ $(function () {
 
               // MODIFICATION : centrage réel du tableau dans la page
               // pdfMake centre mieux les tableaux en utilisant les marges
-              if(colCount > 7) {
+              if(colCount >= 6) {
                 tableNode.margin = [-20, 0, 0, 0]; 
               }
         
