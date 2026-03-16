@@ -201,39 +201,34 @@ $(function () {
         },
         {
           extend: 'pdf',
-          title: exportTitle, // TITRE FIXE
+          title: typeof exportTitle !== 'undefined' ? exportTitle : 'Rapport d\'Inventaire', // TITRE FIXE
           messageTop: dynamicSubtitle,      // SOUS-TITRE DYNAMIQUE
           exportOptions: { columns: ':visible' },
-          orientation: 'portrait',
+          orientation: 'portrait', 
           customize: function (doc) {
-            // --- Ta logique de personnalisation ---
+            // 1. Calcul du nombre de colonnes visibles
             const colCount = doc.content[1].table.body[0].length;
-            
+        
+            // 2. Bascule dynamique paysage si > 7 colonnes
             if (colCount > 7) {
               doc.pageOrientation = 'landscape';
             }
-
-            // Important : Avec messageTop, le tableau passe à l'index [2] du contenu
-            // On vérifie où se trouve le tableau pour ne pas casser le code
-            var tableContent = doc.content.find(c => c.table);
-            if (tableContent) {
-                tableContent.table.widths = Array(colCount).fill('*');
-                tableContent.table.headerRows = 1;
-                tableContent.table.dontBreakRows = true;
-            }
-
-            // Style du sous-titre (messageTop)
-            doc.styles.message = {
-              fontSize: 12,
-              italic: true,
-              alignment: 'center',
-              margin: [0, 0, 0, 12] // Marge basse pour décoller du tableau
-            };
-
-            // Alignements des cellules
+        
+            // 3. Force 100% de largeur et gère les retours à la ligne (wrapping)
+            // Utile pour les libellés longs comme "FIZZI PAMPLEMOUSSE 0,33" 
+            doc.content[1].table.widths = Array(colCount).fill('*');
+        
+            // 4. Gestion de l'affichage sur plusieurs pages
+            doc.content[1].table.headerRows = 1; // Répète l'en-tête sur chaque page
+            doc.content[1].table.dontBreakRows = true; // Empêche de couper une ligne de produit en deux
+        
+            // 5. Alignements et styles
             doc.styles.tableBodyEven.alignment = 'center';
             doc.styles.tableBodyOdd.alignment = 'center';
             doc.styles.tableHeader.alignment = 'center';
+            
+            // Ajustement de la taille de police pour assurer que tout rentre
+            doc.defaultStyle.fontSize = 10; 
           }
         },
         {
