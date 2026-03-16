@@ -250,6 +250,10 @@ $(function () {
               // '*' permet de répartir équitablement l'espace disponible entre les colonnes
               // et force les textes longs à revenir à la ligne
               tableNode.table.widths = Array(colCount).fill('*');
+
+              // MODIFICATION : centrage réel du tableau dans la page
+              // pdfMake centre mieux les tableaux en utilisant les marges
+              tableNode.margin = [40, 0, 40, 0]; 
         
               // MODIFICATION 3 : Centrage du tableau dans la page
               // Sans cela, pdfMake aligne le tableau à gauche par défaut
