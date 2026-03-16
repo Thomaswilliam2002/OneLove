@@ -231,29 +231,50 @@ $(function () {
           exportOptions: { columns: ':visible' },
           orientation: 'portrait', 
           customize: function (doc) {
-            // 1. Calcul du nombre de colonnes visibles
-            const colCount = doc.content[1].table.body[0].length;
-        
-            // 2. Bascule dynamique paysage si > 7 colonnes
-            if (colCount > 7) {
-              doc.pageOrientation = 'landscape';
-            }
-        
-            // 3. Force 100% de largeur et gère les retours à la ligne (wrapping)
-            // Utile pour les libellés longs comme "FIZZI PAMPLEMOUSSE 0,33" 
-            doc.content[1].table.widths = Array(colCount).fill('*');
-        
-            // 4. Gestion de l'affichage sur plusieurs pages
-            doc.content[1].table.headerRows = 1; // Répète l'en-tête sur chaque page
-            doc.content[1].table.dontBreakRows = true; // Empêche de couper une ligne de produit en deux
-        
-            // 5. Alignements et styles
-            doc.styles.tableBodyEven.alignment = 'center';
-            doc.styles.tableBodyOdd.alignment = 'center';
-            doc.styles.tableHeader.alignment = 'center';
-            
-            // Ajustement de la taille de police pour assurer que tout rentre
-            doc.defaultStyle.fontSize = 10; 
+            // Localisation du tableau
+    var tableNode = doc.content.find(node => node.table);
+    
+    if (tableNode) {
+      const colCount = tableNode.table.body[0].length;
+
+      // MODIFICATION 1 : Passage en paysage SI > 7 colonnes (cas des mois Jan-Nov)
+      // On utilise doc.pageOrientation ET on ajuste pageSize si nécessaire
+      if (colCount > 7) {
+        doc.pageOrientation = 'landscape';
+      }
+
+      // MODIFICATION 2 : Gestion de la largeur des colonnes
+      // Remplacer 'auto' par '*' pour FORCER le tableau à rester dans les limites de la page
+      // Cela oblige les textes longs à faire des retours à la ligne (wrap)
+      tableNode.table.widths = Array(colCount).fill('*');
+
+      // MODIFICATION 3 : Réduction de la police globale
+      // Indispensable pour les tableaux denses (Personnel ou Mois) [cite: 3, 6]
+      doc.defaultStyle.fontSize = 9; 
+      doc.styles.tableHeader.fontSize = 10;
+
+      // MODIFICATION 4 : Réduction des marges internes (paddings)
+      // On gagne de précieux millimètres pour éviter que le tableau ne déborde
+      tableNode.layout = {
+        hLineWidth: function (i, node) { return 0.5; },
+        vLineWidth: function (i, node) { return 0.5; },
+        paddingLeft: function (i) { return 2; },
+        paddingRight: function (i) { return 2; },
+        paddingTop: function (i) { return 2; },
+        paddingBottom: function (i) { return 2; }
+      };
+
+      // MODIFICATION 5 : Répétition de l'en-tête sur chaque page
+      tableNode.table.headerRows = 1;
+      tableNode.table.dontBreakRows = true;
+    }
+
+    // Styles des titres et alignements
+    doc.styles.title = { fontSize: 16, bold: true, alignment: 'center' };
+    doc.styles.message = { fontSize: 11, italic: true, alignment: 'center', margin: [0, 5, 0, 15] };
+    doc.styles.tableBodyEven.alignment = 'center';
+    doc.styles.tableBodyOdd.alignment = 'center';
+    doc.styles.tableHeader.alignment = 'center';
           }
         },
         {
