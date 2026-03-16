@@ -253,7 +253,9 @@ $(function () {
 
               // MODIFICATION : centrage réel du tableau dans la page
               // pdfMake centre mieux les tableaux en utilisant les marges
-              tableNode.margin = [-20, 0, 0, 0]; 
+              if(colCount > 7) {
+                tableNode.margin = [-20, 0, 0, 0]; 
+              }
         
               // MODIFICATION 3 : Centrage du tableau dans la page
               // Sans cela, pdfMake aligne le tableau à gauche par défaut
