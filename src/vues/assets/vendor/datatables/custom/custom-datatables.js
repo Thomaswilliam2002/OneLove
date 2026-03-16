@@ -225,52 +225,84 @@ $(function () {
           title: exportTitle,
           exportOptions: { columns: ':visible' }
         },
-        {
+        { 
           extend: 'pdf',
           title: typeof exportTitle !== 'undefined' ? exportTitle + '\n' + dynamicSubtitle : 'Rapport d\'Inventaire',
           exportOptions: { columns: ':visible' },
           orientation: 'portrait', 
+        
           customize: function (doc) {
+        
+            // Localisation du tableau dans le document PDF
             var tableNode = doc.content.find(node => node.table);
-            
+        
             if (tableNode) {
+        
               const colCount = tableNode.table.body[0].length;
         
+              // MODIFICATION 1 : Passage en paysage SI > 7 colonnes
+              // Cela permet d'éviter que le tableau déborde lorsque beaucoup de colonnes existent
               if (colCount > 7) {
                 doc.pageOrientation = 'landscape';
               }
         
-              // Correction pour le centrage : on force les largeurs 
-              // '*' répartit l'espace et aligne le bloc sur toute la largeur disponible
+              // MODIFICATION 2 : Gestion automatique de la largeur des colonnes
+              // '*' permet de répartir équitablement l'espace disponible entre les colonnes
+              // et force les textes longs à revenir à la ligne
               tableNode.table.widths = Array(colCount).fill('*');
         
-              // MODIFICATION : Suppression des bordures (noBorders)
-              // On définit toutes les lignes à 0 pour faire disparaître les contours
+              // MODIFICATION 3 : Centrage du tableau dans la page
+              // Sans cela, pdfMake aligne le tableau à gauche par défaut
+              tableNode.alignment = 'center';
+        
+              // MODIFICATION 4 : Réduction de la police pour les tableaux larges
+              // Cela évite les débordements sur les pages PDF
+              doc.defaultStyle.fontSize = 9; 
+              doc.styles.tableHeader.fontSize = 10;
+        
+              // MODIFICATION 5 : Suppression des bordures du tableau
+              // hLineWidth = lignes horizontales
+              // vLineWidth = lignes verticales
+              // Mettre 0 supprime complètement les bordures
               tableNode.layout = {
-                hLineWidth: function (i, node) { return 0; }, // Supprime lignes horizontales
-                vLineWidth: function (i, node) { return 0; }, // Supprime lignes verticales
-                paddingLeft: function (i) { return 4; },      // Un peu de padding pour l'esthétique
-                paddingRight: function (i) { return 4; },
-                paddingTop: function (i) { return 2; },
-                paddingBottom: function (i) { return 2; }
+                hLineWidth: function () { return 0; },
+                vLineWidth: function () { return 0; },
+        
+                // Réduction des marges internes pour gagner de l'espace
+                paddingLeft: function () { return 2; },
+                paddingRight: function () { return 2; },
+                paddingTop: function () { return 2; },
+                paddingBottom: function () { return 2; }
               };
         
+              // MODIFICATION 6 : Répéter l'en-tête du tableau sur chaque page
               tableNode.table.headerRows = 1;
+        
+              // Empêche qu'une ligne soit coupée entre deux pages
               tableNode.table.dontBreakRows = true;
             }
         
-            // Styles des textes et alignement horizontal
-            doc.styles.title = { fontSize: 16, bold: true, alignment: 'center' };
-            doc.styles.message = { fontSize: 11, italic: true, alignment: 'center', margin: [0, 5, 0, 15] };
-            
+            // Styles globaux du document
+        
+            // Style du titre principal
+            doc.styles.title = {
+              fontSize: 16,
+              bold: true,
+              alignment: 'center'
+            };
+        
+            // Style du sous-titre
+            doc.styles.message = {
+              fontSize: 11,
+              italic: true,
+              alignment: 'center',
+              margin: [0, 5, 0, 15]
+            };
+        
             // Centrage du contenu des cellules
-            doc.styles.tableBodyEven = { alignment: 'center' };
-            doc.styles.tableBodyOdd = { alignment: 'center' };
-            doc.styles.tableHeader = { alignment: 'center', bold: true };
-            
-            // Assurer que le style par défaut est centré pour tout le document
-            doc.defaultStyle.alignment = 'center';
-            doc.defaultStyle.fontSize = 9;
+            doc.styles.tableBodyEven.alignment = 'center';
+            doc.styles.tableBodyOdd.alignment = 'center';
+            doc.styles.tableHeader.alignment = 'center';
           }
         },
         {
