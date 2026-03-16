@@ -199,17 +199,33 @@ $(function () {
         },
         {
           extend: 'pdf',
-          title: exportTitle,
+          title: typeof exportTitle !== 'undefined' ? exportTitle : 'Rapport d\'Inventaire',
           exportOptions: { columns: ':visible' },
-          // --- AJOUT DE LA PERSONNALISATION ICI ---
+          orientation: 'portrait', 
           customize: function (doc) {
-            // Force le tableau à prendre 100% de la largeur
-            doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('*');
-            
-            // Optionnel : Aligner le texte au centre pour toutes les cellules du PDF
+            // 1. Calcul du nombre de colonnes visibles
+            const colCount = doc.content[1].table.body[0].length;
+        
+            // 2. Bascule dynamique paysage si > 7 colonnes
+            if (colCount > 7) {
+              doc.pageOrientation = 'landscape';
+            }
+        
+            // 3. Force 100% de largeur et gère les retours à la ligne (wrapping)
+            // Utile pour les libellés longs comme "FIZZI PAMPLEMOUSSE 0,33" 
+            doc.content[1].table.widths = Array(colCount).fill('*');
+        
+            // 4. Gestion de l'affichage sur plusieurs pages
+            doc.content[1].table.headerRows = 1; // Répète l'en-tête sur chaque page
+            doc.content[1].table.dontBreakRows = true; // Empêche de couper une ligne de produit en deux
+        
+            // 5. Alignements et styles
             doc.styles.tableBodyEven.alignment = 'center';
             doc.styles.tableBodyOdd.alignment = 'center';
             doc.styles.tableHeader.alignment = 'center';
+            
+            // Ajustement de la taille de police pour assurer que tout rentre
+            doc.defaultStyle.fontSize = 10; 
           }
         },
         {

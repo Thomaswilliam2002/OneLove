@@ -3951,3 +3951,31 @@ deleteHistCaisse = (app) => {
     <% } %>
     <!-- Row starts -->
   </div>
+
+  {
+    extend: 'pdf',
+    title: exportTitle,
+    exportOptions: { columns: ':visible' },
+    // --- AJOUT DE LA PERSONNALISATION ICI ---
+    // Gestion dynamique de l'orientation selon le nombre de colonnes
+    orientation: 'portrait', // Valeur par défaut
+    customize: function (doc) {
+      // 1. Calculer le nombre de colonnes visibles réellement exportées
+      const colCount = doc.content[1].table.body[0].length;
+
+      // 2. Si plus de 7 colonnes, on bascule l'orientation du document en paysage
+      if (colCount > 7) {
+        doc.pageOrientation = 'landscape';
+      }
+      // Force le tableau à prendre 100% de la largeur
+      // 3. Force le tableau à occuper 100% de la largeur disponible.
+      // L'utilisation de '*' force pdfMake à diviser l'espace et à faire 
+      // des retours à la ligne si le texte est trop long pour la cellule.
+      doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('*');
+      
+      // Optionnel : Aligner le texte au centre pour toutes les cellules du PDF
+      doc.styles.tableBodyEven.alignment = 'center';
+      doc.styles.tableBodyOdd.alignment = 'center';
+      doc.styles.tableHeader.alignment = 'center';
+    }
+  },
