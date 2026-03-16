@@ -201,8 +201,7 @@ $(function () {
         },
         {
           extend: 'pdf',
-          title: typeof exportTitle !== 'undefined' ? exportTitle : 'Rapport d\'Inventaire', // TITRE FIXE
-          messageTop: dynamicSubtitle,      // SOUS-TITRE DYNAMIQUE
+          title: typeof exportTitle !== 'undefined' ? exportTitle : 'Rapport d\'Inventaire',
           exportOptions: { columns: ':visible' },
           orientation: 'portrait', 
           customize: function (doc) {
