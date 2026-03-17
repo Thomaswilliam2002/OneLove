@@ -193,22 +193,6 @@
                                                       <input type="number" value="<%= hachat.prix_unit %>" min="0" step="0.01" class="form-control" id="a2" name="prix" required>
                                                     </div>
                                                   </div>
-                                                  <!-- <div class="col-sm-12">
-                                                    <div class="mb-3">
-                                                      <label class="form-label" for="a8">Nom de la caisse destinataire<span class="text-danger">*</span></label>
-                                                      <select name="dest" class="form-select" id="">
-                                                        <% if(caisses.length > 0){ caisses.forEach(c => {%>
-                                                          <option value="<%= c.id_lieu %>|<%= c.type_lieu %>|<%= c.id_caisse %>" ><%= c.nom %> (<%= c.type_lieu %>)</option>
-                                                        <% }) }%>
-                                                      </select>
-                                                    </div>
-                                                  </div> -->
-                                                  <!-- <div class="col-sm-12">
-                                                    <div class="mb-3">
-                                                      <label class="form-label" for="a8">Commantaire<span class="text-danger">*</span></label>
-                                                      <textarea class="form-control" id="a8" placeholder="un commantaire ?" rows="2" name="cmm"></textarea>
-                                                    </div>
-                                                  </div> -->
                                                   <input type="hidden" class="form-control" id="a2" name="type" value="produit">
                                                   <input type="hidden" class="form-control" id="a2" name="idpro" value="<%= produit.id_produit %>">
                                                 </div>

@@ -144,6 +144,7 @@ updateHSortie = (app) => {
         }
     });
 };
+
 const deleteHSortie = (app) => {
     app.delete('/deleteHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
         try {
