@@ -202,7 +202,8 @@
                         </form>
                     </div>
                 </div>
-
+                <br>
+                <br>
                 <!-- carte pour ajouter un suprimer un caissier d'une caisse existante a la quelle il a ete affecter -->
               <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
                 <div class="card-header bg-danger text-white text-center p-4">
@@ -373,7 +374,7 @@
             caisse => caisse.id_caisse == selectedCaisse
         );
 
-        personnelSelect.innerHTML = '<option value="">-- Choisir un personnel --</option>';
+        // personnelSelect.innerHTML = '<option value="">-- Choisir un personnel --</option>';
 
         if (nb_caisse_personnel && nb_caisse_personnel.Personnels) {
             nb_caisse_personnel.Personnels.forEach(personnel => {
