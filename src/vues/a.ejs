@@ -4077,3 +4077,182 @@ deleteHistCaisse = (app) => {
   
   // Ajustement de la taille de police pour assurer que tout rentre
   doc.defaultStyle.fontSize = 10; 
+
+
+  // if(req.query.art === 'produit'){
+    //     HistEntrer.findOne({
+    //         where: {id_hist: req.params.id, type: 'produit'}
+    //     })
+    //     .then(hentrer => {
+    //         const appartDel = hentrer;
+    //         HistEntrer.destroy({where: {id_hist: appartDel.id_hist}})
+    //             .then(_ => {
+    //                 res.redirect('/oneProduit/' + req.query.id + '?msg=sup&type=achat')
+    //             })
+    //             .catch(_ => console.log('erreure de suppression', _))
+    //     })
+    // }
+    // else if(req.query.art === 'emballage'){
+    //     HistEntrer.findOne({
+    //         where: {id_hist: req.params.id, type: 'emballage'}
+    //     })
+    //     .then(hentrer => {
+    //         const appartDel = hentrer;
+    //         HistEntrer.destroy({where: {id_hist: appartDel.id_hist}})
+    //             .then(_ => {
+    //                 res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=achat')
+    //             })
+    //             .catch(_ => console.log('erreure de suppression', _))
+    //     })
+    // }
+
+    updateHSortie = (app) => {
+      app.put('/updateHSortie/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+          try {
+              const { nbr, prix, type, idpro, cmm } = req.body;
+  
+              const exist = await HistSortie.findOne({
+                  where: { id_hist: req.params.id, type: type, id_probal: idpro }
+              });
+  
+              let q
+  
+              if(type === 'produit'){
+                  if (!exist) {
+                      return res.redirect('/oneProduit/' + idpro + '?msg=Historique de sortie du produit introuvable&tc=alert-danger');
+                  }
+  
+                  const article = await Produit.findByPk(idpro);
+                  if (!article) {
+                      return res.redirect('/notFound');
+                  }
+                  q = article.quantiter;
+                  await Produit.update({
+                      quantiter: parseInt(q) + parseInt(exist.quantiter) - parseInt(nbr)
+                  }, {
+                      where: {
+                          id_produit: idpro
+                      }
+                  })
+              }else if(type === 'emballage'){
+                  if (!exist) {
+                      return res.redirect('/oneEmballage/' + idpro + '?msg=Historique de sortie de l\'emballage introuvable&tc=alert-danger');
+                  }
+          
+                  const article = await Emballage.findByPk(idpro);
+                  if (!article) {
+                      return res.redirect('/notFound');
+                  }
+                  q = article.quantiter;
+                  await Emballage.update({
+                      quantiter: parseInt(q) + parseInt(exist.quantiter) - parseInt(nbr)
+                  }, {
+                      where: {
+                          id_emballage: idpro
+                      }
+                  })
+              }else{
+                  res.redirect('/notFound');
+                  return; 
+              }
+  
+              await HistSortie.update({
+                  quantiter: nbr,
+                  prix_unit: prix,
+                  commantaire: cmm,
+              }, { where: { id_hist: req.params.id, type: type, id_probal: idpro } });
+  
+              if(type === 'produit'){
+                  res.redirect('/oneProduit/' + idpro + '?msg=Historique de sortie du produit modifier avec succes&tc=alert-success');
+              }else if(type === 'emballage'){
+                  res.redirect('/oneEmballage/' + idpro + '?msg=Historique de sortie de l\'emballage modifier avec succes&tc=alert-success');
+              }else{
+                  res.redirect('/notFound');
+              }
+          } catch (error) {
+              console.error(error);
+              res.redirect('/notFound');
+          }
+      })
+  }
+
+  updateHEntrer = (app) => {
+    app.put('/updateHEntrer/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        try{
+            const {nbr, prix, type, idpro,} = req.body;
+
+            const exist = await HistEntrer.findOne({
+                where: {id_hist: req.params.id, type: type, id_probal: idpro}
+            });
+    
+            let q
+    
+            if(type === 'produit'){
+                if (!exist) {
+                    return res.redirect('/oneProduit/' + idpro + '?msg=Historique d\'approvisionnement du produit introuvable&tc=alert-danger');
+                }
+        
+                const article = await Produit.findByPk(idpro);
+                if (!article) {
+                    return res.redirect('/notFound');
+                }
+                q = article.quantiter;
+                await Produit.update({
+                    quantiter: parseInt(q) + parseInt(exist.quantiter) - parseInt(nbr)
+                }, {
+                    where: {
+                        id_produit: idpro
+                    }
+                })
+    
+            }else if(type === 'emballage'){
+                if (!exist) {
+                    return res.redirect('/oneEmballage/' + idpro + '?msg=Historique d\'approvisionnement de l\'emballage introuvable&tc=alert-danger');
+                }
+        
+                const article = await Emballage.findByPk(idpro);
+                if (!article) {
+                    return res.redirect('/notFound');
+                }
+                q = article.quantiter;
+                await Emballage.update({
+                    quantiter: parseInt(q) + parseInt(exist.quantiter) - parseInt(nbr)
+                }, {
+                    where: {
+                        id_emballage: idpro
+                    }
+                })
+            }else{
+                res.redirect('/notFound');
+                return; 
+            }
+        
+            HistEntrer.update({
+                quantiter: nbr,
+                prix_unit: prix,
+            },{
+                where: {id_hist: req.params.id, type: type, id_probal: idpro}
+            })
+                .then(hentrer => {
+                    if(type === 'produit'){
+                        res.redirect('/oneProduit/' + idpro + '?msg=Historique d\'approvisionnement du produit modifier avec succes&tc=alert-success')
+                    }else if(type === 'emballage'){
+                        res.redirect('/oneEmballage/' + idpro + '?msg=Historique d\'approvisionnement de l\'emballage modifier avec succes&tc=alert-success')
+                    }else{
+                        res.redirect('/notFound');
+                        return; 
+                    }
+                })
+                .catch(_ => {
+                    console.error(_);
+                    res.redirect('/notFound');
+                    return; 
+                })
+        }
+        catch(_){
+            console.error(_);
+            res.redirect('/notFound');
+            return; 
+        }
+    })
+}

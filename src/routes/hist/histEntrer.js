@@ -1,6 +1,8 @@
+const { where } = require('sequelize');
 const {HistEntrer} = require('../../db/sequelize')
 const {Produit, Emballage} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
+const emballage = require('../../models/emballage');
 
 allHEntrer = (app) => {
     app.get('/allHEntrer', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
@@ -104,7 +106,71 @@ addHEntrer = (app) => {
         
     })
 }
+updateHEntrer = (app) => {
+    app.put('/updateHEntrer/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
+        const t = await sequelize.transaction();
 
+        try {
+            const { nbr, prix, type, idpro } = req.body;
+
+            if (!['produit', 'emballage'].includes(type)) {
+                return res.redirect('/notFound');
+            }
+
+            const Model = type === 'produit' ? Produit : Emballage;
+            const field = type === 'produit' ? 'id_produit' : 'id_emballage';
+            const redirectUrl = type === 'produit' ? '/oneProduit/' : '/oneEmballage/';
+
+            const exist = await HistEntrer.findOne({
+                where: { id_hist: req.params.id, type, id_probal: idpro },
+                transaction: t
+            });
+
+            if (!exist) {
+                return res.redirect(`${redirectUrl}${idpro}?msg=Historique introuvable&tc=alert-danger`);
+            }
+
+            const article = await Model.findByPk(idpro, { transaction: t });
+            if (!article) {
+                return res.redirect('/notFound');
+            }
+
+            const oldQte = parseInt(exist.quantiter) || 0;
+            const newQte = parseInt(nbr) || 0;
+            const stock = parseInt(article.quantiter) || 0;
+
+            const newStock = stock - oldQte + newQte;
+
+            if (newStock < 0) {
+                return res.redirect(`${redirectUrl}${idpro}?msg=Stock invalide&tc=alert-danger`);
+            }
+
+            await Model.update({
+                quantiter: newStock
+            }, {
+                where: { [field]: idpro },
+                transaction: t
+            });
+
+            await HistEntrer.update({
+                quantiter: newQte,
+                prix_unit: prix,
+            }, {
+                where: { id_hist: req.params.id, type, id_probal: idpro },
+                transaction: t
+            });
+
+            await t.commit();
+
+            res.redirect(`${redirectUrl}${idpro}?msg=Modification réussie&tc=alert-success`);
+
+        } catch (error) {
+            await t.rollback();
+            console.error(error);
+            res.redirect('/notFound');
+        }
+    });
+};
 deleteHEntrer = (app) => {
     app.delete('/deleteHEntrer/:id', protrctionRoot, authorise('admin', 'comptable'), async (req, res) => {
 
@@ -154,35 +220,9 @@ deleteHEntrer = (app) => {
     })
 }
 
-// if(req.query.art === 'produit'){
-//     HistEntrer.findOne({
-//         where: {id_hist: req.params.id, type: 'produit'}
-//     })
-//     .then(hentrer => {
-//         const appartDel = hentrer;
-//         HistEntrer.destroy({where: {id_hist: appartDel.id_hist}})
-//             .then(_ => {
-//                 res.redirect('/oneProduit/' + req.query.id + '?msg=sup&type=achat')
-//             })
-//             .catch(_ => console.log('erreure de suppression', _))
-//     })
-// }
-// else if(req.query.art === 'emballage'){
-//     HistEntrer.findOne({
-//         where: {id_hist: req.params.id, type: 'emballage'}
-//     })
-//     .then(hentrer => {
-//         const appartDel = hentrer;
-//         HistEntrer.destroy({where: {id_hist: appartDel.id_hist}})
-//             .then(_ => {
-//                 res.redirect('/oneEmballage/' + req.query.id + '?msg=sup&type=achat')
-//             })
-//             .catch(_ => console.log('erreure de suppression', _))
-//     })
-// }
-
 module.exports = {
     allHEntrer,
     addHEntrer,
-    deleteHEntrer
+    deleteHEntrer,
+    updateHEntrer
 }

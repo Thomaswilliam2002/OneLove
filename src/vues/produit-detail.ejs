@@ -155,8 +155,75 @@
                                             </div>
                                           </div>
                                       <!-- Card ends -->
-                                    
-                                    <!-- ----------------------------------------------------------------------------------------- -->
+
+                                      <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#<%= hachat.id_hist %>exampleModalCenter" data-bs-title="Augmenter le nombre en stock">
+                                        <i class="ri-file-reduce-line"></i>
+                                      </button>
+                                      <!-- Modal -->
+                                      <div class="modal fade" id="<%= hachat.id_hist %>exampleModalCenter" tabindex="-1"
+                                        aria-labelledby="<%= hachat.id_hist %>exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="<%= hachat.id_hist %>exampleModalCenterTitle">
+                                                Modiffication de l'historique du stock Entrer
+                                              </h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                              <!-- Row starts -->
+                                              <form action="/updateHEntrer/<%= hachat.id_hist %>?_method=PUT" method="post">
+                                                <div class="row gx-3">
+                                                  <div class="col-sm-12">
+                                                    <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                      <h6 class="m-0">Details de l'historique</h6>
+                                                    </div>
+                                                  </div>
+                                                  
+                                                  <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                                    <div class="mb-3">
+                                                      <label class="form-label" for="a1">Quantiter<span class="text-danger">*</span></label>
+                                                      <input type="number" min="1"  max="100000" step="0.01" class="form-control" id="a1" placeholder="Entrer le nombre ou la quqntiter" name="nbr" required>
+                                                    </div>
+                                                  </div>
+                                                  <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                                    <div class="mb-3">
+                                                      <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                      <input type="number" value="<%= hachat.prix_unit %>" min="0" step="0.01" class="form-control" id="a2" name="prix" required>
+                                                    </div>
+                                                  </div>
+                                                  <!-- <div class="col-sm-12">
+                                                    <div class="mb-3">
+                                                      <label class="form-label" for="a8">Nom de la caisse destinataire<span class="text-danger">*</span></label>
+                                                      <select name="dest" class="form-select" id="">
+                                                        <% if(caisses.length > 0){ caisses.forEach(c => {%>
+                                                          <option value="<%= c.id_lieu %>|<%= c.type_lieu %>|<%= c.id_caisse %>" ><%= c.nom %> (<%= c.type_lieu %>)</option>
+                                                        <% }) }%>
+                                                      </select>
+                                                    </div>
+                                                  </div> -->
+                                                  <!-- <div class="col-sm-12">
+                                                    <div class="mb-3">
+                                                      <label class="form-label" for="a8">Commantaire<span class="text-danger">*</span></label>
+                                                      <textarea class="form-control" id="a8" placeholder="un commantaire ?" rows="2" name="cmm"></textarea>
+                                                    </div>
+                                                  </div> -->
+                                                  <input type="hidden" class="form-control" id="a2" name="type" value="produit">
+                                                  <input type="hidden" class="form-control" id="a2" name="idpro" value="<%= produit.id_produit %>">
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Annuler
+                                                  </button>
+                                                  <button type="submit" class="btn btn-danger">Confirmer la modification</button>
+                                                </div>
+                                              </form>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <!-- Card ends -->
                                       
                                       <!-- ----------------------------------------------------------------------------------------- -->
                                   </div>
@@ -279,7 +346,64 @@
                                       <!-- Card ends -->
                                     
                                     <!-- ----------------------------------------------------------------------------------------- -->
-                                    
+                                      <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#<%= hvente.id_hist %>exampleModalCenter" data-bs-title="Augmenter le nombre en stock">
+                                        <i class="ri-file-reduce-line"></i>
+                                      </button>
+                                      <!-- Modal -->
+                                      <div class="modal fade" id="<%= hvente.id_hist %>exampleModalCenter" tabindex="-1"
+                                        aria-labelledby="<%= hvente.id_hist %>exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="<%= hvente.id_hist %>exampleModalCenterTitle">
+                                                Modiffication de l'historique de sortie
+                                              </h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                              <!-- Row starts -->
+                                              <form action="/updateHSortie/<%= hvente.id_hist %>?_method=PUT" method="post">
+                                                <div class="row gx-3">
+                                                  <div class="col-sm-12">
+                                                    <div class="bg-light rounded-2 px-3 py-2 mb-3">
+                                                      <h6 class="m-0">Details de l'historique</h6>
+                                                    </div>
+                                                  </div>
+                                                  
+                                                  <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                                    <div class="mb-3">
+                                                      <label class="form-label" for="a1">Quantiter<span class="text-danger">*</span></label>
+                                                      <input type="number" min="1"  max="<%= produit.quantiter %>" value="<%= hvente.quantiter %>" step="0.01" class="form-control" id="a1" placeholder="Entrer le nombre ou la quqntiter" name="nbr" required>
+                                                    </div>
+                                                  </div>
+                                                  <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                                    <div class="mb-3">
+                                                      <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
+                                                      <input type="number" value="<%= hachat.prix_unit %>" min="0" step="0.01" class="form-control" id="a2" name="prix" required>
+                                                    </div>
+                                                  </div>
+                                                  <div class="col-sm-12">
+                                                    <div class="mb-3">
+                                                      <label class="form-label" for="a8">Commantaire<span class="text-danger">*</span></label>
+                                                      <textarea class="form-control" id="a8" placeholder="un commantaire ?" rows="2" name="cmm"></textarea>
+                                                    </div>
+                                                  </div>
+                                                  <input type="hidden" class="form-control" id="a2" name="type" value="produit">
+                                                  <input type="hidden" class="form-control" id="a2" name="idpro" value="<%= produit.id_produit %>">
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Annuler
+                                                  </button>
+                                                  <button type="submit" class="btn btn-danger">Confirmer la modification</button>
+                                                </div>
+                                              </form>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <!-- Card ends -->
                                   </div>
                                 </td>
                               </tr>

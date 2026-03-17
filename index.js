@@ -844,10 +844,12 @@ categorie.deleteCateg(app);
 histSortie.allHSortie(app);
 histSortie.addHSortie(app);
 histSortie.deleteHSortie(app);
+histSortie.updateHSortie(app);
 
 histEntrer.allHEntrer(app);
 histEntrer.addHEntrer(app);
 histEntrer.deleteHEntrer(app);
+histEntrer.updateHEntrer(app);
 
 produit.allProduit(app);
 produit.formAddProduit(app);
