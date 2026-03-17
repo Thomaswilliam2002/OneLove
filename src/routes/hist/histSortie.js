@@ -1,5 +1,5 @@
 const {HistSortie} = require('../../db/sequelize')
-const {Produit, Emballage} = require('../../db/sequelize')
+const {Produit, Emballage, sequelize} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 allHSortie = (app) => {
     app.get('/allHSortie', protrctionRoot, authorise('admin', 'comptable'), (req, res) => {
