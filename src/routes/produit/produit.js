@@ -103,11 +103,11 @@ oneProduit = (app) => {
             const [hachats, hventesRaw, hr, hs] = await Promise.all([
 
                 HistEntrer.findAll({
-                    where: { id_probal: produit.id_produit, type: 'produit', is_active: true },
+                    where: { id_probal: produit.id_produit, type: 'produit', is_active: true }, order: [['created', 'DESC']]
                 }),
 
                 HistSortie.findAll({
-                    where: { id_probal: produit.id_produit, type: 'produit', is_active: true },
+                    where: { id_probal: produit.id_produit, type: 'produit', is_active: true }, order: [['created', 'DESC']]
                 }),
 
                 HistEntrer.findAll({
