@@ -202,6 +202,53 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- carte pour ajouter un suprimer un caissier d'une caisse existante a la quelle il a ete affecter -->
+              <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
+                <div class="card-header bg-danger text-white text-center p-4">
+                    <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Retiré un caissier Affecter une Caisse</h3>
+                </div>
+                <div class="card-body p-5 bg-light">
+                    <div class="alert alert-success border-0 shadow-sm d-flex align-items-center mb-4">
+                        <i class="fas fa-link me-3 fa-2x"></i>
+                        <div>
+                            <h5 class="mb-0 text-success">Retiré un Personnel Lier à une Caisse</h5>
+                            <small>Utilisez cette section pour retiré un employé lier à une caisse déjà créée.</small>
+                        </div>
+                    </div>
+        
+                    <form action="/desassignCaisse" method="POST">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Sélectionner la Caisse</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white text-danger border-danger"><i class="fas fa-cash-register"></i></span>
+                                    <select name="id_caisse" id="caisseSelect" class="form-select border-danger shadow-sm" required>
+                                        <% if(caisse){ caisse.forEach(c => { %>
+                                            <option value="<%= c.id_caisse %>"><%= c.nom %> (<%= c.type_lieu %>)</option>
+                                        <% })} %>
+                                    </select>
+                                </div>
+                            </div>
+        
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Choisir le Caissier a retiré</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white text-danger border-danger"><i class="fas fa-user-tie"></i></span>
+                                    <select name="id_personnel" id="personnelSelect" class="form-select border-danger shadow-sm" required>
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 d-grid mt-4">
+                                <button type="submit" class="btn btn-success btn-lg shadow-sm fw-bold">
+                                    <i class="fas fa-check-circle me-2"></i> VALIDER LE RETRAIT
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+              </div>
             </div>
         </div>
             <!-- Row ends -->
@@ -245,6 +292,7 @@
     <script>
       // Chargement des données EJS de manière sécurisée
       // On utilise JSON.parse pour s'assurer que l'objet est bien formé
+      const all_caisse = JSON.parse(`<%- JSON.stringify(caissesd) %>`);
       const databaseLieux = {
         BarSimple: JSON.parse(`<%- JSON.stringify(bars) %>`),
         BarVip: JSON.parse(`<%- JSON.stringify(vips) %>`),
@@ -316,6 +364,30 @@
               }
           }
       }
+
+      const caisseSelect = document.getElementById('caisseSelect');
+      const personnelSelect = document.getElementById('personnelSelect');
+
+      caisseSelect.addEventListener('change', function() {
+            const selectedCaisse = this.value;
+
+            const nb_caisse_personnel = all_caisse.find(
+                caisse => caisse.id_caisse == selectedCaisse
+            );
+
+            personnelSelect.innerHTML = '';
+
+            if (nb_caisse_personnel && nb_caisse_personnel.Personnels) {
+                nb_caisse_personnel.Personnels.forEach(personnel => {
+                    personnelSelect.insertAdjacentHTML(
+                        'beforeend',
+                        `<option value="${personnel.id_personnel}">
+                            ${personnel.nom} ${personnel.prenom}
+                        </option>`
+                    );
+                });
+            }
+        });
   </script>
   </body>
 

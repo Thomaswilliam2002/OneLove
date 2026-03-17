@@ -30,6 +30,18 @@ formAddCaisse = (app) =>{
                 where: { is_active: true },
                 order: [['id_occupe', 'DESC']]
             });
+
+            const caissesd = await Caisse.findAll({
+                include: [{
+                    model: Personnel,
+                    required: false,
+                    where: { is_active: true },
+                    through: { attributes: ['id_personnel', 'id_caisse'] } 
+                }],
+                where: { is_active: true },
+                order: [['id_caisse', 'DESC']]
+            });
+
             const bars = await BarSimple.findAll({where: { is_active: true }});
             const vips = await BarVip.findAll({where: { is_active: true }});
             const clubs = await CrazyClub.findAll({where: { is_active: true }});
@@ -38,7 +50,7 @@ formAddCaisse = (app) =>{
             const appartements = await Appartement.findAll({where: { is_active: true }});
             const caisse = await Caisse.findAll({where: { is_active: true }});
             res.render('add-caisse', { 
-                personnels, bars, vips, clubs, cuisines, appartements, maisons, caisse, msg:req.query.msg, tc:req.query.tc
+                personnels, bars, vips, clubs, cuisines, appartements, caissesd: caissesd, maisons, caisse, msg:req.query.msg, tc:req.query.tc
             });
         }catch(e){
             console.error(e);
@@ -57,12 +69,23 @@ assignCaisse = (app) =>{
                 return res.redirect('/formAddCaisse?msg=Veuillez remplir tous les champs&tc=alert-warning');
             }
 
-            // On vérifie si le lien existe déjà pour éviter les doublons
+            // On vérifie si le lien active existe déjà pour éviter les doublons
             const existeDeja = await CaissePersonnel.findOne({ 
                 where: { id_caisse, id_personnel, is_active: true } 
             });
 
             if (existeDeja) {
+                return res.redirect('/formAddCaisse?msg=Ce caissier est déjà lié à cette caisse&tc=alert-warning');
+            }
+
+            // On vérifie si le lien inactive existe déjà pour éviter les doublons
+            const existeDejaF = await CaissePersonnel.findOne({ 
+                where: { id_caisse, id_personnel, is_active: false } 
+            });
+
+            if (existeDejaF) {
+                // On active le lien existant
+                await CaissePersonnel.update({ is_active: true }, { where: { id_caisse, id_personnel, is_active: false } });
                 return res.redirect('/formAddCaisse?msg=Ce caissier est déjà lié à cette caisse&tc=alert-warning');
             }
 
@@ -76,6 +99,41 @@ assignCaisse = (app) =>{
         }
     });
 }
+
+desassignCaisse = (app) => {
+    app.post('/desassignCaisse', async (req, res) => {
+        try {
+            const { id_caisse, id_personnel } = req.body;
+
+            if (!id_caisse || !id_personnel) {
+                return res.redirect('/formAddCaisse?msg=Informations manquantes&tc=alert-warning');
+            }
+
+            // Vérifier si le lien actif existe
+            const liaison = await CaissePersonnel.findOne({
+                where: { id_caisse, id_personnel, is_active: true }
+            });
+
+            if (!liaison) {
+                return res.redirect('/formAddCaisse?msg=Aucune affectation active trouvée&tc=alert-warning');
+            }
+
+            // Suppression logique
+            await CaissePersonnel.update(
+                { is_active: false },
+                {
+                    where: { id_caisse, id_personnel }
+                }
+            );
+
+            res.redirect('/formAddCaisse?msg=Caissier retiré de la caisse avec succès&tc=alert-success');
+
+        } catch (e) {
+            console.log(e);
+            res.redirect('/notFound');
+        }
+    });
+};
 
 //route ajout d'une nouvelle caisse
 addCaisse = (app) => {
