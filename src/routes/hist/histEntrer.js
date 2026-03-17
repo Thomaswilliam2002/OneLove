@@ -1,6 +1,6 @@
 const { where } = require('sequelize');
 const {HistEntrer} = require('../../db/sequelize')
-const {Produit, Emballage} = require('../../db/sequelize')
+const {Produit, Emballage, sequelize} = require('../../db/sequelize')
 const {protrctionRoot, authorise} = require('../../middleware/protectRoot');
 const emballage = require('../../models/emballage');
 
