@@ -4256,3 +4256,27 @@ deleteHistCaisse = (app) => {
         }
     })
 }
+
+
+
+
+caisseSelect.addEventListener('change', function() {
+  const selectedCaisse = this.value;
+
+  const nb_caisse_personnel = all_caisse.find(
+      caisse => caisse.id_caisse == selectedCaisse
+  );
+
+  personnelSelect.innerHTML = '';
+
+  if (nb_caisse_personnel && nb_caisse_personnel.Personnels) {
+      nb_caisse_personnel.Personnels.forEach(personnel => {
+          personnelSelect.insertAdjacentHTML(
+              'beforeend',
+              `<option value="${personnel.id_personnel}">
+                  ${personnel.nom} ${personnel.prenom}
+              </option>`
+          );
+      });
+  }
+});
