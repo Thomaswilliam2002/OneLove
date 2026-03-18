@@ -562,5 +562,5 @@ oneCaisse = (app) => {
 
 module.exports = {
     allCaisse, caisseBareSimple, caisseBareVip, caisseAppart, caisseMClose, caisseCClub, caisseCuisine,
-    formAddCaisse, formEditCaisse, addCaisse, updateCaisse, deleteCaisse, oneCaisse, assignCaisse
+    formAddCaisse, formEditCaisse, addCaisse, updateCaisse, deleteCaisse, oneCaisse, assignCaisse, desassignCaisse
 };

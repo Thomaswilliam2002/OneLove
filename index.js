@@ -765,6 +765,7 @@ caisse.caisseMClose(app);
 caisse.caisseCClub(app);
 caisse.caisseCuisine(app);
 caisse.assignCaisse(app);
+caisse.desassignCaisse(app);
 
 caisseProduit.allProduitCaisse(app);
 caisseProduit.addHistCaisse(app);
