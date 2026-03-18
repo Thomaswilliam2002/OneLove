@@ -374,7 +374,8 @@
             caisse => caisse.id_caisse == selectedCaisse
         );
 
-        // personnelSelect.innerHTML = '<option value="">-- Choisir un personnel --</option>';
+        personnelSelect.innerHTML = '';
+        // <option value="">-- Choisir un personnel --</option>
 
         if (nb_caisse_personnel && nb_caisse_personnel.Personnels) {
             nb_caisse_personnel.Personnels.forEach(personnel => {
