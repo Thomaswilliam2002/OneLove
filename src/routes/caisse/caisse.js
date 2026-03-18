@@ -86,7 +86,7 @@ assignCaisse = (app) =>{
             if (existeDejaF) {
                 // On active le lien existant
                 await CaissePersonnel.update({ is_active: true }, { where: { id_caisse, id_personnel, is_active: false } });
-                return res.redirect('/formAddCaisse?msg=Ce caissier est déjà lié à cette caisse&tc=alert-warning');
+                return res.redirect('/formAddCaisse?msg=Affectation existante activer&tc=alert-warning');
             }
 
             // Ajout du lien dans la table pivot
