@@ -36,7 +36,7 @@ formAddCaisse = (app) =>{
                     model: Personnel,
                     required: false,
                     where: { is_active: true },
-                    through: { attributes: ['id_personnel', 'id_caisse'] } 
+                    through: { attributes: ['id_personnel', 'id_caisse'], where: { is_active: true } } 
                 }],
                 where: { is_active: true },
                 order: [['id_caisse', 'DESC']]
@@ -201,7 +201,7 @@ allCaisse = (app) => {
                     model: Personnel,
                     required: false,
                     where: { is_active: true },
-                    through: { attributes: ['id_personnel', 'id_caisse'] } 
+                    through: { attributes: ['id_personnel', 'id_caisse'], where: { is_active: true }  } 
                 }],
                 where: { is_active: true },
                 order: [['id_caisse', 'DESC']]
