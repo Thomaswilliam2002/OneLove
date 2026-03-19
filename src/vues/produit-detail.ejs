@@ -279,75 +279,49 @@
                               </tr>
                             </thead>
                             <tbody class="text-center" id="tbody2">
-                              <% i = 1; total_q = 0; total_p = 0; montant = 0; hventes.forEach((hvente, index) => {%>
-                              <tr>
-                                <td><%= i %></td>
-                                <td><%= hvente.quantiter %></td>
-                                <td><%= hvente.prix_unit %></td>
-                                <td class="calcule2"><%= hvente.prix_unit * hvente.quantiter %></td>
-                                <td><%= hvente.caisse.nom %></td>
-                                <td class="wrap-text"><%= hvente.commantaire %></td>
-                                <td><%= new Date(hvente.created).getDate() %>-<%= new Date(hvente.created).getMonth() + 1 %>-<%= new Date(hvente.created).getFullYear()%></td>
-                                <td><%= new Date(hvente.created).getHours() %>-<%= new Date(hvente.created).getMinutes() %>-<%= new Date(hvente.created).getSeconds()%></td>
-                                <td>
-                                  <div class="d-inline-flex gap-1">
-                                    <!-- ----------------------------------------------------------------------------------- -->
-                                   
-                                      <!-- Card starts -->
-                                          <!-- Button trigger modal -->
-                                          <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#<%= hvente.id_hist %>ModalCenter" class="btn btn-outline-danger btn-sm">
-                                            <i class="ri-delete-bin-line"></i>
-                                          </button>
-                                          <!-- Modal -->
-                                          <div class="modal fade" id="<%= hvente.id_hist %>ModalCenter" tabindex="-1"
-                                            aria-labelledby="personnel.id_personnelModalCenterTitle" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                              <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <h5 class="modal-title" id="<%= hvente.id_hist %>ModalCenterTitle">
-                                                    Confirmer
-                                                  </h5>
-                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                  <p>Voulez-vous vraiment supprimer la Vente ?</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    annuler
-                                                  </button>
-                                                  <form action="/deleteHSortie/<%= hvente.id_hist %>?_method=DELETE&id=<%= produit.id_produit %>" method="post">
-                                                    <div class="col-sm-12">
-                                                      <div class="d-flex gap-2 justify-content-end">
-                                                        <button type="submit" class="btn btn-danger">Supprimer</button>
-                                                      </div>
-                                                    </div>
-                                                  </form>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                      <!-- Card ends -->
-                                      <% if (index === 0) { %>
-                                        <!-- ----------------------------------------------------------------------------------------- -->
+                              <% i = 1; total_q = 0; total_p = 0; montant = 0%>
+                                <% 
+                                // Initialisation d'un Set pour suivre les caisses déjà traitées
+                                // Cela permet d'afficher le bouton "Modifier" uniquement pour l'entrée la plus récente de chaque caisse
+                                const caissesTraitees = new Set(); 
+                              %>
+                              
+                              <% hventes.forEach((hvente, index) => { %>
+                                <tr>
+                                  <td><%= i %></td>
+                                  <td><%= hvente.quantiter %></td>
+                                  <td><%= hvente.prix_unit %></td>
+                                  <td class="calcule2"><%= hvente.prix_unit * hvente.quantiter %></td>
+                                  <td><%= hvente.caisse.nom %></td>
+                                  <td class="wrap-text"><%= hvente.commantaire %></td>
+                                  <td><%= new Date(hvente.created).getDate() %>-<%= new Date(hvente.created).getMonth() + 1 %>-<%= new Date(hvente.created).getFullYear()%></td>
+                                  <td><%= new Date(hvente.created).getHours() %>-<%= new Date(hvente.created).getMinutes() %>-<%= new Date(hvente.created).getSeconds()%></td>
+                                  <td>
+                                    <div class="d-inline-flex gap-1">
+                                      
+                                      <button type="button" data-bs-toggle="modal" data-bs-target="#<%= hvente.id_hist %>ModalCenter" class="btn btn-outline-danger btn-sm">
+                                        <i class="ri-delete-bin-line"></i>
+                                      </button>
+                              
+                                      <% 
+                                        // Logique : Si l'ID de la caisse n'est pas encore dans le Set, 
+                                        // c'est que c'est l'historique le plus récent pour cette caisse précise.
+                                        if (!caissesTraitees.has(hvente.caisse.id_caisse)) { 
+                                          caissesTraitees.add(hvente.caisse.id_caisse); 
+                                      %>
                                         <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal"
                                           data-bs-target="#<%= hvente.id_hist %>exampleModalCenter" data-bs-title="Modifier">
                                           <i class="ri-file-reduce-line"></i>
                                         </button>
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="<%= hvente.id_hist %>exampleModalCenter" tabindex="-1"
-                                          aria-labelledby="<%= hvente.id_hist %>exampleModalCenterTitle" aria-hidden="true">
+                                        
+                                        <div class="modal fade" id="<%= hvente.id_hist %>exampleModalCenter" tabindex="-1" aria-labelledby="<%= hvente.id_hist %>exampleModalCenterTitle" aria-hidden="true">
                                           <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                               <div class="modal-header">
-                                                <h5 class="modal-title" id="<%= hvente.id_hist %>exampleModalCenterTitle">
-                                                  Modiffication de l'historique de sortie
-                                                </h5>
+                                                <h5 class="modal-title">Modification de l'historique de sortie (<%= hvente.caisse.nom %>)</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                               </div>
                                               <div class="modal-body">
-                                                <!-- Row starts -->
                                                 <form action="/updateHSortie/<%= hvente.id_hist %>?_method=PUT" method="post">
                                                   <div class="row gx-3">
                                                     <div class="col-sm-12">
@@ -355,32 +329,29 @@
                                                         <h6 class="m-0">Details de l'historique</h6>
                                                       </div>
                                                     </div>
-                                                    
-                                                    <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                                    <div class="col-xxl-6 col-lg-6 col-sm-6">
                                                       <div class="mb-3">
-                                                        <label class="form-label" for="a1">Quantiter<span class="text-danger">*</span></label>
-                                                        <input type="number" min="1"  max="100000" value="<%= hvente.quantiter %>" step="0.01" class="form-control" id="a1" placeholder="Entrer le nombre ou la quqntiter" name="nbr" required>
+                                                        <label class="form-label">Quantité<span class="text-danger">*</span></label>
+                                                        <input type="number" min="1" max="100000" value="<%= hvente.quantiter %>" step="0.01" class="form-control" name="nbr" required>
                                                       </div>
                                                     </div>
-                                                    <div class="col-xxl-3 col-lg-6 col-sm-6">
+                                                    <div class="col-xxl-6 col-lg-6 col-sm-6">
                                                       <div class="mb-3">
-                                                        <label class="form-label" for="a2">Prix a l'unité <span class="text-danger">*</span></label>
-                                                        <input type="number" value="<%= hvente.prix_unit %>" min="0" step="0.01" class="form-control" id="a2" name="prix" required>
+                                                        <label class="form-label">Prix à l'unité <span class="text-danger">*</span></label>
+                                                        <input type="number" value="<%= hvente.prix_unit %>" min="0" step="0.01" class="form-control" name="prix" required>
                                                       </div>
                                                     </div>
                                                     <div class="col-sm-12">
                                                       <div class="mb-3">
-                                                        <label class="form-label" for="a8">Commantaire<span class="text-danger">*</span></label>
-                                                        <textarea class="form-control" id="a8" value="<%= hvente.commentaire %>" placeholder="un commantaire ?" rows="2" name="cmm"></textarea>
+                                                        <label class="form-label">Commentaire</label>
+                                                        <textarea class="form-control" placeholder="un commentaire ?" rows="2" name="cmm"><%= hvente.commantaire %></textarea>
                                                       </div>
                                                     </div>
-                                                    <input type="hidden" class="form-control" id="a2" name="type" value="produit">
-                                                    <input type="hidden" class="form-control" id="a2" name="idpro" value="<%= produit.id_produit %>">
+                                                    <input type="hidden" name="type" value="produit">
+                                                    <input type="hidden" name="idpro" value="<%= produit.id_produit %>">
                                                   </div>
                                                   <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                      Annuler
-                                                    </button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                                                     <button type="submit" class="btn btn-danger">Confirmer la modification</button>
                                                   </div>
                                                 </form>
@@ -388,12 +359,32 @@
                                             </div>
                                           </div>
                                         </div>
-                                        <!-- Card ends -->
                                       <% } %>
-                                  </div>
-                                </td>
-                              </tr>
-                              <% i++; total_p += hvente.prix_unit; total_q += hvente.quantiter; montant += hvente.prix_unit * hvente.quantiter}) %>
+                              
+                                      <div class="modal fade" id="<%= hvente.id_hist %>ModalCenter" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title">Confirmer la suppression</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                              <p>Voulez-vous vraiment supprimer cette vente pour <strong><%= hvente.caisse.nom %></strong> ?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                              <form action="/deleteHSortie/<%= hvente.id_hist %>?_method=DELETE&id=<%= produit.id_produit %>" method="post">
+                                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                                              </form>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                              
+                                    </div>
+                                  </td>
+                                </tr>
+                              <% i++; total_p += hvente.prix_unit; total_q += hvente.quantiter; montant += hvente.prix_unit * hvente.quantiter; }) %>
                               <!-- <th >Total</th>
                               <th ><%= total_q %></th>
                               <th ><%= total_p %></th>
